@@ -1,55 +1,103 @@
-import express from 'express';
-import cors from 'cors';
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import Admin from "./admin.model.js";
 
-const app= express();
-const admins= [
-    {
-        adminName: "admin1",
-        adminPassword: "password1",
-        students:[
-            'Alice', 'Bob', 'Charlie', 'David', 'Eve',
-            'Frank', 'Grace', 'Heidi', 'Ivan', 'Judy'
-        ]
-    },
-    {
-        adminName: "admin2",
-        adminPassword: "password2",
-        students:[
-            'Mallory', 'Nina', 'Oscar', 'Peggy', 'Quentin',
-            'Rupert', 'Sybil', 'Trent', 'Uma', 'Victor'
-        ]
-    }
-]
+const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/admin/login', (req,res) =>{
-    const {adminName, adminPassword} = req.body;
-    const admin = admins.find(admin => 
-        admin.adminName === adminName && admin.adminPassword === adminPassword
-    );
-    
-    if(admin) {
-        res.status(200).json({
-            success: true,
-            message: "Login successful",
-            students: admin.students
-        });
-    } else {
-        res.status(401).json({message: "Invalid credentials"});
-    }
-});
+const MONGO_URI = "mongodb+srv://kthiganth:wW4yBoeipjwoA2zu@cluster0.nhrldh9.mongodb.net/progresspoint?retryWrites=true&w=majority";
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.get('/api/admin/:adminName/students', (req, res) => {
+// Fetch all students for a given admin
+app.get("/api/admin/:adminName/students", async (req, res) => {
   const { adminName } = req.params;
-  const admin = admins.find(a => a.adminName === adminName);
-  if (admin) {
+  try {
+    const admin = await Admin.findOne({ adminName });
+    if (!admin) return res.status(404).json({ error: "Admin not found" });
+    // Return full student objects
     res.json({ students: admin.students });
-  } else {
-    res.status(404).json({ message: 'Admin not found' });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
   }
 });
 
-app.listen(5001, () =>{
-    console.log("Server is running on port 5001");
+// Add a new student to an admin
+app.post("/api/admin/:adminName/students", async (req, res) => {
+  const { adminName } = req.params;
+  const studentData = req.body;
+  try {
+    const admin = await Admin.findOne({ adminName });
+    if (!admin) return res.status(404).json({ error: "Admin not found" });
+    admin.students.push(studentData);
+    await admin.save();
+    res.json(admin.students);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
 });
+
+// Admin login
+app.post("/api/admin/login", async (req, res) => {
+  const { adminName, adminPassword } = req.body;
+  try {
+    const admin = await Admin.findOne({ adminName, adminPassword });
+    if (!admin) return res.status(401).json({ success: false, error: "Invalid credentials" });
+    res.json({ success: true, message: "Login successful" });
+  } catch (err) {
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+});
+
+// Save attendance for a date
+app.post("/api/admin/:adminName/attendance", async (req, res) => {
+  const { adminName } = req.params;
+  const { date, attendance } = req.body; // attendance: { regNo: status, ... }
+  try {
+    const admin = await Admin.findOne({ adminName });
+    if (!admin) return res.status(404).json({ error: "Admin not found" });
+
+    // For each student, add or update attendance for the date
+    admin.students.forEach(student => {
+      if (attendance[student.regNo]) {
+        // Remove existing attendance for this date if present
+        student.attendance = student.attendance.filter(a => a.date.toISOString().slice(0,10) !== date);
+        // Add new attendance record
+        student.attendance.push({ date, status: attendance[student.regNo] });
+      }
+    });
+
+    await admin.save();
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get all attendance records for an admin
+app.get("/api/admin/:adminName/attendance", async (req, res) => {
+  const { adminName } = req.params;
+  try {
+    const admin = await Admin.findOne({ adminName });
+    if (!admin) return res.status(404).json({ error: "Admin not found" });
+
+    // Build attendance by date: { date: { regNo: status, ... }, ... }
+    const attendanceRecords = {};
+    admin.students.forEach(student => {
+      student.attendance.forEach(a => {
+        const date = a.date.toISOString().slice(0,10);
+        if (!attendanceRecords[date]) attendanceRecords[date] = {};
+        attendanceRecords[date][student.regNo] = a.status; // Use regNo as key
+      });
+    });
+
+    res.json({ attendanceRecords });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Start server
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

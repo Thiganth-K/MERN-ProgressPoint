@@ -3,78 +3,69 @@ import NavBar from '../components/NavBar';
 
 const LeaderBoard = () => {
   const [students, setStudents] = useState([]);
-  const [marks, setMarks] = useState({});
-  const [attendance, setAttendance] = useState({});
+  const adminName = localStorage.getItem('adminName');
 
   useEffect(() => {
-    setMarks(JSON.parse(localStorage.getItem('marksRecords') || '{}'));
-    setAttendance(JSON.parse(localStorage.getItem('attendanceRecords') || '{}'));
-    // Get students from marks or attendance
-    const allStudents = new Set([
-      ...Object.keys(JSON.parse(localStorage.getItem('marksRecords') || '{}')),
-      ...Object.values(JSON.parse(localStorage.getItem('attendanceRecords') || '{}')).flatMap(obj => Object.keys(obj))
-    ]);
-    setStudents(Array.from(allStudents));
-  }, []);
+    fetch(`http://localhost:5001/api/admin/${adminName}/students`)
+      .then(res => res.json())
+      .then(data => setStudents(data.students || []));
+  }, [adminName]);
 
-  // Calculate attendance percentage
-  const getAttendancePercent = (student) => {
-    const attendanceData = Object.values(attendance);
-    if (!attendanceData.length) return 0;
-    let present = 0, total = 0;
-    attendanceData.forEach(day => {
-      if (student in day) {
-        total++;
-        if (day[student] === 'Present') present++;
-      }
-    });
-    return total ? Math.round((present / total) * 100) : 0;
-  };
+  // Calculate total marks and attendance percentage for each student
+  const leaderboard = students.map(student => {
+    const total = (student.marks.efforts || 0) +
+                  (student.marks.presentation || 0) +
+                  (student.marks.assessment || 0) +
+                  (student.marks.assignment || 0);
 
-  // Prepare leaderboard data
-  const leaderboard = students.map(student => ({
-    student,
-    total: marks[student]?.Total || 0,
-    attendance: getAttendancePercent(student)
-  })).sort((a, b) =>
-    b.total - a.total !== 0
-      ? b.total - a.total
-      : b.attendance - a.attendance
-  );
+    const totalDays = student.attendance.length;
+    const presentDays = student.attendance.filter(a => a.status === 'Present' || a.status === 'On-Duty').length;
+    const attendancePercent = totalDays > 0 ? ((presentDays / totalDays) * 100).toFixed(2) : "0.00";
+
+    return {
+      name: student.name,
+      regNo: student.regNo,
+      total,
+      attendancePercent: Number(attendancePercent),
+      ...student.marks
+    };
+  }).sort((a, b) => {
+    if (b.total !== a.total) return b.total - a.total;
+    return b.attendancePercent - a.attendancePercent;
+  });
 
   return (
     <div className="min-h-screen bg-base-200">
       <NavBar />
       <div className="flex flex-col items-center py-8 px-2">
         <h1 className="text-2xl font-bold mb-6 text-primary">Leaderboard</h1>
-        <div className="overflow-x-auto w-full max-w-2xl">
+        <div className="overflow-x-auto w-full max-w-3xl">
           <table className="table w-full rounded-xl border border-base-200">
             <thead>
               <tr className="bg-base-200">
                 <th className="px-4 py-2 text-left">Rank</th>
                 <th className="px-4 py-2 text-left">Student</th>
-                <th className="px-4 py-2 text-left">Total Marks</th>
+                <th className="px-4 py-2 text-left">Reg No</th>
+                <th className="px-4 py-2 text-left">Efforts</th>
+                <th className="px-4 py-2 text-left">Presentation</th>
+                <th className="px-4 py-2 text-left">Assessment</th>
+                <th className="px-4 py-2 text-left">Assignment</th>
+                <th className="px-4 py-2 text-left">Total</th>
                 <th className="px-4 py-2 text-left">Attendance %</th>
               </tr>
             </thead>
             <tbody>
-              {leaderboard.map((entry, idx) => (
-                <tr
-                  key={entry.student}
-                  className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200 hover:bg-base-300"}
-                >
+              {leaderboard.map((student, idx) => (
+                <tr key={student.regNo} className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200"}>
                   <td className="px-4 py-2">{idx + 1}</td>
-                  <td className="px-4 py-2 font-medium">{entry.student}</td>
-                  <td className="px-4 py-2">{entry.total}</td>
-                  <td className="px-4 py-2">
-                    <span className={
-                      entry.attendance < 25
-                        ? 'text-error font-bold'
-                        : 'text-success font-bold'
-                    }>
-                      {entry.attendance}%
-                    </span>
-                  </td>
+                  <td className="px-4 py-2">{student.name}</td>
+                  <td className="px-4 py-2">{student.regNo}</td>
+                  <td className="px-4 py-2">{student.efforts}</td>
+                  <td className="px-4 py-2">{student.presentation}</td>
+                  <td className="px-4 py-2">{student.assessment}</td>
+                  <td className="px-4 py-2">{student.assignment}</td>
+                  <td className="px-4 py-2 font-bold">{student.total}</td>
+                  <td className="px-4 py-2">{student.attendancePercent}%</td>
                 </tr>
               ))}
             </tbody>

@@ -34,9 +34,9 @@ const AdminPage = () => {
               </thead>
               <tbody>
                 {students.map((student, idx) => (
-                  <tr key={idx} className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200"}>
+                  <tr key={student.regNo || idx} className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200"}>
                     <td className="px-4 py-2">{idx + 1}</td>
-                    <td className="px-4 py-2">{student}</td>
+                    <td className="px-4 py-2">{student.name}</td>
                   </tr>
                 ))}
               </tbody>

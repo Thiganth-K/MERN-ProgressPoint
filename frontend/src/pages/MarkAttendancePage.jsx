@@ -20,22 +20,24 @@ const MarkAttendancePage = () => {
       .then(data => {
         setStudents(data.students || []);
         const initial = {};
-        (data.students || []).forEach(name => {
-          initial[name] = 'Present';
+        (data.students || []).forEach(s => {
+          initial[s.regNo] = 'Present';
         });
         setAttendance(initial);
       });
   }, [adminName]);
 
-  const handleStatusChange = (student, status) => {
-    setAttendance(prev => ({ ...prev, [student]: status }));
+  const handleStatusChange = (regNo, status) => {
+    setAttendance(prev => ({ ...prev, [regNo]: status }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '{}');
-    allAttendance[date] = attendance;
-    localStorage.setItem('attendanceRecords', JSON.stringify(allAttendance));
+    await fetch(`http://localhost:5001/api/admin/${adminName}/attendance`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date, attendance }),
+    });
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 2500);
   };
@@ -66,17 +68,17 @@ const MarkAttendancePage = () => {
             </thead>
             <tbody>
               {students.map((student, idx) => (
-                <tr key={student} className="hover">
+                <tr key={student.regNo} className="hover">
                   <td>{idx + 1}</td>
-                  <td className="font-medium">{student}</td>
+                  <td className="font-medium">{student.name}</td>
                   <td>
                     <div className="flex gap-2">
                       {statusOptions.map(option => (
                         <button
                           type="button"
                           key={option.label}
-                          className={`btn btn-xs ${attendance[student] === option.label ? option.color : 'btn-outline'}`}
-                          onClick={() => handleStatusChange(student, option.label)}
+                          className={`btn btn-xs ${attendance[student.regNo] === option.label ? option.color : 'btn-outline'}`}
+                          onClick={() => handleStatusChange(student.regNo, option.label)}
                         >
                           {option.label}
                         </button>
@@ -99,27 +101,6 @@ const MarkAttendancePage = () => {
               <span className="text-success text-2xl font-bold mb-2">Success!</span>
               <span className="text-base-content text-lg">Attendance marked successfully!</span>
             </div>
-            <style>
-              {`
-                @keyframes fade-pop {
-                  0% { opacity: 0; transform: scale(0.8);}
-                  60% { opacity: 1; transform: scale(1.05);}
-                  100% { opacity: 1; transform: scale(1);}
-                }
-                .animate-fade-pop {
-                  animation: fade-pop 0.5s cubic-bezier(.68,-0.55,.27,1.55);
-                }
-                @keyframes success-tick {
-                  0% { stroke-dasharray: 0 24; }
-                  60% { stroke-dasharray: 24 0; }
-                  100% { stroke-dasharray: 24 0; }
-                }
-                .animate-success-tick path {
-                  stroke-dasharray: 24 0;
-                  animation: success-tick 0.7s cubic-bezier(.68,-0.55,.27,1.55);
-                }
-              `}
-            </style>
           </div>
         )}
       </form>

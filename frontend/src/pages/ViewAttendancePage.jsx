@@ -3,13 +3,21 @@ import NavBar from '../components/NavBar';
 
 const ViewAttendancePage = () => {
   const [attendanceRecords, setAttendanceRecords] = useState({});
+  const [students, setStudents] = useState([]);
   const [selected, setSelected] = useState(null);
+  const adminName = localStorage.getItem('adminName');
 
   useEffect(() => {
-    // Load attendance records from localStorage
-    const records = JSON.parse(localStorage.getItem('attendanceRecords') || '{}');
-    setAttendanceRecords(records);
-  }, []);
+    fetch(`http://localhost:5001/api/admin/${adminName}/attendance`)
+      .then(res => res.json())
+      .then(data => setAttendanceRecords(data.attendanceRecords || {}));
+    fetch(`http://localhost:5001/api/admin/${adminName}/students`)
+      .then(res => res.json())
+      .then(data => setStudents(data.students || []));
+  }, [adminName]);
+
+  const regNoToName = {};
+  students.forEach(s => { regNoToName[s.regNo] = s.name; });
 
   const dates = Object.keys(attendanceRecords);
 
@@ -64,12 +72,12 @@ const ViewAttendancePage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.entries(attendanceRecords[selected]).map(([student, status], idx) => (
+                    {Object.entries(attendanceRecords[selected]).map(([regNo, status], idx) => (
                       <tr
-                        key={student}
+                        key={regNo}
                         className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200 hover:bg-base-300"}
                       >
-                        <td className="px-4 py-2">{student}</td>
+                        <td className="px-4 py-2">{regNoToName[regNo] || regNo}</td>
                         <td className="px-4 py-2">
                           <span className={
                             status === 'Present' ? 'text-success font-bold' :
