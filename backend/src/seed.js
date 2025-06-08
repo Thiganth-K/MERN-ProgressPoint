@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 import Admin from "./admin.model.js";
+import dotenv from "dotenv";
+dotenv.config();
 
-const MONGO_URI = "mongodb+srv://kthiganth:wW4yBoeipjwoA2zu@cluster0.nhrldh9.mongodb.net/progresspoint?retryWrites=true&w=majority";
+const MONGO_URI = process.env.MONGO_URI;
 
 // Students for admin1
 const students1 = [

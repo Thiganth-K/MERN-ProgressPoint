@@ -2,12 +2,15 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import Admin from "./admin.model.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const MONGO_URI = "mongodb+srv://kthiganth:wW4yBoeipjwoA2zu@cluster0.nhrldh9.mongodb.net/progresspoint?retryWrites=true&w=majority";
+const MONGO_URI = process.env.MONGO_URI;
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Fetch all students for a given admin
