@@ -101,6 +101,24 @@ app.get("/api/admin/:adminName/attendance", async (req, res) => {
   }
 });
 
+// Add marks for a student
+app.post("/api/admin/:adminName/student/:regNo/marks", async (req, res) => {
+  const { adminName, regNo } = req.params;
+  const { marks } = req.body;
+  try {
+    const admin = await Admin.findOne({ adminName });
+    if (!admin) return res.status(404).json({ error: "Admin not found" });
+    const student = admin.students.find(s => s.regNo === regNo);
+    if (!student) return res.status(404).json({ error: "Student not found" });
+    student.marks = marks;
+    student.marksLastUpdated = new Date();
+    await admin.save();
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

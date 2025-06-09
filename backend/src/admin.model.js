@@ -9,6 +9,7 @@ const studentSchema = new mongoose.Schema({
     assessment: { type: Number, default: 0 },
     assignment: { type: Number, default: 0 }
   },
+  marksLastUpdated: { type: Date }, // <-- Add this line
   attendance: [
     {
       date: { type: Date, required: true },

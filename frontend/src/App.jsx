@@ -8,6 +8,7 @@ import AttendancePage from './pages/AttendancePage';
 import MarkAttendancePage from './pages/MarkAttendancePage';
 import ViewAttendancePage from './pages/ViewAttendancePage';
 import MarkEntryPage from "./pages/MarkEntryPage";
+import Footer from './components/Footer';
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/viewattendance" element={<ViewAttendancePage />} />
         <Route path="/markentry" element={<MarkEntryPage />} />
       </Routes>
+      <Footer />
     </div>
   );
 };

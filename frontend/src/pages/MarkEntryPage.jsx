@@ -31,10 +31,20 @@ const MarkEntryPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     localStorage.setItem('marksRecords', JSON.stringify(marks));
     setShowMessage(true);
+
+    // Save marks to server
+    for (const regNo in marks) {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/admin/${adminName}/student/${regNo}/marks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ marks: marks[regNo] }),
+      });
+    }
+
     setTimeout(() => setShowMessage(false), 2000);
   };
 

@@ -35,9 +35,9 @@ const LeaderBoard = () => {
   });
 
   return (
-    <div className="min-h-screen bg-base-200">
+    <div className="bg-base-200 min-h-[calc(100vh-64px)] flex flex-col ">
       <NavBar />
-      <div className="flex flex-col items-center py-8 px-2">
+      <div className="flex flex-col items-center flex-1 py-8 px-2 ">
         <h1 className="text-2xl font-bold mb-6 text-primary">Leaderboard</h1>
         <div className="overflow-x-auto w-full max-w-3xl">
           <table className="table w-full rounded-xl border border-base-200">
@@ -52,6 +52,7 @@ const LeaderBoard = () => {
                 <th className="px-4 py-2 text-left">Assignment</th>
                 <th className="px-4 py-2 text-left">Total</th>
                 <th className="px-4 py-2 text-left">Attendance %</th>
+                <th className="px-4 py-2 text-left">Last Updated</th>
               </tr>
             </thead>
             <tbody>
@@ -66,6 +67,11 @@ const LeaderBoard = () => {
                   <td className="px-4 py-2">{student.assignment}</td>
                   <td className="px-4 py-2 font-bold">{student.total}</td>
                   <td className="px-4 py-2">{student.attendancePercent}%</td>
+                  <td className="px-4 py-2">
+                    {student.marksLastUpdated
+                      ? new Date(student.marksLastUpdated).toLocaleString()
+                      : "—"}
+                  </td>
                 </tr>
               ))}
             </tbody>
