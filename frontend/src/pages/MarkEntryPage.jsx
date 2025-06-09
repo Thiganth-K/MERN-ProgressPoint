@@ -15,18 +15,18 @@ const MarkEntryPage = () => {
       .then(data => {
         setStudents(data.students || []);
         const initial = {};
-        (data.students || []).forEach(name => {
-          initial[name] = { Efforts: 0, Presentation: 0, Assignment: 0, Assessment: 0, Total: 0 };
+        (data.students || []).forEach(s => {
+          initial[s.regNo] = { Efforts: 0, Presentation: 0, Assignment: 0, Assessment: 0, Total: 0 };
         });
         setMarks(initial);
       });
   }, [adminName]);
 
-  const handleMarkChange = (student, col, value) => {
+  const handleMarkChange = (regNo, col, value) => {
     setMarks(prev => {
       const updated = { ...prev };
-      updated[student][col] = Number(value);
-      updated[student].Total = columns.reduce((sum, c) => sum + Number(updated[student][c]), 0);
+      updated[regNo][col] = Number(value);
+      updated[regNo].Total = columns.reduce((sum, c) => sum + Number(updated[regNo][c]), 0);
       return updated;
     });
   };
@@ -55,22 +55,22 @@ const MarkEntryPage = () => {
               </thead>
               <tbody>
                 {students.map(student => (
-                  <tr key={student}>
-                    <td className="font-medium">{student}</td>
+                  <tr key={student.regNo}>
+                    <td className="font-medium">{student.name}</td>
                     {columns.map(col => (
                       <td key={col}>
                         <input
                           type="number"
                           min={0}
                           max={100}
-                          value={marks[student]?.[col] || ''}
-                          onChange={e => handleMarkChange(student, col, e.target.value)}
+                          value={marks[student.regNo]?.[col] || ''}
+                          onChange={e => handleMarkChange(student.regNo, col, e.target.value)}
                           className="input input-bordered input-xs w-16"
                           required
                         />
                       </td>
                     ))}
-                    <td className="font-bold">{marks[student]?.Total || 0}</td>
+                    <td className="font-bold">{marks[student.regNo]?.Total || 0}</td>
                   </tr>
                 ))}
               </tbody>
