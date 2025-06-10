@@ -47,5 +47,4 @@ ProgressPoint helps educational institutions and teachers:
 
 ---
 
-Feel free to expand this with screenshots, deployment instructions, or contribution guidelines!
 signing off - Thiganth
