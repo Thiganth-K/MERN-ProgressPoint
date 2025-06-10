@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 const MONGO_URI = process.env.MONGO_URI;
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(MONGO_URI);
 
 // Fetch all students for a given admin
 app.get("/api/admin/:adminName/students", async (req, res) => {
