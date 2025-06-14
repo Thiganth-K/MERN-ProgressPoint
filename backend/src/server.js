@@ -1,17 +1,29 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import Admin from "./admin.model.js";
 import dotenv from "dotenv";
+import path from "path";
+import Admin from "./admin.model.js";
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
 app.use(express.json());
 
-const MONGO_URI = process.env.MONGO_URI;
-mongoose.connect(MONGO_URI);
+// CORS only in development
+if (process.env.NODE_ENV !== "production") {
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+    })
+  );
+}
+
+const PORT = process.env.PORT || 5001;
+const __dirname = path.resolve();
+
+mongoose.connect(process.env.MONGO_URI);
 
 // Fetch all students for a given admin
 app.get("/api/admin/:adminName/students", async (req, res) => {
@@ -119,6 +131,14 @@ app.post("/api/admin/:adminName/student/:regNo/marks", async (req, res) => {
   }
 });
 
-// Start server
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Serve frontend in production
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  });
+}
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}!`);
+});
