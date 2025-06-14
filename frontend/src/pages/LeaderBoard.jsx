@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
+import api from '../lib/axios';
 
 const LeaderBoard = () => {
   const [students, setStudents] = useState([]);
   const adminName = localStorage.getItem('adminName');
 
   useEffect(() => {
-    fetch(`http://localhost:5001/api/admin/${adminName}/students`)
-      .then(res => res.json())
-      .then(data => setStudents(data.students || []));
+    api.get(`/admin/${adminName}/students`)
+      .then(res => setStudents(res.data.students || []));
   }, [adminName]);
 
   // Calculate total marks and attendance percentage for each student

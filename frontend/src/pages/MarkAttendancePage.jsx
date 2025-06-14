@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
+import api from '../lib/axios';
 
 const statusOptions = [
   { label: 'Present', color: 'btn-primary' },
@@ -15,12 +16,11 @@ const MarkAttendancePage = () => {
   const adminName = localStorage.getItem('adminName');
 
   useEffect(() => {
-    fetch(`http://localhost:5001/api/admin/${adminName}/students`)
-      .then(res => res.json())
-      .then(data => {
-        setStudents(data.students || []);
+    api.get(`/admin/${adminName}/students`)
+      .then(res => {
+        setStudents(res.data.students || []);
         const initial = {};
-        (data.students || []).forEach(s => {
+        (res.data.students || []).forEach(s => {
           initial[s.regNo] = 'Present';
         });
         setAttendance(initial);
@@ -33,11 +33,7 @@ const MarkAttendancePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await fetch(`http://localhost:5001/api/admin/${adminName}/attendance`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date, attendance }),
-    });
+    await api.post(`/admin/${adminName}/attendance`, { date, attendance });
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 2500);
   };

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import {useNavigate} from "react-router";
+import React, { useState } from 'react'
+import { useNavigate } from "react-router";
 import toast from 'react-hot-toast';
+import api from '../lib/axios';
 
 const HomePage = () => {
     const [adminName, setAdminName] = useState('');
@@ -13,12 +14,8 @@ const HomePage = () => {
             toast.error('Please fill in all fields');
             return;
         }
-        const res = await fetch('http://localhost:5001/api/admin/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ adminName, adminPassword }),
-        });
-        const data = await res.json();
+        const res = await api.post('/admin/login', { adminName, adminPassword });
+        const data = res.data;
         if (data.success) {
             localStorage.setItem('adminName', adminName);
             toast.success('Admin Login successfully!');

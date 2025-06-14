@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar';
+import api from '../lib/axios';
 
 const ViewAttendancePage = () => {
   const [attendanceRecords, setAttendanceRecords] = useState({});
@@ -8,12 +9,10 @@ const ViewAttendancePage = () => {
   const adminName = localStorage.getItem('adminName');
 
   useEffect(() => {
-    fetch(`http://localhost:5001/api/admin/${adminName}/attendance`)
-      .then(res => res.json())
-      .then(data => setAttendanceRecords(data.attendanceRecords || {}));
-    fetch(`http://localhost:5001/api/admin/${adminName}/students`)
-      .then(res => res.json())
-      .then(data => setStudents(data.students || []));
+    api.get(`/admin/${adminName}/attendance`)
+      .then(res => setAttendanceRecords(res.data.attendanceRecords || {}));
+    api.get(`/admin/${adminName}/students`)
+      .then(res => setStudents(res.data.students || []));
   }, [adminName]);
 
   const regNoToName = {};

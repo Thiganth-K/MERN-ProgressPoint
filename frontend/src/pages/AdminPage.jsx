@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
+import api from '../lib/axios';
 
 const AdminPage = () => {
   const [students, setStudents] = useState([]);
@@ -7,9 +8,8 @@ const AdminPage = () => {
 
   useEffect(() => {
     if (adminName) {
-      fetch(`http://localhost:5001/api/admin/${adminName}/students`)
-        .then(res => res.json())
-        .then(data => setStudents(data.students || []));
+      api.get(`/admin/${adminName}/students`)
+        .then(res => setStudents(res.data.students || []));
     }
   }, [adminName]);
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
+import api from '../lib/axios';
 
 const columns = ['Efforts', 'Presentation', 'Assignment', 'Assessment'];
 
@@ -10,12 +11,11 @@ const MarkEntryPage = () => {
   const adminName = localStorage.getItem('adminName');
 
   useEffect(() => {
-    fetch(`http://localhost:5001/api/admin/${adminName}/students`)
-      .then(res => res.json())
-      .then(data => {
-        setStudents(data.students || []);
+    api.get(`/admin/${adminName}/students`)
+      .then(res => {
+        setStudents(res.data.students || []);
         const initial = {};
-        (data.students || []).forEach(s => {
+        (res.data.students || []).forEach(s => {
           initial[s.regNo] = { Efforts: 0, Presentation: 0, Assignment: 0, Assessment: 0, Total: 0 };
         });
         setMarks(initial);
@@ -38,10 +38,8 @@ const MarkEntryPage = () => {
 
     // Save marks to server
     for (const regNo in marks) {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/admin/${adminName}/student/${regNo}/marks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ marks: marks[regNo] }),
+      await api.post(`/admin/${adminName}/student/${regNo}/marks`, {
+        marks: marks[regNo]
       });
     }
 
