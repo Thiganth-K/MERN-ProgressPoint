@@ -2,143 +2,236 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import path from "path";
 import Admin from "./admin.model.js";
-
+import Batch from "./batch.model.js";
 dotenv.config();
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
-// CORS only in development
-if (process.env.NODE_ENV !== "production") {
-  app.use(
-    cors({
-      origin: "http://localhost:5173",
-    })
-  );
-}
-
-const PORT = process.env.PORT || 5001;
-const __dirname = path.resolve();
+const SUPER_ADMIN = {
+  username: "superadmin1",
+  password: "superadminpassword1"
+};
 
 mongoose.connect(process.env.MONGO_URI);
 
-// Fetch all students for a given admin
-app.get("/api/admin/:adminName/students", async (req, res) => {
-  const { adminName } = req.params;
-  try {
-    const admin = await Admin.findOne({ adminName });
-    if (!admin) return res.status(404).json({ error: "Admin not found" });
-    // Return full student objects
-    res.json({ students: admin.students });
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// Add a new student to an admin
-app.post("/api/admin/:adminName/students", async (req, res) => {
-  const { adminName } = req.params;
-  const studentData = req.body;
-  try {
-    const admin = await Admin.findOne({ adminName });
-    if (!admin) return res.status(404).json({ error: "Admin not found" });
-    admin.students.push(studentData);
-    await admin.save();
-    res.json(admin.students);
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// Admin login
+// Admin login (with logs)
 app.post("/api/admin/login", async (req, res) => {
   const { adminName, adminPassword } = req.body;
+  if (adminName === SUPER_ADMIN.username && adminPassword === SUPER_ADMIN.password) {
+    return res.json({ success: true, role: "superadmin" });
+  }
   try {
     const admin = await Admin.findOne({ adminName, adminPassword });
     if (!admin) return res.status(401).json({ success: false, error: "Invalid credentials" });
-    res.json({ success: true, message: "Login successful" });
-  } catch (err) {
+    admin.logs.push({ type: "login", timestamp: new Date() });
+    await admin.save();
+    res.json({ success: true, role: "admin" });
+  } catch {
     res.status(500).json({ success: false, error: "Server error" });
   }
 });
 
-// Save attendance for a date
-app.post("/api/admin/:adminName/attendance", async (req, res) => {
-  const { adminName } = req.params;
-  const { date, attendance } = req.body; // attendance: { regNo: status, ... }
+// Admin logout (with logs)
+app.post("/api/admin/logout", async (req, res) => {
+  const { adminName } = req.body;
   try {
     const admin = await Admin.findOne({ adminName });
     if (!admin) return res.status(404).json({ error: "Admin not found" });
-
-    // For each student, add or update attendance for the date
-    admin.students.forEach(student => {
-      if (attendance[student.regNo]) {
-        // Remove existing attendance for this date if present
-        student.attendance = student.attendance.filter(a => a.date.toISOString().slice(0,10) !== date);
-        // Add new attendance record
-        student.attendance.push({ date, status: attendance[student.regNo] });
-      }
-    });
-
+    admin.logs.push({ type: "logout", timestamp: new Date() });
     await admin.save();
     res.json({ success: true });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// Get all attendance records for an admin
-app.get("/api/admin/:adminName/attendance", async (req, res) => {
-  const { adminName } = req.params;
+// Superadmin: get all admin logs
+app.get("/api/superadmin/logs", async (req, res) => {
   try {
-    const admin = await Admin.findOne({ adminName });
-    if (!admin) return res.status(404).json({ error: "Admin not found" });
-
-    // Build attendance by date: { date: { regNo: status, ... }, ... }
-    const attendanceRecords = {};
-    admin.students.forEach(student => {
-      student.attendance.forEach(a => {
-        const date = a.date.toISOString().slice(0,10);
-        if (!attendanceRecords[date]) attendanceRecords[date] = {};
-        attendanceRecords[date][student.regNo] = a.status; // Use regNo as key
-      });
-    });
-
-    res.json({ attendanceRecords });
-  } catch (err) {
+    const admins = await Admin.find({}, "adminName logs");
+    res.json({ logs: admins.map(a => ({ adminName: a.adminName, logs: a.logs })) });
+  } catch {
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// Add marks for a student
-app.post("/api/admin/:adminName/student/:regNo/marks", async (req, res) => {
-  const { adminName, regNo } = req.params;
-  const { marks } = req.body;
+// Superadmin: manage admins
+app.get("/api/superadmin/admins", async (req, res) => {
+  const admins = await Admin.find({}, "adminName adminPassword"); // include _id by default
+  res.json({ admins });
+});
+app.post("/api/superadmin/admins", async (req, res) => {
+  const { adminName, adminPassword } = req.body;
   try {
-    const admin = await Admin.findOne({ adminName });
-    if (!admin) return res.status(404).json({ error: "Admin not found" });
-    const student = admin.students.find(s => s.regNo === regNo);
-    if (!student) return res.status(404).json({ error: "Student not found" });
-    student.marks = marks;
-    student.marksLastUpdated = new Date();
+    const admin = new Admin({ adminName, adminPassword, logs: [] });
     await admin.save();
+    res.json({ success: true, admin });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Update admin name and password by ID
+app.put("/api/superadmin/admins/:id", async (req, res) => {
+  const { id } = req.params;
+  const { adminName, adminPassword } = req.body;
+  try {
+    const admin = await Admin.findById(id);
+    if (!admin) return res.status(404).json({ success: false, error: "Admin not found" });
+    admin.adminName = adminName;
+    admin.adminPassword = adminPassword;
+    await admin.save();
+    res.json({ success: true, admin });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+app.delete("/api/superadmin/admins/:id", async (req, res) => {
+  try {
+    await Admin.findByIdAndDelete(req.params.id);
     res.json({ success: true });
   } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Superadmin: move student between batches
+app.post("/api/superadmin/move-student", async (req, res) => {
+  const { fromBatch, toBatch, regNo } = req.body;
+  try {
+    const from = await Batch.findOne({ batchName: fromBatch });
+    const to = await Batch.findOne({ batchName: toBatch });
+    if (!from || !to) return res.status(404).json({ error: "Batch not found" });
+    const idx = from.students.findIndex(s => s.regNo === regNo);
+    if (idx === -1) return res.status(404).json({ error: "Student not found" });
+    const [student] = from.students.splice(idx, 1);
+    to.students.push(student);
+    await from.save();
+    await to.save();
+    res.json({ success: true });
+  } catch {
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// Serve frontend in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+// Batches CRUD
+app.get("/api/batches", async (req, res) => {
+  const batches = await Batch.find();
+  res.json({ batches });
+});
+app.post("/api/batches", async (req, res) => {
+  const { batchName, students } = req.body;
+  try {
+    const batch = new Batch({
+      batchName,
+      students: (students || []).map(s => ({
+        ...s,
+        marks: { efforts: 0, presentation: 0, assessment: 0, assignment: 0 },
+        marksLastUpdated: null,
+        attendance: [],
+        attendancePercent: 0
+      }))
+    });
+    await batch.save();
+    res.json({ success: true, batch });
+  } catch (err) {
+    if (err.code === 11000) {
+      // Duplicate key error
+      return res.status(400).json({ success: false, error: "Batch name already exists" });
+    }
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+app.post("/api/batches/:batchName/students", async (req, res) => {
+  const { batchName } = req.params;
+  const { students } = req.body;
+  const batch = await Batch.findOne({ batchName });
+  if (!batch) return res.status(404).json({ error: "Batch not found" });
+  students.forEach(s => {
+    batch.students.push({
+      ...s,
+      marks: { efforts: 0, presentation: 0, assessment: 0, assignment: 0 },
+      marksLastUpdated: null,
+      attendance: [],
+      attendancePercent: 0
+    });
   });
-}
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}!`);
+  await batch.save();
+  res.json({ success: true, batch });
 });
+
+// Get students of a batch
+app.get("/api/batches/:batchName/students", async (req, res) => {
+  const { batchName } = req.params;
+  const batch = await Batch.findOne({ batchName });
+  if (!batch) return res.status(404).json({ error: "Batch not found" });
+  res.json({ students: batch.students });
+});
+
+// Update marks for a student in a batch
+app.post("/api/batches/:batchName/student/:regNo/marks", async (req, res) => {
+  const { batchName, regNo } = req.params;
+  const { marks } = req.body;
+  const batch = await Batch.findOne({ batchName });
+  if (!batch) return res.status(404).json({ error: "Batch not found" });
+  const student = batch.students.find(s => s.regNo === regNo);
+  if (!student) return res.status(404).json({ error: "Student not found" });
+  student.marks = marks;
+  student.marksLastUpdated = new Date();
+  await batch.save();
+  res.json({ success: true });
+});
+
+// Mark attendance for a batch
+app.post("/api/batches/:batchName/attendance", async (req, res) => {
+  const { batchName } = req.params;
+  const { date, attendance } = req.body;
+  const batch = await Batch.findOne({ batchName });
+  if (!batch) return res.status(404).json({ error: "Batch not found" });
+  batch.students.forEach(student => {
+    if (attendance[student.regNo]) {
+      student.attendance.push({ date, status: attendance[student.regNo] });
+      const totalDays = student.attendance.length;
+      const presentDays = student.attendance.filter(a => a.status === 'Present' || a.status === 'On-Duty').length;
+      student.attendancePercent = totalDays > 0 ? ((presentDays / totalDays) * 100).toFixed(2) : 0;
+    }
+  });
+  await batch.save();
+  res.json({ success: true });
+});
+
+// Superadmin: remove a batch
+app.delete("/api/batches/:batchName", async (req, res) => {
+  const { batchName } = req.params;
+  try {
+    await Batch.deleteOne({ batchName });
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get all admins (without passwords)
+app.get('/api/admins', async (req, res) => {
+  try {
+    const admins = await Admin.find({}, '-adminPassword'); // don't send passwords
+    res.json({ admins });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch admins' });
+  }
+});
+
+app.delete('/api/superadmin/logs', async (req, res) => {
+  try {
+    await Admin.updateMany({}, { $set: { logs: [] } });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

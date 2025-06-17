@@ -8,6 +8,8 @@ import AttendancePage from './pages/AttendancePage';
 import MarkAttendancePage from './pages/MarkAttendancePage';
 import ViewAttendancePage from './pages/ViewAttendancePage';
 import MarkEntryPage from "./pages/MarkEntryPage";
+import SuperAdminPage from './pages/SuperAdminPage';
+import ManageAdminsPage from './pages/ManageAdminsPage';
 import Footer from './components/Footer';
 
 const App = () => {
@@ -22,8 +24,10 @@ const App = () => {
         <Route path="/markattendance" element={<MarkAttendancePage />} />
         <Route path="/viewattendance" element={<ViewAttendancePage />} />
         <Route path="/markentry" element={<MarkEntryPage />} />
+        <Route path="/superadmin" element={<SuperAdminPage />} />
+        <Route path="/manage-admins" element={<ManageAdminsPage />} />
       </Routes>
-      <Footer />
+      
     </div>
   );
 };

@@ -1,125 +1,156 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 import api from '../lib/axios';
+import toast from 'react-hot-toast';
 
-const columns = ['Efforts', 'Presentation', 'Assignment', 'Assessment'];
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+const columns = [
+  { key: 'efforts', label: 'Efforts' },
+  { key: 'presentation', label: 'Presentation' },
+  { key: 'assignment', label: 'Assignment' },
+  { key: 'assessment', label: 'Assessment' }
+];
 
 const MarkEntryPage = () => {
   const [students, setStudents] = useState([]);
   const [marks, setMarks] = useState({});
   const [showMessage, setShowMessage] = useState(false);
-  const adminName = localStorage.getItem('adminName');
+  const query = useQuery();
+  const batch = query.get('batch');
 
   useEffect(() => {
-    api.get(`/admin/${adminName}/students`)
-      .then(res => {
-        setStudents(res.data.students || []);
-        const initial = {};
-        (res.data.students || []).forEach(s => {
-          initial[s.regNo] = { Efforts: 0, Presentation: 0, Assignment: 0, Assessment: 0, Total: 0 };
+    if (batch) {
+      api.get(`/batches/${batch}/students`)
+        .then(res => {
+          setStudents(res.data.students || []);
+          const initial = {};
+          (res.data.students || []).forEach(s => {
+            initial[s.regNo] = { ...s.marks };
+          });
+          setMarks(initial);
         });
-        setMarks(initial);
-      });
-  }, [adminName]);
+    }
+  }, [batch]);
 
-  const handleMarkChange = (regNo, col, value) => {
-    setMarks(prev => {
-      const updated = { ...prev };
-      updated[regNo][col] = Number(value);
-      updated[regNo].Total = columns.reduce((sum, c) => sum + Number(updated[regNo][c]), 0);
-      return updated;
-    });
+  const handleMarkChange = (regNo, key, value) => {
+    setMarks(prev => ({
+      ...prev,
+      [regNo]: {
+        ...prev[regNo],
+        [key]: Number(value)
+      }
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    localStorage.setItem('marksRecords', JSON.stringify(marks));
-    setShowMessage(true);
-
-    // Save marks to server
-    for (const regNo in marks) {
-      await api.post(`/admin/${adminName}/student/${regNo}/marks`, {
-        marks: marks[regNo]
-      });
+    try {
+      await Promise.all(
+        students.map(student =>
+          api.post(`/batches/${batch}/student/${student.regNo}/marks`, {
+            marks: marks[student.regNo]
+          })
+        )
+      );
+      toast.success('Marks updated successfully!');
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 2200);
+    } catch {
+      toast.error('Failed to update marks');
     }
-
-    setTimeout(() => setShowMessage(false), 2000);
   };
 
   return (
-    <div className="min-h-screen bg-base-200">
+    <div>
       <NavBar />
-      <div className="flex flex-col items-center py-8 px-2">
-        <h1 className="text-2xl font-bold mb-6 text-primary">Mark Entry</h1>
-        <form onSubmit={handleSubmit} className="w-full max-w-3xl bg-base-100 rounded-xl shadow-lg p-6">
-          <div className="overflow-x-auto">
-            <table className="table w-full">
+      <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-base-200 px-2 py-8">
+        <h1 className="mb-8 text-3xl sm:text-4xl font-extrabold text-primary text-center tracking-tight">
+          Mark Entry <span className="text-accent">{batch ? `- ${batch}` : ''}</span>
+        </h1>
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-4xl bg-base-100 p-6 rounded-2xl shadow-2xl relative"
+        >
+          <div className="overflow-x-auto rounded-xl border border-base-200 mb-4">
+            <table className="table w-full text-base">
               <thead>
-                <tr>
-                  <th>Student</th>
-                  {columns.map(col => <th key={col}>{col}</th>)}
-                  <th>Total</th>
+                <tr className="bg-base-200 text-base font-semibold text-primary">
+                  <th className="px-4 py-2 text-left">#</th>
+                  <th className="px-4 py-2 text-left">Reg No</th>
+                  <th className="px-4 py-2 text-left">Name</th>
+                  {columns.map(col => (
+                    <th key={col.key} className="px-4 py-2 text-center">{col.label}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {students.map(student => (
-                  <tr key={student.regNo}>
-                    <td className="font-medium">{student.name}</td>
+                {students.map((student, idx) => (
+                  <tr key={student.regNo} className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200"}>
+                    <td className="px-4 py-2">{idx + 1}</td>
+                    <td className="px-4 py-2 font-mono">{student.regNo}</td>
+                    <td className="px-4 py-2">{student.name}</td>
                     {columns.map(col => (
-                      <td key={col}>
+                      <td key={col.key} className="px-2 py-2 text-center">
                         <input
                           type="number"
                           min={0}
                           max={100}
-                          value={marks[student.regNo]?.[col] || ''}
-                          onChange={e => handleMarkChange(student.regNo, col, e.target.value)}
-                          className="input input-bordered input-xs w-16"
+                          value={marks[student.regNo]?.[col.key] ?? 0}
+                          onChange={e => handleMarkChange(student.regNo, col.key, e.target.value)}
+                          className="input input-bordered input-sm w-20 text-center font-semibold"
                           required
                         />
                       </td>
                     ))}
-                    <td className="font-bold">{marks[student.regNo]?.Total || 0}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <button type="submit" className="btn btn-primary mt-6 w-full">Submit Marks</button>
+          <button
+            type="submit"
+            className="btn btn-primary mt-6 w-full text-lg tracking-wide font-bold"
+          >
+            Save Marks
+          </button>
+          {/* Success Animation & Message */}
           {showMessage && (
-            <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
-              <div className="bg-base-100 border-2 border-success px-10 py-8 rounded-2xl shadow-2xl flex flex-col items-center animate-fade-pop">
-                <svg className="w-16 h-16 text-success mb-4 animate-success-tick" fill="none" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="2" fill="none"/>
-                  <path d="M7 13l3 3 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                </svg>
-                <span className="text-success text-2xl font-bold mb-2">Success!</span>
-                <span className="text-base-content text-lg">Marks saved successfully!</span>
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-base-100 bg-opacity-90 rounded-2xl animate-fade-in z-10">
+              <svg
+                className="w-20 h-20 text-success animate-bounce mb-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12l2 2l4-4" />
+              </svg>
+              <div className="text-2xl font-bold text-success text-center tracking-wide">
+                Mark Entry Done!
               </div>
-              <style>
-                {`
-                  @keyframes fade-pop {
-                    0% { opacity: 0; transform: scale(0.8);}
-                    60% { opacity: 1; transform: scale(1.05);}
-                    100% { opacity: 1; transform: scale(1);}
-                  }
-                  .animate-fade-pop {
-                    animation: fade-pop 0.5s cubic-bezier(.68,-0.55,.27,1.55);
-                  }
-                  @keyframes success-tick {
-                    0% { stroke-dasharray: 0 24; }
-                    60% { stroke-dasharray: 24 0; }
-                    100% { stroke-dasharray: 24 0; }
-                  }
-                  .animate-success-tick path {
-                    stroke-dasharray: 24 0;
-                    animation: success-tick 0.7s cubic-bezier(.68,-0.55,.27,1.55);
-                  }
-                `}
-              </style>
             </div>
           )}
         </form>
+        {/* Animation keyframes */}
+        <style>
+          {`
+            @keyframes fade-in {
+              0% { opacity: 0; transform: scale(0.95);}
+              100% { opacity: 1; transform: scale(1);}
+            }
+            .animate-fade-in {
+              animation: fade-in 0.5s cubic-bezier(.4,0,.2,1);
+            }
+          `}
+        </style>
       </div>
+      <Footer />
     </div>
   );
 };

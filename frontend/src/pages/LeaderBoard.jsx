@@ -1,15 +1,37 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 import api from '../lib/axios';
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+const trophyIcons = [
+  // Gold, Silver, Bronze
+  <svg key="gold" className="w-6 h-6 text-yellow-400 inline-block mr-1" fill="currentColor" viewBox="0 0 20 20">
+    <path d="M9 2a1 1 0 012 0v1h3a1 1 0 011 1v2a5 5 0 01-4 4.9V13h2a1 1 0 010 2H7a1 1 0 010-2h2V8.9A5 5 0 015 6V4a1 1 0 011-1h3V2z" />
+  </svg>,
+  <svg key="silver" className="w-6 h-6 text-gray-400 inline-block mr-1" fill="currentColor" viewBox="0 0 20 20">
+    <path d="M9 2a1 1 0 012 0v1h3a1 1 0 011 1v2a5 5 0 01-4 4.9V13h2a1 1 0 010 2H7a1 1 0 010-2h2V8.9A5 5 0 015 6V4a1 1 0 011-1h3V2z" />
+  </svg>,
+  <svg key="bronze" className="w-6 h-6 text-yellow-700 inline-block mr-1" fill="currentColor" viewBox="0 0 20 20">
+    <path d="M9 2a1 1 0 012 0v1h3a1 1 0 011 1v2a5 5 0 01-4 4.9V13h2a1 1 0 010 2H7a1 1 0 010-2h2V8.9A5 5 0 015 6V4a1 1 0 011-1h3V2z" />
+  </svg>,
+];
 
 const LeaderBoard = () => {
   const [students, setStudents] = useState([]);
-  const adminName = localStorage.getItem('adminName');
+  const query = useQuery();
+  const batch = query.get('batch');
 
   useEffect(() => {
-    api.get(`/admin/${adminName}/students`)
-      .then(res => setStudents(res.data.students || []));
-  }, [adminName]);
+    if (batch) {
+      api.get(`/batches/${batch}/students`)
+        .then(res => setStudents(res.data.students || []));
+    }
+  }, [batch]);
 
   // Calculate total marks and attendance percentage for each student
   const leaderboard = students.map(student => {
@@ -27,7 +49,8 @@ const LeaderBoard = () => {
       regNo: student.regNo,
       total,
       attendancePercent: Number(attendancePercent),
-      ...student.marks
+      ...student.marks,
+      marksLastUpdated: student.marksLastUpdated
     };
   }).sort((a, b) => {
     if (b.total !== a.total) return b.total - a.total;
@@ -35,39 +58,63 @@ const LeaderBoard = () => {
   });
 
   return (
-    <div className="bg-base-200 min-h-[calc(100vh-64px)] flex flex-col ">
+    <div className="bg-base-200 min-h-[calc(100vh-64px)] flex flex-col">
       <NavBar />
-      <div className="flex flex-col items-center flex-1 py-8 px-2 ">
-        <h1 className="text-2xl font-bold mb-6 text-primary">Leaderboard</h1>
-        <div className="overflow-x-auto w-full max-w-3xl">
-          <table className="table w-full rounded-xl border border-base-200">
+      <div className="flex flex-col items-center flex-1 py-8 px-2">
+        <h1 className="text-3xl sm:text-4xl font-extrabold mb-6 text-primary tracking-tight flex items-center gap-2">
+          <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 17v-7a4 4 0 118 0v7M12 21v-4" />
+          </svg>
+          Leaderboard
+        </h1>
+        <div className="overflow-x-auto w-full max-w-4xl bg-base-100 rounded-2xl shadow-xl p-4">
+          <table className="table w-full text-base">
             <thead>
-              <tr className="bg-base-200">
+              <tr className="bg-base-200 text-primary font-semibold text-base">
                 <th className="px-4 py-2 text-left">Rank</th>
                 <th className="px-4 py-2 text-left">Student</th>
                 <th className="px-4 py-2 text-left">Reg No</th>
-                <th className="px-4 py-2 text-left">Efforts</th>
-                <th className="px-4 py-2 text-left">Presentation</th>
-                <th className="px-4 py-2 text-left">Assessment</th>
-                <th className="px-4 py-2 text-left">Assignment</th>
-                <th className="px-4 py-2 text-left">Total</th>
-                <th className="px-4 py-2 text-left">Attendance %</th>
-                <th className="px-4 py-2 text-left">Last Updated</th>
+                <th className="px-4 py-2 text-center">Efforts</th>
+                <th className="px-4 py-2 text-center">Presentation</th>
+                <th className="px-4 py-2 text-center">Assessment</th>
+                <th className="px-4 py-2 text-center">Assignment</th>
+                <th className="px-4 py-2 text-center">Total</th>
+                <th className="px-4 py-2 text-center">Attendance %</th>
+                <th className="px-4 py-2 text-center">Last Updated</th>
               </tr>
             </thead>
             <tbody>
+              {leaderboard.length === 0 && (
+                <tr>
+                  <td colSpan={10} className="text-center py-8 text-gray-400 font-semibold">
+                    No students found for this batch.
+                  </td>
+                </tr>
+              )}
               {leaderboard.map((student, idx) => (
                 <tr key={student.regNo} className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200"}>
-                  <td className="px-4 py-2">{idx + 1}</td>
-                  <td className="px-4 py-2">{student.name}</td>
-                  <td className="px-4 py-2">{student.regNo}</td>
-                  <td className="px-4 py-2">{student.efforts}</td>
-                  <td className="px-4 py-2">{student.presentation}</td>
-                  <td className="px-4 py-2">{student.assessment}</td>
-                  <td className="px-4 py-2">{student.assignment}</td>
-                  <td className="px-4 py-2 font-bold">{student.total}</td>
-                  <td className="px-4 py-2">{student.attendancePercent}%</td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 font-bold text-lg text-center">
+                    {idx < 3 ? trophyIcons[idx] : <span className="text-base">{idx + 1}</span>}
+                  </td>
+                  <td className="px-4 py-2 font-semibold">{student.name}</td>
+                  <td className="px-4 py-2 font-mono">{student.regNo}</td>
+                  <td className="px-4 py-2 text-center">{student.efforts}</td>
+                  <td className="px-4 py-2 text-center">{student.presentation}</td>
+                  <td className="px-4 py-2 text-center">{student.assessment}</td>
+                  <td className="px-4 py-2 text-center">{student.assignment}</td>
+                  <td className="px-4 py-2 font-bold text-center text-primary">{student.total}</td>
+                  <td className="px-4 py-2 text-center">
+                    <span className={
+                      student.attendancePercent >= 90
+                        ? "text-success font-semibold"
+                        : student.attendancePercent >= 75
+                        ? "text-warning font-semibold"
+                        : "text-error font-semibold"
+                    }>
+                      {student.attendancePercent}%
+                    </span>
+                  </td>
+                  <td className="px-4 py-2 text-center text-xs">
                     {student.marksLastUpdated
                       ? new Date(student.marksLastUpdated).toLocaleString()
                       : "—"}
@@ -78,6 +125,7 @@ const LeaderBoard = () => {
           </table>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

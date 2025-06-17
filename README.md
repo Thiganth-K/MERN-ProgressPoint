@@ -2,23 +2,65 @@
 
 **ProgressPoint** is a full-stack MERN (MongoDB, Express, React, Node.js) application designed for teachers and administrators to efficiently manage and track student progress.
 
-## Features
+---
 
-- **Admin Login:** Secure login for admins to manage their own set of students.
-- **Student Management:** Each admin can view and manage a unique list of students with registration numbers and marks.
-- **Marks Tracking:** Track student performance in Efforts, Presentation, Assessment, and Assignment.
-- **Attendance Management:** Mark daily attendance for each student and view attendance records and statistics.
-- **Leaderboard:** View a sorted leaderboard of students based on total marks, with attendance percentage as a tiebreaker.
-- **Multi-Admin Support:** Each admin has their own login and student set.
+## 🚀 Features
 
-## Tech Stack
+- **Admin & SuperAdmin Login:**  
+  Secure login for admins and a superadmin to manage the platform.
 
-- **Frontend:** React, Tailwind CSS, DaisyUI, React Router
+- **Batch Management:**  
+  - Create, view, and remove student batches.
+  - Move students between batches.
+  - Responsive batch and student tables for all devices.
+
+- **Student Management:**  
+  - Add students to batches (with registration number and name).
+  - Remove students from batches.
+  - View all students in a batch with marks and attendance.
+
+- **Marks Tracking:**  
+  - Track and update student performance in Efforts, Presentation, Assessment, and Assignment.
+  - Mark entry page for bulk updating marks.
+
+- **Attendance Management:**  
+  - Mark daily attendance for each student (Present, Absent, On-Duty).
+  - View attendance records grouped by date.
+  - Attendance percentage auto-calculated for each student.
+
+- **Leaderboard:**  
+  - View a sorted leaderboard of students based on total marks.
+  - Attendance percentage used as a tiebreaker.
+  - Trophy icons for top 3 students.
+
+- **Multi-Admin Support:**  
+  - Each admin manages their own set of students and batches.
+  - Superadmin can add, edit, and remove admins.
+
+- **Admin Logs:**  
+  - Login and logout logs for each admin.
+  - Superadmin can view and clear all logs.
+
+- **Responsive UI:**  
+  - Mobile, tablet, and desktop friendly.
+  - Built with Tailwind CSS and DaisyUI.
+
+- **Security:**  
+  - Simple authentication for admins and superadmin.
+  - Passwords stored securely in the database.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React, Tailwind CSS, DaisyUI, React Router, Axios
 - **Backend:** Node.js, Express, Mongoose
 - **Database:** MongoDB Atlas (cloud)
 - **Authentication:** Simple admin login (can be extended for more security)
 
-## Getting Started
+---
+
+## 🏁 Getting Started
 
 1. **Clone the repository**
 2. **Set up your environment variables**
@@ -33,12 +75,16 @@
 5. **Start the frontend**
    - `npm run dev` in the `frontend` folder.
 
-## Project Structure
+---
+
+## 📁 Project Structure
 
 - `/backend` — Express API, MongoDB models, and seed scripts
 - `/frontend` — React app with pages for login, attendance, leaderboard, etc.
 
-## Purpose
+---
+
+## 🎯 Purpose
 
 ProgressPoint helps educational institutions and teachers:
 - Keep all student records organized in one place
