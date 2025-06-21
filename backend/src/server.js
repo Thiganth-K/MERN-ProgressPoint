@@ -4,6 +4,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import Admin from "./admin.model.js";
 import Batch from "./batch.model.js";
+import path from "path";
+import { fileURLToPath } from "url";
 dotenv.config();
 
 const app = express();
@@ -232,6 +234,30 @@ app.delete('/api/superadmin/logs', async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
+// Remove a student from a batch
+app.delete("/api/batches/:batchName/student/:regNo", async (req, res) => {
+  const { batchName, regNo } = req.params;
+  const batch = await Batch.findOne({ batchName });
+  if (!batch) return res.status(404).json({ error: "Batch not found" });
+  const initialLength = batch.students.length;
+  batch.students = batch.students.filter(s => s.regNo !== regNo);
+  if (batch.students.length === initialLength) {
+    return res.status(404).json({ error: "Student not found in batch" });
+  }
+  await batch.save();
+  res.json({ success: true });
+});
+
+// Serve frontend in production
+if (process.env.NODE_ENV === "production") {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const frontendDist = path.resolve(__dirname, "../../frontend/dist");
+  app.use(express.static(frontendDist));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendDist, "index.html"));
+  });
+}
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

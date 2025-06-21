@@ -231,10 +231,7 @@ const SuperAdminPage = () => {
   const handleRemoveStudent = async (regNo, batchName) => {
     if (!window.confirm(`Remove student ${regNo} from ${batchName}?`)) return;
     try {
-      const batch = batches.find(b => b.batchName === batchName);
-      if (!batch) return;
-      const updatedStudents = batch.students.filter(s => s.regNo !== regNo);
-      await api.post(`/batches/${batchName}/students`, { students: updatedStudents });
+      await api.delete(`/batches/${batchName}/student/${regNo}`);
       toast.success('Student removed!');
       handleViewStudents(batchName);
       fetchAll();
@@ -450,7 +447,7 @@ const SuperAdminPage = () => {
                 <table className="min-w-[600px] w-full text-xs sm:text-sm md:text-base">
                   <thead>
                     <tr className="bg-base-200 text-xs sm:text-sm uppercase text-gray-600">
-                      <th className="px-2 py-2 text-left font-semibold whitespace-nowrap">#</th>
+                      <th className="px-2 py-2 text-left font-semibold whitespace-nowrap">S.No</th>
                       <th className="px-2 py-2 text-left font-semibold whitespace-nowrap">Reg No</th>
                       <th className="px-2 py-2 text-left font-semibold whitespace-nowrap">Name</th>
                       <th className="px-2 py-2 text-center font-semibold whitespace-nowrap">Efforts</th>

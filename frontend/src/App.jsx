@@ -10,7 +10,7 @@ import ViewAttendancePage from './pages/ViewAttendancePage';
 import MarkEntryPage from "./pages/MarkEntryPage";
 import SuperAdminPage from './pages/SuperAdminPage';
 import ManageAdminsPage from './pages/ManageAdminsPage';
-import Footer from './components/Footer';
+
 
 const App = () => {
   return (
@@ -27,7 +27,6 @@ const App = () => {
         <Route path="/superadmin" element={<SuperAdminPage />} />
         <Route path="/manage-admins" element={<ManageAdminsPage />} />
       </Routes>
-      
     </div>
   );
 };
