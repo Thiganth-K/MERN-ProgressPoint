@@ -13,8 +13,8 @@ app.use(cors());
 app.use(express.json());
 
 const SUPER_ADMIN = {
-  username: "superadmin1",
-  password: "superadminpassword1"
+  username: "it_placement",
+  password: "it_placement123"
 };
 
 mongoose.connect(process.env.MONGO_URI);
