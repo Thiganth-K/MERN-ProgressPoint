@@ -12,6 +12,7 @@ const MarkAttendancePage = () => {
   const [students, setStudents] = useState([]);
   const [attendance, setAttendance] = useState({});
   const [date, setDate] = useState('');
+  const [session, setSession] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const query = useQuery();
   const batch = query.get('batch');
@@ -42,6 +43,7 @@ const MarkAttendancePage = () => {
     try {
       await api.post(`/batches/${batch}/attendance`, {
         date,
+        session,
         attendance
       });
       setShowSuccess(true);
@@ -72,6 +74,17 @@ const MarkAttendancePage = () => {
               className="input input-bordered input-md max-w-xs"
               required
             />
+            <label className="font-semibold text-lg text-secondary">Session:</label>
+            <select
+              value={session}
+              onChange={e => setSession(e.target.value)}
+              className="select select-bordered input-md max-w-xs"
+              required
+            >
+              <option value="">Select Session</option>
+              <option value="FN">FN</option>
+              <option value="AN">AN</option>
+            </select>
           </div>
           <div className="overflow-x-auto rounded-xl border border-base-200">
             <table className="table w-full text-base">
@@ -80,6 +93,7 @@ const MarkAttendancePage = () => {
                   <th className="px-4 py-2 text-left">#</th>
                   <th className="px-4 py-2 text-left">Reg No</th>
                   <th className="px-4 py-2 text-left">Name</th>
+                  <th className="px-4 py-2 text-left">Attendance %</th>
                   <th className="px-4 py-2 text-left">Attendance</th>
                 </tr>
               </thead>
@@ -89,6 +103,22 @@ const MarkAttendancePage = () => {
                     <td className="px-4 py-2">{idx + 1}</td>
                     <td className="px-4 py-2 font-mono">{student.regNo}</td>
                     <td className="px-4 py-2">{student.name}</td>
+                    <td className="px-4 py-2 min-w-[90px] text-center">
+                      <span
+                        className={`font-extrabold text-base sm:text-lg
+                          ${student.attendancePercent >= 90
+                            ? 'text-success'
+                            : student.attendancePercent >= 75
+                            ? 'text-warning'
+                            : 'text-error'}
+                        `}
+                        title="Current Attendance %"
+                      >
+                        {student.attendancePercent !== undefined
+                          ? `${student.attendancePercent}%`
+                          : '0%'}
+                      </span>
+                    </td>
                     <td className="px-4 py-2">
                       <select
                         className={`select select-bordered select-sm

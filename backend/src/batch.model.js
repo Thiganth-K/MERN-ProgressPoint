@@ -10,7 +10,13 @@ const studentSchema = new mongoose.Schema({
     assignment: { type: Number, default: 0 }
   },
   marksLastUpdated: { type: Date, default: null },
-  attendance: [],
+  attendance: [
+    {
+      date: String,
+      session: String, // "FN" or "AN"
+      status: String   // "Present", "Absent", "On-Duty"
+    }
+  ],
   attendancePercent: { type: Number, default: 0 }
 });
 
