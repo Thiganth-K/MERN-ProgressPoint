@@ -6,6 +6,7 @@ import Admin from "./admin.model.js";
 import Batch from "./batch.model.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import ExcelJS from "exceljs";
 dotenv.config();
 
 const app = express();
@@ -13,8 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 const SUPER_ADMIN = {
-  username: "it_placement",
-  password: "it_placement123"
+  username: process.env.SUPER_ADMIN_USERNAME,
+  password: process.env.SUPER_ADMIN_PASSWORD
 };
 
 mongoose.connect(process.env.MONGO_URI);
@@ -195,7 +196,11 @@ app.post("/api/batches/:batchName/attendance", async (req, res) => {
   if (!batch) return res.status(404).json({ error: "Batch not found" });
   batch.students.forEach(student => {
     if (attendance[student.regNo]) {
+      // Remove any existing attendance for this date
+      student.attendance = (student.attendance || []).filter(a => a.date !== date);
+      // Add the new attendance record
       student.attendance.push({ date, status: attendance[student.regNo] });
+      // Recalculate attendance percent
       const totalDays = student.attendance.length;
       const presentDays = student.attendance.filter(a => a.status === 'Present' || a.status === 'On-Duty').length;
       student.attendancePercent = totalDays > 0 ? ((presentDays / totalDays) * 100).toFixed(2) : 0;
@@ -247,6 +252,103 @@ app.delete("/api/batches/:batchName/student/:regNo", async (req, res) => {
   }
   await batch.save();
   res.json({ success: true });
+});
+
+// Export students of a batch as Excel
+app.get("/api/batches/:batchName/export", async (req, res) => {
+  const { batchName } = req.params;
+  const batch = await Batch.findOne({ batchName });
+  if (!batch) return res.status(404).json({ error: "Batch not found" });
+
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Students");
+
+  // Add header row
+  worksheet.addRow([
+    "Reg No",
+    "Name",
+    "Efforts",
+    "Presentation",
+    "Assessment",
+    "Assignment",
+    "Attendance (%)"
+  ]);
+
+  // Add student rows
+  batch.students.forEach(s => {
+    worksheet.addRow([
+      s.regNo,
+      s.name,
+      s.marks?.efforts ?? 0,
+      s.marks?.presentation ?? 0,
+      s.marks?.assessment ?? 0,
+      s.marks?.assignment ?? 0,
+      s.attendancePercent ?? 0
+    ]);
+  });
+
+  // Set response headers
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  );
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename=${batchName}_students.xlsx`
+  );
+
+  // Write workbook to response
+  await workbook.xlsx.write(res);
+  res.end();
+});
+
+// Export attendance of a batch as Excel
+app.get("/api/batches/:batchName/export-attendance", async (req, res) => {
+  const { batchName } = req.params;
+  const batch = await Batch.findOne({ batchName });
+  if (!batch) return res.status(404).json({ error: "Batch not found" });
+
+  // Collect all unique dates from all students' attendance
+  const allDatesSet = new Set();
+  batch.students.forEach(student => {
+    (student.attendance || []).forEach(record => {
+      allDatesSet.add(record.date);
+    });
+  });
+  const allDates = Array.from(allDatesSet).sort(); // sorted for columns
+
+  // Prepare Excel
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Attendance");
+
+  // Header: Reg No, Name, then one column per date
+  worksheet.addRow(["Reg No", "Name", ...allDates]);
+
+  // Rows: For each student, fill status for each date
+  batch.students.forEach(student => {
+    const statusByDate = {};
+    (student.attendance || []).forEach(record => {
+      statusByDate[record.date] = record.status;
+    });
+    worksheet.addRow([
+      student.regNo,
+      student.name,
+      ...allDates.map(date => statusByDate[date] || "")
+    ]);
+  });
+
+  // Set response headers
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  );
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename=${batchName}_attendance.xlsx`
+  );
+
+  await workbook.xlsx.write(res);
+  res.end();
 });
 
 // Serve frontend in production
