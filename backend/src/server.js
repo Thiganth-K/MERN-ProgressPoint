@@ -188,6 +188,25 @@ app.post("/api/batches/:batchName/student/:regNo/marks", async (req, res) => {
   res.json({ success: true });
 });
 
+// Get existing attendance for a batch on a specific date and session
+app.get("/api/batches/:batchName/attendance/:date/:session", async (req, res) => {
+  const { batchName, date, session } = req.params;
+  const batch = await Batch.findOne({ batchName });
+  if (!batch) return res.status(404).json({ error: "Batch not found" });
+  
+  const existingAttendance = {};
+  batch.students.forEach(student => {
+    const attendanceRecord = (student.attendance || []).find(
+      a => a.date === date && a.session === session
+    );
+    if (attendanceRecord) {
+      existingAttendance[student.regNo] = attendanceRecord.status;
+    }
+  });
+  
+  res.json({ attendance: existingAttendance });
+});
+
 // Mark attendance for a batch
 app.post("/api/batches/:batchName/attendance", async (req, res) => {
   const { batchName } = req.params;

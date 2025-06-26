@@ -14,6 +14,8 @@ const MarkAttendancePage = () => {
   const [date, setDate] = useState('');
   const [session, setSession] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [existingAttendanceFound, setExistingAttendanceFound] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const query = useQuery();
   const batch = query.get('batch');
 
@@ -31,6 +33,32 @@ const MarkAttendancePage = () => {
     }
   }, [batch]);
 
+  // Fetch existing attendance when date and session are selected
+  useEffect(() => {
+    if (batch && date && session) {
+      setIsLoading(true);
+      api.get(`/batches/${batch}/attendance/${date}/${session}`)
+        .then(res => {
+          if (res.data.attendance && Object.keys(res.data.attendance).length > 0) {
+            setAttendance(prev => ({
+              ...prev,
+              ...res.data.attendance
+            }));
+            setExistingAttendanceFound(true);
+          } else {
+            setExistingAttendanceFound(false);
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching existing attendance:', err);
+          setExistingAttendanceFound(false);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [batch, date, session]);
+
   const handleAttendanceChange = (regNo, value) => {
     setAttendance(prev => ({
       ...prev,
@@ -47,6 +75,7 @@ const MarkAttendancePage = () => {
         attendance
       });
       setShowSuccess(true);
+      setExistingAttendanceFound(false); // Reset the flag after successful save
       setTimeout(() => setShowSuccess(false), 2200);
     } catch {
       setShowSuccess(false);
@@ -61,6 +90,22 @@ const MarkAttendancePage = () => {
         <h1 className="mb-6 text-3xl font-extrabold text-primary text-center tracking-tight">
           Mark Attendance <span className="text-accent">{batch ? `- ${batch}` : ''}</span>
         </h1>
+        
+        {/* Existing Attendance Alert */}
+        {existingAttendanceFound && (
+          <div className="w-full max-w-3xl mb-4">
+            <div className="alert alert-info shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <div>
+                <h3 className="font-bold">Existing Attendance Found!</h3>
+                <div className="text-xs">Previous attendance records for {date} ({session}) have been loaded. You can modify them below.</div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <form
           onSubmit={handleSubmit}
           className="w-full max-w-3xl bg-base-100 p-6 rounded-2xl shadow-xl relative"
@@ -85,6 +130,9 @@ const MarkAttendancePage = () => {
               <option value="FN">FN</option>
               <option value="AN">AN</option>
             </select>
+            {isLoading && (
+              <div className="loading loading-spinner loading-md"></div>
+            )}
           </div>
           <div className="overflow-x-auto rounded-xl border border-base-200">
             <table className="table w-full text-base">
@@ -143,8 +191,9 @@ const MarkAttendancePage = () => {
           <button
             type="submit"
             className="btn btn-primary mt-6 w-full text-lg tracking-wide"
+            disabled={isLoading}
           >
-            Save Attendance
+            {existingAttendanceFound ? 'Update Attendance' : 'Save Attendance'}
           </button>
           {/* Success Animation & Message */}
           {showSuccess && (
@@ -160,7 +209,7 @@ const MarkAttendancePage = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12l2 2l4-4" />
               </svg>
               <div className="text-2xl font-bold text-success text-center tracking-wide">
-                Attendance Marked Successfully!
+                {existingAttendanceFound ? 'Attendance Updated Successfully!' : 'Attendance Marked Successfully!'}
               </div>
             </div>
           )}
