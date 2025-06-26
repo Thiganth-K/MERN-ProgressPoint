@@ -19,23 +19,55 @@ const columns = [
 const MarkEntryPage = () => {
   const [students, setStudents] = useState([]);
   const [marks, setMarks] = useState({});
+  const [date, setDate] = useState('');
   const [showMessage, setShowMessage] = useState(false);
+  const [existingMarksFound, setExistingMarksFound] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const query = useQuery();
   const batch = query.get('batch');
 
   useEffect(() => {
     if (batch) {
-      api.get(`/batches/${batch}/students`)
-        .then(res => {
-          setStudents(res.data.students || []);
-          const initial = {};
-          (res.data.students || []).forEach(s => {
-            initial[s.regNo] = { ...s.marks };
-          });
-          setMarks(initial);
+      api.get(`/batches/${batch}/students`).then(res => {
+        setStudents(res.data.students || []);
+        // Initialize marks with zeros
+        const initial = {};
+        (res.data.students || []).forEach(s => {
+          initial[s.regNo] = { efforts: 0, presentation: 0, assessment: 0, assignment: 0 };
         });
+        setMarks(initial);
+      });
     }
   }, [batch]);
+
+  // Fetch marks for the selected date
+  useEffect(() => {
+    if (batch && date) {
+      setIsLoading(true);
+      api.get(`/batches/${batch}/marks/${date}`)
+        .then(res => {
+          if (res.data.marks && Object.keys(res.data.marks).length > 0) {
+            setMarks(prev => ({
+              ...prev,
+              ...res.data.marks
+            }));
+            setExistingMarksFound(true);
+          } else {
+            setExistingMarksFound(false);
+            // Reset marks to zero for all students
+            setMarks(prev => {
+              const reset = { ...prev };
+              students.forEach(s => {
+                reset[s.regNo] = { efforts: 0, presentation: 0, assessment: 0, assignment: 0 };
+              });
+              return reset;
+            });
+          }
+        })
+        .catch(() => setExistingMarksFound(false))
+        .finally(() => setIsLoading(false));
+    }
+  }, [batch, date, students]);
 
   const handleMarkChange = (regNo, key, value) => {
     setMarks(prev => ({
@@ -50,16 +82,14 @@ const MarkEntryPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await Promise.all(
-        students.map(student =>
-          api.post(`/batches/${batch}/student/${student.regNo}/marks`, {
-            marks: marks[student.regNo]
-          })
-        )
-      );
-      toast.success('Marks updated successfully!');
+      await api.post(`/batches/${batch}/marks`, {
+        date,
+        marks
+      });
+      toast.success(existingMarksFound ? 'Marks updated successfully!' : 'Marks saved successfully!');
       setShowMessage(true);
       setTimeout(() => setShowMessage(false), 2200);
+      setExistingMarksFound(true);
     } catch {
       toast.error('Failed to update marks');
     }
@@ -76,6 +106,22 @@ const MarkEntryPage = () => {
           onSubmit={handleSubmit}
           className="w-full max-w-4xl bg-base-100 p-6 rounded-2xl shadow-2xl relative"
         >
+          <div className="mb-6 flex flex-col sm:flex-row items-center gap-4">
+            <label className="font-semibold text-lg text-secondary">Test Conducted On:</label>
+            <input
+              type="date"
+              value={date}
+              onChange={e => setDate(e.target.value)}
+              className="input input-bordered input-md max-w-xs"
+              required
+            />
+            {isLoading && <div className="loading loading-spinner loading-md"></div>}
+          </div>
+          {existingMarksFound && (
+            <div className="alert alert-info mb-4">
+              <span>Existing marks found for this date. You can update them below.</span>
+            </div>
+          )}
           <div className="overflow-x-auto rounded-xl border border-base-200 mb-4">
             <table className="table w-full text-base">
               <thead>
@@ -115,24 +161,15 @@ const MarkEntryPage = () => {
           <button
             type="submit"
             className="btn btn-primary mt-6 w-full text-lg tracking-wide font-bold"
+            disabled={isLoading}
           >
-            Save Marks
+            {existingMarksFound ? 'Update Marks' : 'Save Marks'}
           </button>
           {/* Success Animation & Message */}
           {showMessage && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-base-100 bg-opacity-90 rounded-2xl animate-fade-in z-10">
-              <svg
-                className="w-20 h-20 text-success animate-bounce mb-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12l2 2l4-4" />
-              </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-base-100 bg-opacity-80 rounded-2xl animate-fade-in z-10">
               <div className="text-2xl font-bold text-success text-center tracking-wide">
-                Mark Entry Done!
+                {existingMarksFound ? 'Marks updated successfully!' : 'Marks saved successfully!'}
               </div>
             </div>
           )}

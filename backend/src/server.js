@@ -385,6 +385,44 @@ app.get("/api/batches/:batchName/export-attendance", async (req, res) => {
   res.end();
 });
 
+// Get marks for a batch for a specific date
+app.get("/api/batches/:batchName/marks/:date", async (req, res) => {
+  const { batchName, date } = req.params;
+  const batch = await Batch.findOne({ batchName });
+  if (!batch) return res.status(404).json({ error: "Batch not found" });
+
+  const marksByRegNo = {};
+  batch.students.forEach(student => {
+    const record = (student.marksHistory || []).find(mh => mh.date === date);
+    if (record) {
+      marksByRegNo[student.regNo] = record.marks;
+    }
+  });
+  res.json({ marks: marksByRegNo });
+});
+
+// Save or update marks for a batch for a specific date
+app.post("/api/batches/:batchName/marks", async (req, res) => {
+  const { batchName } = req.params;
+  const { date, marks } = req.body;
+  const batch = await Batch.findOne({ batchName });
+  if (!batch) return res.status(404).json({ error: "Batch not found" });
+
+  batch.students.forEach(student => {
+    if (marks[student.regNo]) {
+      // Remove any existing marks for this date
+      student.marksHistory = (student.marksHistory || []).filter(mh => mh.date !== date);
+      // Add new marks for this date
+      student.marksHistory.push({ date, marks: marks[student.regNo] });
+      // Optionally update latest marks
+      student.marks = marks[student.regNo];
+      student.marksLastUpdated = new Date();
+    }
+  });
+  await batch.save();
+  res.json({ success: true });
+});
+
 // Serve frontend in production
 if (process.env.NODE_ENV === "production") {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
