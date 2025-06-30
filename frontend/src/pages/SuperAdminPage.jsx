@@ -86,6 +86,8 @@ const SuperAdminPage = () => {
   const [editAdminName, setEditAdminName] = useState('');
   const [editAdminPassword, setEditAdminPassword] = useState('');
   const [showAdminModal, setShowAdminModal] = useState(false);
+  const [showRemoveBatchModal, setShowRemoveBatchModal] = useState(false);
+  const [batchToRemove, setBatchToRemove] = useState(null);
 
   useEffect(() => {
     fetchAll();
@@ -97,7 +99,11 @@ const SuperAdminPage = () => {
       api.get('/batches'),
       api.get('/superadmin/admins')
     ]);
-    setBatches(batchRes.data.batches || []);
+    setBatches(
+      (batchRes.data.batches || []).sort((a, b) =>
+        a.batchName.localeCompare(b.batchName)
+      )
+    );
     setAdmins(adminRes.data.admins || []);
   };
 
@@ -144,15 +150,27 @@ const SuperAdminPage = () => {
     }
   };
 
-  const handleRemoveBatch = async (batchName) => {
-    if (!window.confirm(`Remove batch "${batchName}"?`)) return;
+  const handleRemoveBatch = (batchName) => {
+    setBatchToRemove(batchName);
+    setShowRemoveBatchModal(true);
+  };
+
+  const confirmRemoveBatch = async () => {
+    if (!batchToRemove) return;
     try {
-      await api.delete(`/batches/${batchName}`);
+      await api.delete(`/batches/${batchToRemove}`);
       toast.success('Batch removed!');
       fetchAll();
     } catch {
       toast.error('Failed to remove batch');
     }
+    setShowRemoveBatchModal(false);
+    setBatchToRemove(null);
+  };
+
+  const cancelRemoveBatch = () => {
+    setShowRemoveBatchModal(false);
+    setBatchToRemove(null);
   };
 
   const handleAddAdmin = async (e) => {
@@ -659,6 +677,20 @@ const SuperAdminPage = () => {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Remove Batch Confirmation Modal */}
+        {showRemoveBatchModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-base-100 rounded-2xl shadow-2xl w-[90vw] max-w-sm p-6 flex flex-col items-center">
+              <h3 className="text-xl font-bold text-error mb-4">Confirm Batch Removal</h3>
+              <p className="mb-6 text-center">Are you sure you want to remove batch <span className="font-semibold text-accent">{batchToRemove}</span>? This action cannot be undone.</p>
+              <div className="flex gap-4">
+                <button className="btn btn-error font-semibold" onClick={confirmRemoveBatch}>Yes, Remove</button>
+                <button className="btn btn-ghost font-semibold" onClick={cancelRemoveBatch}>Cancel</button>
+              </div>
             </div>
           </div>
         )}
