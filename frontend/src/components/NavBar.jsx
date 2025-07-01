@@ -66,7 +66,12 @@ const NavBar = () => {
   const menuRef = useRef(null);
 
   useEffect(() => {
-    api.get('/batches').then(res => setBatches(res.data.batches || []));
+    api.get('/batches').then(res => {
+      const sorted = (res.data.batches || []).sort((a, b) =>
+        a.batchName.localeCompare(b.batchName)
+      );
+      setBatches(sorted);
+    });
     const params = new URLSearchParams(location.search);
     const batchFromUrl = params.get('batch');
     if (batchFromUrl && batchFromUrl !== selectedBatch) {
