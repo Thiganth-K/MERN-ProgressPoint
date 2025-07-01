@@ -40,7 +40,12 @@ const AdminPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get('/batches').then(res => setBatches(res.data.batches));
+    api.get('/batches').then(res => {
+      const sortedBatches = (res.data.batches || []).sort((a, b) =>
+        a.batchName.localeCompare(b.batchName)
+      );
+      setBatches(sortedBatches);
+    });
   }, []);
 
   const handleSelectBatch = (batchName) => {
