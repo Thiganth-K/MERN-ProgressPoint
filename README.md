@@ -4,7 +4,7 @@
 
 ---
 
-## 🚀 Features
+##  Features
 
 - **Admin & SuperAdmin Login:**  
   Secure login for admins and a superadmin to manage the platform.
@@ -51,7 +51,7 @@
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Frontend:** React, Tailwind CSS, DaisyUI, React Router, Axios
 - **Backend:** Node.js, Express, Mongoose
@@ -60,7 +60,7 @@
 
 ---
 
-## 🏁 Getting Started
+##  Getting Started
 
 1. **Clone the repository**
 2. **Set up your environment variables**
@@ -77,14 +77,14 @@
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 - `/backend` — Express API, MongoDB models, and seed scripts
 - `/frontend` — React app with pages for login, attendance, leaderboard, etc.
 
 ---
 
-## 🎯 Purpose
+##  Purpose
 
 ProgressPoint helps educational institutions and teachers:
 - Keep all student records organized in one place
