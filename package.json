@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Thiganth-K/MERN-ProgressPoint/issues"
   },
-  "homepage": "https://github.com/Thiganth-K/MERN-ProgressPoint#readme"
+  "homepage": "https://github.com/Thiganth-K/MERN-ProgressPoint#readme",
+  "dependencies": {
+    "express-rate-limit": "^7.5.1"
+  }
 }
