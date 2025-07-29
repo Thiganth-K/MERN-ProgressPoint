@@ -25,6 +25,7 @@ const MarkEntryPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showMarkTable, setShowMarkTable] = useState(false); // NEW
   const [openMarkRegNo, setOpenMarkRegNo] = useState(null); // NEW
+  const [prevMarks, setPrevMarks] = useState({}); // NEW
   const query = useQuery();
   const batch = query.get('batch');
 
@@ -34,10 +35,17 @@ const MarkEntryPage = () => {
         setStudents(res.data.students || []);
         // Initialize marks with zeros
         const initial = {};
+        const prev = {};
         (res.data.students || []).forEach(s => {
           initial[s.regNo] = { efforts: 0, presentation: 0, assessment: 0, assignment: 0 };
+          // Get last marksHistory entry if exists
+          if (s.marksHistory && s.marksHistory.length > 0) {
+            const last = s.marksHistory[s.marksHistory.length - 1];
+            prev[s.regNo] = last.marks;
+          }
         });
         setMarks(initial);
+        setPrevMarks(prev); // NEW
       });
     }
   }, [batch]);
@@ -122,33 +130,72 @@ const MarkEntryPage = () => {
           {/* Student List with Mark Entry Button */}
           <div className="mb-6">
             {students.map((student, idx) => (
-              <div key={student.regNo} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4 bg-base-200 p-4 rounded-xl">
-                <span className="font-semibold text-base text-primary flex-1">
-                  {idx + 1}. {student.name} <span className="text-xs text-secondary">({student.regNo})</span>
-                </span>
-                <button
-                  type="button"
-                  className="btn btn-accent btn-sm"
-                  onClick={() => setOpenMarkRegNo(openMarkRegNo === student.regNo ? null : student.regNo)}
-                >
-                  {openMarkRegNo === student.regNo ? "Hide Marks" : "Enter Marks"}
-                </button>
+              <div key={student.regNo} className="flex flex-col gap-2 mb-4 bg-base-200 p-4 rounded-xl">
+                <div className="flex flex-row items-center justify-between">
+                  <span className="font-semibold text-base text-primary">
+                    {idx + 1}. {student.name} <span className="text-xs text-secondary">({student.regNo})</span>
+                  </span>
+                  {/* Show "Enter Marks" button only if not open */}
+                  {openMarkRegNo !== student.regNo && (
+                    <button
+                      type="button"
+                      className="btn btn-accent btn-sm"
+                      onClick={() => setOpenMarkRegNo(student.regNo)}
+                    >
+                      Enter Marks
+                    </button>
+                  )}
+                </div>
                 {openMarkRegNo === student.regNo && (
-                  <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
-                    {columns.map(col => (
-                      <div key={col.key} className="flex flex-col items-center">
-                        <label className="text-xs font-medium">{col.label}</label>
-                        <input
-                          type="number"
-                          min={0}
-                          max={100}
-                          value={marks[student.regNo]?.[col.key] ?? 0}
-                          onChange={e => handleMarkChange(student.regNo, col.key, e.target.value)}
-                          className="input input-bordered input-sm w-20 text-center font-semibold"
-                          required
-                        />
+                  <div className="w-full">
+                    {/* Previous Marks Display */}
+                    {prevMarks[student.regNo] && (
+                      <div className="mb-2 flex flex-col">
+                        <span className="font-bold text-sm text-primary flex items-center mb-1">
+                          <svg className="w-5 h-5 mr-1 text-primary" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 20l9-5-9-5-9 5 9 5z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 12V4m0 0L8 8m4-4l4 4" />
+                          </svg>
+                          Previous Marks:
+                        </span>
+                        <div className="h-2"></div>
+                        <div className="flex flex-wrap gap-4 items-center">
+                          {columns.map(col => (
+                            <span
+                              key={col.key}
+                              className="badge badge-lg badge-outline badge-primary text-base font-semibold px-4 py-2"
+                              title={col.label}
+                            >
+                              <span className="text-primary">{col.label}:</span> <span className="text-accent">{prevMarks[student.regNo][col.key]}</span>
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    ))}
+                    )}
+                    <div className="flex flex-wrap gap-2 mt-2 sm:mt-0 items-end">
+                      {columns.map(col => (
+                        <div key={col.key} className="flex flex-col items-center">
+                          <label className="text-xs font-medium text-secondary">{col.label}</label>
+                          <input
+                            type="number"
+                            min={0}
+                            max={100}
+                            value={marks[student.regNo]?.[col.key] ?? 0}
+                            onChange={e => handleMarkChange(student.regNo, col.key, e.target.value)}
+                            className="input input-bordered input-sm w-20 text-center font-semibold"
+                            required
+                          />
+                        </div>
+                      ))}
+                      {/* Hide Marks button after last input */}
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-error btn-sm ml-4"
+                        onClick={() => setOpenMarkRegNo(null)}
+                      >
+                        Hide Marks
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
