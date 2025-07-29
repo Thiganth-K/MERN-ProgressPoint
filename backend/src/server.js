@@ -501,6 +501,36 @@ app.get("/api/placement-done/export", async (req, res) => {
   }
 });
 
+// Get batch averages
+app.get('/api/batch-averages', async (req, res) => {
+  try {
+    const batches = await Batch.find({});
+    const result = batches.map(batch => {
+      const students = batch.students || [];
+      const total = { efforts: 0, presentation: 0, assignment: 0, assessment: 0 };
+      students.forEach(s => {
+        total.efforts += s.marks?.efforts || 0;
+        total.presentation += s.marks?.presentation || 0;
+        total.assignment += s.marks?.assignment || 0;
+        total.assessment += s.marks?.assessment || 0;
+      });
+      const count = students.length || 1;
+      return {
+        batchName: batch.batchName,
+        averages: {
+          efforts: +(total.efforts / count).toFixed(2),
+          presentation: +(total.presentation / count).toFixed(2),
+          assignment: +(total.assignment / count).toFixed(2),
+          assessment: +(total.assessment / count).toFixed(2),
+        }
+      };
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch batch averages' });
+  }
+});
+
 // Serve frontend in production
 if (process.env.NODE_ENV === "production") {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -513,3 +543,46 @@ if (process.env.NODE_ENV === "production") {
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Move a student to Placement Done group
+app.post("/api/placement-done", async (req, res) => {
+  const { regNo, batchName, placedCompany, package: pkg, placementType } = req.body;
+  try {
+    // Find the batch and student
+    const batch = await Batch.findOne({ batchName });
+    if (!batch) return res.status(404).json({ error: "Batch not found" });
+    const idx = batch.students.findIndex(s => s.regNo === regNo);
+    if (idx === -1) return res.status(404).json({ error: "Student not found in batch" });
+
+    const student = batch.students[idx];
+
+    // Check if already in placement done
+    const exists = await PlacementDoneStudent.findOne({ regNo });
+    if (exists) return res.status(400).json({ error: "Student already in placement done list" });
+
+    // Create PlacementDoneStudent document
+    const placementDone = new PlacementDoneStudent({
+      regNo: student.regNo,
+      name: student.name,
+      department: student.department,
+      personalEmail: student.personalEmail,
+      collegeEmail: student.collegeEmail,
+      attendancePercent: student.attendancePercent,
+      marks: student.marks,
+      placedCompany,
+      package: pkg,
+      placementType,
+      originalBatch: batchName,
+      movedAt: new Date()
+    });
+    await placementDone.save();
+
+    // Remove student from batch
+    batch.students.splice(idx, 1);
+    await batch.save();
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to move student to placement done" });
+  }
+});

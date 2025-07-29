@@ -2,20 +2,35 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import api from '../lib/axios';
 import toast from 'react-hot-toast';
+import { Bar, Pie } from 'react-chartjs-2';
+import { Chart, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js';
+Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 // Minimal SuperAdmin NavBar and Footer
-const SuperAdminNavBar = ({ onLogout }) => (
+const SuperAdminNavBar = ({ onLogout, onViewPlacementDone }) => (
   <nav className="w-full h-16 flex items-center justify-between px-4 sm:px-6 bg-base-100 shadow z-50">
     <span className="text-lg sm:text-xl font-extrabold text-primary tracking-tight">ProgressPoint</span>
-    <button
-      className="btn btn-error btn-sm font-semibold flex items-center"
-      onClick={onLogout}
-    >
-      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
-      </svg>
-      Logout
-    </button>
+    <div className="flex items-center gap-2">
+      <button
+        className="btn btn-success btn-sm font-semibold flex items-center"
+        onClick={onViewPlacementDone}
+      >
+        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+        Placement Done
+      </button>
+      <button
+        className="btn btn-error btn-sm font-semibold flex items-center"
+        onClick={onLogout}
+      >
+        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+        </svg>
+        Logout
+      </button>
+    </div>
   </nav>
 );
 
@@ -94,9 +109,11 @@ const SuperAdminPage = () => {
   const [placementDetails, setPlacementDetails] = useState({ placedCompany: '', package: '', placementType: '' });
   const [showPlacementDoneModal, setShowPlacementDoneModal] = useState(false);
   const [placementDoneStudents, setPlacementDoneStudents] = useState([]);
+  const [batchAverages, setBatchAverages] = useState([]);
 
   useEffect(() => {
     fetchAll();
+    api.get('/batch-averages').then(res => setBatchAverages(res.data));
     // eslint-disable-next-line
   }, []);
 
@@ -286,180 +303,234 @@ const SuperAdminPage = () => {
     setPlacementDoneStudents(res.data.students || []);
   };
 
+  // Prepare data for charts
+  const batchNames = batchAverages.map(b => b.batchName);
+  const efforts = batchAverages.map(b => b.averages.efforts);
+  const presentation = batchAverages.map(b => b.averages.presentation);
+  const assessment = batchAverages.map(b => b.averages.assessment);
+  const assignment = batchAverages.map(b => b.averages.assignment);
+
+  const barData = {
+    labels: batchNames,
+    datasets: [
+      { label: 'Efforts', data: efforts, backgroundColor: '#60a5fa' },
+      { label: 'Presentation', data: presentation, backgroundColor: '#fbbf24' },
+      { label: 'Assessment', data: assessment, backgroundColor: '#34d399' },
+      { label: 'Assignment', data: assignment, backgroundColor: '#f472b6' }
+    ]
+  };
+
+  const pieData = {
+    labels: batchNames,
+    datasets: [
+      {
+        label: 'Average Total Marks',
+        data: batchAverages.map(b => b.averages.efforts + b.averages.presentation + b.averages.assessment + b.averages.assignment),
+        backgroundColor: ['#60a5fa', '#fbbf24', '#34d399', '#f472b6', '#818cf8', '#f87171']
+      }
+    ]
+  };
+
+  // Handler for Placement Done button in navbar
+  const handleShowPlacementDone = () => {
+    navigate("/placement-done");
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-base-200">
-      <SuperAdminNavBar onLogout={handleSuperAdminLogout} />
+      <SuperAdminNavBar
+        onLogout={handleSuperAdminLogout}
+        onViewPlacementDone={handleShowPlacementDone}
+      />
       <main className="flex-1 flex flex-col items-center px-2 py-4 sm:py-8">
-        <div className="w-full max-w-4xl bg-base-100 rounded-2xl shadow-2xl px-2 sm:px-4 md:px-8 py-4 sm:py-8 flex flex-col items-center">
-          {/* Add Placement Done button near the top of the dashboard */}
-          <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-primary tracking-tight flex items-center gap-2">
-              {icons.admin} Super Admin Dashboard
-            </h1>
-            {/* Placement Done button now navigates to the new page */}
-            <button
-              className="btn btn-success font-semibold flex items-center px-4 py-2 text-base rounded-lg shadow hover:scale-105 transition-transform"
-              onClick={() => navigate("/placement-done")}
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-              View Placement Done Students
+        {/* Batch Comparison Charts */}
+        <section className="w-full max-w-7xl mb-8 bg-base-100 rounded-2xl shadow-xl p-6">
+  <h2 className="text-xl font-bold text-primary mb-4">Batch Wise Comparison</h2>
+
+  <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
+    {/* Bar Chart Section */}
+    <div className="w-full md:w-1/2">
+      <h3 className="text-lg font-semibold mb-2">Average Marks (Bar Chart)</h3>
+      <div style={{ width: '100%', height: 400 }}>
+        <Bar
+          data={barData}
+          options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } }
+          }}
+        />
+      </div>
+    </div>
+
+    {/* Pie Chart Section */}
+    <div className="w-full md:w-1/2">
+      <h3 className="text-lg font-semibold mb-2">Total Average Marks (Pie Chart)</h3>
+      <div style={{ width: '100%', height: 400 }}>
+        <Pie
+          data={pieData}
+          options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } }
+          }}
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+
+        {/* Add Batch */}
+        <section className="w-full mb-6">
+          <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
+            {icons.batch} Add New Batch
+          </h2>
+          <form onSubmit={handleAddBatch} className="flex flex-col gap-3 bg-base-200 rounded-xl p-3 sm:p-4 shadow">
+            <input
+              type="text"
+              placeholder="Batch Name"
+              value={newBatchName}
+              onChange={e => setNewBatchName(e.target.value)}
+              className="input input-bordered"
+            />
+            <textarea
+              placeholder={`Enter students, one per line: regno,studentname\nExample:\n21IT001,John Doe\n21IT002,Jane Smith`}
+              value={newBatchStudents}
+              onChange={e => setNewBatchStudents(e.target.value)}
+              className="textarea textarea-bordered"
+              rows={3}
+            />
+            <button type="submit" className="btn btn-primary font-semibold flex items-center w-full sm:w-fit self-end">
+              {icons.add} Add Batch
             </button>
-          </div>
+          </form>
+        </section>
 
-          {/* Add Batch */}
-          <section className="w-full mb-6">
-            <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
-              {icons.batch} Add New Batch
-            </h2>
-            <form onSubmit={handleAddBatch} className="flex flex-col gap-3 bg-base-200 rounded-xl p-3 sm:p-4 shadow">
-              <input
-                type="text"
-                placeholder="Batch Name"
-                value={newBatchName}
-                onChange={e => setNewBatchName(e.target.value)}
-                className="input input-bordered"
-              />
-              <textarea
-                placeholder={`Enter students, one per line: regno,studentname\nExample:\n21IT001,John Doe\n21IT002,Jane Smith`}
-                value={newBatchStudents}
-                onChange={e => setNewBatchStudents(e.target.value)}
-                className="textarea textarea-bordered"
-                rows={3}
-              />
-              <button type="submit" className="btn btn-primary font-semibold flex items-center w-full sm:w-fit self-end">
-                {icons.add} Add Batch
-              </button>
-            </form>
-          </section>
-
-          {/* Batches Table */}
-          <section className="w-full mb-6">
-            <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
-              {icons.batch} Batches
-            </h2>
-            <div className="overflow-x-auto rounded-xl shadow">
-              <table className="table w-full text-xs sm:text-sm md:text-base">
-                <thead>
+        {/* Batches Table */}
+        <section className="w-full mb-6">
+          <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
+            {icons.batch} Batches
+          </h2>
+          <div className="overflow-x-auto rounded-xl shadow">
+            <table className="table w-full text-xs sm:text-sm md:text-base">
+              <thead>
+                <tr>
+                  <th className="text-left">Batch Name</th>
+                  <th className="text-left">Students</th>
+                  <th className="text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {batches.length === 0 ? (
                   <tr>
-                    <th className="text-left">Batch Name</th>
-                    <th className="text-left">Students</th>
-                    <th className="text-left">Actions</th>
+                    <td colSpan={3} className="text-center text-gray-400 py-6">No batches added yet.</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {batches.length === 0 ? (
-                    <tr>
-                      <td colSpan={3} className="text-center text-gray-400 py-6">No batches added yet.</td>
-                    </tr>
-                  ) : (
-                    batches.map(batch => (
-                      <tr key={batch.batchName}>
-                        <td className="font-semibold">{batch.batchName}</td>
-                        <td>{batch.students?.length || 0}</td>
-                        <td className="flex flex-col sm:flex-row gap-2 py-2">
-                          <button
-                            className="btn btn-info btn-xs"
-                            onClick={() => handleViewStudents(batch.batchName)}
-                          >
-                            {icons.view} View
-                          </button>
-                          <button
-                            className="btn btn-error btn-xs"
-                            onClick={() => handleRemoveBatch(batch.batchName)}
-                          >
-                            {icons.remove} Remove
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          {/* Add Admin */}
-          <section className="w-full mb-6">
-            <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
-              {icons.admin} Add New Admin
-            </h2>
-            <form onSubmit={handleAddAdmin} className="flex flex-col sm:flex-row gap-3 bg-base-200 rounded-xl p-3 sm:p-4 shadow">
-              <input
-                type="text"
-                placeholder="Admin Name"
-                value={newAdminName}
-                onChange={e => setNewAdminName(e.target.value)}
-                className="input input-bordered flex-1"
-              />
-              <input
-                type="password"
-                placeholder="Admin Password"
-                value={newAdminPassword}
-                onChange={e => setNewAdminPassword(e.target.value)}
-                className="input input-bordered flex-1"
-                autoComplete="new-password"
-              />
-              <button type="submit" className="btn btn-success font-semibold flex items-center w-full sm:w-fit">
-                {icons.add} Add Admin
-              </button>
-            </form>
-          </section>
-
-          {/* Admins List */}
-          <section className="w-full mb-6">
-            <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
-              {icons.admin} Admins
-            </h2>
-            <div className="bg-base-200 rounded-xl shadow p-3 sm:p-4">
-              {admins.length === 0 ? (
-                <div className="text-center text-gray-400 py-6">No admins available.</div>
-              ) : (
-                <ul className="divide-y divide-base-300">
-                  {admins.map(a => (
-                    <li
-                      key={a._id}
-                      className="py-2 flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-1"
-                    >
-                      <div className="flex-1 flex items-center gap-2">
-                        {icons.admin}
-                        <span className="font-semibold">{a.adminName}</span>
-                        <span className="ml-2 text-gray-500 font-mono">
-                          {a.adminPassword ? '*'.repeat(a.adminPassword.length) : ''}
-                        </span>
-                      </div>
-                      <div className="flex gap-2 mt-1 sm:mt-0">
+                ) : (
+                  batches.map(batch => (
+                    <tr key={batch.batchName}>
+                      <td className="font-semibold">{batch.batchName}</td>
+                      <td>{batch.students?.length || 0}</td>
+                      <td className="flex flex-col sm:flex-row gap-2 py-2">
                         <button
-                          className="btn btn-xs btn-info"
-                          onClick={() => handleShowAdmin(a)}
-                          title="Edit"
+                          className="btn btn-info btn-xs"
+                          onClick={() => handleViewStudents(batch.batchName)}
                         >
-                          {icons.edit} Edit
+                          {icons.view} View
                         </button>
                         <button
-                          className="btn btn-xs btn-error"
-                          onClick={() => handleRemoveAdmin(a._id)}
-                          title="Remove"
+                          className="btn btn-error btn-xs"
+                          onClick={() => handleRemoveBatch(batch.batchName)}
                         >
                           {icons.remove} Remove
                         </button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </section>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-          {/* Admin Logs */}
-          <section className="w-full mb-2">
-            <button className="btn btn-warning font-semibold flex items-center w-full sm:w-fit" onClick={handleViewLogs}>
-              {icons.logs} View Admin Logs
+        {/* Add Admin */}
+        <section className="w-full mb-6">
+          <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
+            {icons.admin} Add New Admin
+          </h2>
+          <form onSubmit={handleAddAdmin} className="flex flex-col sm:flex-row gap-3 bg-base-200 rounded-xl p-3 sm:p-4 shadow">
+            <input
+              type="text"
+              placeholder="Admin Name"
+              value={newAdminName}
+              onChange={e => setNewAdminName(e.target.value)}
+              className="input input-bordered flex-1"
+            />
+            <input
+              type="password"
+              placeholder="Admin Password"
+              value={newAdminPassword}
+              onChange={e => setNewAdminPassword(e.target.value)}
+              className="input input-bordered flex-1"
+              autoComplete="new-password"
+            />
+            <button type="submit" className="btn btn-success font-semibold flex items-center w-full sm:w-fit">
+              {icons.add} Add Admin
             </button>
-          </section>
-        </div>
+          </form>
+        </section>
+
+        {/* Admins List */}
+        <section className="w-full mb-6">
+          <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
+            {icons.admin} Admins
+          </h2>
+          <div className="bg-base-200 rounded-xl shadow p-3 sm:p-4">
+            {admins.length === 0 ? (
+              <div className="text-center text-gray-400 py-6">No admins available.</div>
+            ) : (
+              <ul className="divide-y divide-base-300">
+                {admins.map(a => (
+                  <li
+                    key={a._id}
+                    className="py-2 flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-1"
+                  >
+                    <div className="flex-1 flex items-center gap-2">
+                      {icons.admin}
+                      <span className="font-semibold">{a.adminName}</span>
+                      <span className="ml-2 text-gray-500 font-mono">
+                        {a.adminPassword ? '*'.repeat(a.adminPassword.length) : ''}
+                      </span>
+                    </div>
+                    <div className="flex gap-2 mt-1 sm:mt-0">
+                      <button
+                        className="btn btn-xs btn-info"
+                        onClick={() => handleShowAdmin(a)}
+                        title="Edit"
+                      >
+                        {icons.edit} Edit
+                      </button>
+                      <button
+                        className="btn btn-xs btn-error"
+                        onClick={() => handleRemoveAdmin(a._id)}
+                        title="Remove"
+                      >
+                        {icons.remove} Remove
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+
+        {/* Admin Logs */}
+        <section className="w-full mb-2">
+          <button className="btn btn-warning font-semibold flex items-center w-full sm:w-fit" onClick={handleViewLogs}>
+            {icons.logs} View Admin Logs
+          </button>
+        </section>
 
         {/* Students Modal */}
         {showStudentsModal && (
