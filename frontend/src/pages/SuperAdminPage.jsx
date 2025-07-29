@@ -88,6 +88,12 @@ const SuperAdminPage = () => {
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showRemoveBatchModal, setShowRemoveBatchModal] = useState(false);
   const [batchToRemove, setBatchToRemove] = useState(null);
+  const [profileStudent, setProfileStudent] = useState(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [placementDone, setPlacementDone] = useState(false);
+  const [placementDetails, setPlacementDetails] = useState({ placedCompany: '', package: '', placementType: '' });
+  const [showPlacementDoneModal, setShowPlacementDoneModal] = useState(false);
+  const [placementDoneStudents, setPlacementDoneStudents] = useState([]);
 
   useEffect(() => {
     fetchAll();
@@ -275,16 +281,32 @@ const SuperAdminPage = () => {
     }
   };
 
+  const fetchPlacementDone = async () => {
+    const res = await api.get('/placement-done');
+    setPlacementDoneStudents(res.data.students || []);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-base-200">
       <SuperAdminNavBar onLogout={handleSuperAdminLogout} />
       <main className="flex-1 flex flex-col items-center px-2 py-4 sm:py-8">
         <div className="w-full max-w-4xl bg-base-100 rounded-2xl shadow-2xl px-2 sm:px-4 md:px-8 py-4 sm:py-8 flex flex-col items-center">
+          {/* Add Placement Done button near the top of the dashboard */}
           <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-primary tracking-tight flex items-center gap-2">
               {icons.admin} Super Admin Dashboard
             </h1>
-            
+            {/* Placement Done button now navigates to the new page */}
+            <button
+              className="btn btn-success font-semibold flex items-center px-4 py-2 text-base rounded-lg shadow hover:scale-105 transition-transform"
+              onClick={() => navigate("/placement-done")}
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              View Placement Done Students
+            </button>
           </div>
 
           {/* Add Batch */}
@@ -489,10 +511,7 @@ const SuperAdminPage = () => {
                       <th className="px-2 py-2 text-left font-bold whitespace-nowrap">S.No</th>
                       <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Reg No</th>
                       <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Name</th>
-                      <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Efforts</th>
-                      <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Presentation</th>
-                      <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Assessment</th>
-                      <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Assignment</th>
+                      <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Profile</th>
                       <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Attendance</th>
                       <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Move</th>
                       <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Remove</th>
@@ -501,7 +520,7 @@ const SuperAdminPage = () => {
                   <tbody>
                     {studentsInBatch.length === 0 ? (
                       <tr>
-                        <td colSpan={10} className="text-center py-6 text-gray-400 font-semibold">
+                        <td colSpan={7} className="text-center py-6 text-gray-400 font-semibold">
                           <span className="inline-flex items-center gap-2">
                             {icons.add}
                             No students in this batch.
@@ -514,10 +533,15 @@ const SuperAdminPage = () => {
                           <td className="px-2 py-2 text-xs sm:text-sm text-gray-500 whitespace-nowrap">{idx + 1}</td>
                           <td className="px-2 py-2 font-mono text-xs sm:text-sm whitespace-nowrap">{student.regNo}</td>
                           <td className="px-2 py-2 text-xs sm:text-sm whitespace-nowrap">{student.name}</td>
-                          <td className="px-2 py-2 text-center whitespace-nowrap">{student.marks?.efforts ?? 0}</td>
-                          <td className="px-2 py-2 text-center whitespace-nowrap">{student.marks?.presentation ?? 0}</td>
-                          <td className="px-2 py-2 text-center whitespace-nowrap">{student.marks?.assessment ?? 0}</td>
-                          <td className="px-2 py-2 text-center whitespace-nowrap">{student.marks?.assignment ?? 0}</td>
+                          <td className="px-2 py-2 text-center whitespace-nowrap">
+                            <button
+                              className="btn btn-secondary btn-sm w-24 flex items-center gap-1 justify-center"
+                              onClick={() => { setProfileStudent(student); setShowProfileModal(true); }}
+                              title="View Profile"
+                            >
+                              {icons.view} Profile
+                            </button>
+                          </td>
                           <td className="px-2 py-2 text-center whitespace-nowrap">
                             <span className="inline-flex items-center gap-1">
                               <svg className="w-4 h-4 text-success" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -528,7 +552,7 @@ const SuperAdminPage = () => {
                           </td>
                           <td className="px-2 py-2 text-center whitespace-nowrap">
                             <select
-                              className="select select-xs w-full max-w-[90px]"
+                              className="select select-xs w-[90px]"
                               value=""
                               onChange={e => handleMoveStudent(student.regNo, selectedBatch, e.target.value)}
                             >
@@ -542,11 +566,11 @@ const SuperAdminPage = () => {
                           </td>
                           <td className="px-2 py-2 text-center whitespace-nowrap">
                             <button
-                              className="btn btn-error btn-sm w-28 flex items-center gap-1 justify-center"
+                              className="btn btn-error btn-sm w-24 flex items-center gap-1 justify-center"
                               onClick={() => handleRemoveStudent(student.regNo, selectedBatch)}
                               title="Remove Student"
                             >
-                              {icons.remove} Remove
+                               Remove
                             </button>
                           </td>
                         </tr>
@@ -690,6 +714,184 @@ const SuperAdminPage = () => {
               <div className="flex gap-4">
                 <button className="btn btn-error font-semibold" onClick={confirmRemoveBatch}>Yes, Remove</button>
                 <button className="btn btn-ghost font-semibold" onClick={cancelRemoveBatch}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Student Profile Modal */}
+        {showProfileModal && profileStudent && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-base-100 rounded-2xl shadow-2xl w-[95vw] max-w-md p-6 relative flex flex-col items-center">
+              <button
+                className="absolute top-3 right-3 btn btn-circle btn-sm btn-ghost"
+                onClick={() => { setShowProfileModal(false); setPlacementDone(false); setPlacementDetails({ placedCompany: '', package: '', placementType: '' }); }}
+                aria-label="Close"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <div className="flex flex-col items-center gap-2 mb-4">
+                <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-white text-3xl font-bold mb-2">
+                  {profileStudent.name?.[0] || '?'}
+                </div>
+                <h2 className="text-xl font-extrabold text-primary">{profileStudent.name || ''}</h2>
+                <div className="text-sm text-gray-500 font-mono">Reg No: {profileStudent.regNo || ''}</div>
+                <div className="text-sm text-gray-500">Department: {profileStudent.department || ''}</div>
+              </div>
+              <div className="w-full flex flex-col gap-2 mb-2">
+                <div className="flex justify-between">
+                  <span className="font-semibold">Attendance %:</span>
+                  <span>{profileStudent.attendancePercent ?? 0}%</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="font-semibold">Marks:</span>
+                  <div className="ml-2 grid grid-cols-2 gap-x-4 gap-y-1">
+                    <span>Efforts:</span><span>{profileStudent.marks?.efforts ?? 0}</span>
+                    <span>Presentation:</span><span>{profileStudent.marks?.presentation ?? 0}</span>
+                    <span>Assessment:</span><span>{profileStudent.marks?.assessment ?? 0}</span>
+                    <span>Assignment:</span><span>{profileStudent.marks?.assignment ?? 0}</span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1 mt-2">
+                  <span className="font-semibold">Mail Details:</span>
+                  <div className="ml-2">
+                    <div>Personal: <span className="font-mono">{profileStudent.personalEmail || '-'}</span></div>
+                    <div>College: <span className="font-mono">{profileStudent.collegeEmail || '-'}</span></div>
+                  </div>
+                </div>
+              </div>
+              {/* Placement Done Checkbox and Form */}
+              <div className="w-full mt-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" className="checkbox checkbox-success" checked={placementDone} onChange={e => setPlacementDone(e.target.checked)} />
+                  <span className="font-semibold">Placement Done</span>
+                </label>
+                {placementDone && (
+                  <form className="flex flex-col gap-2 mt-3" onSubmit={async e => {
+                    e.preventDefault();
+                    if (!placementDetails.placedCompany || !placementDetails.package || !placementDetails.placementType) {
+                      toast.error('Please fill all placement details');
+                      return;
+                    }
+                    try {
+                      await api.post('/placement-done', {
+                        regNo: profileStudent.regNo,
+                        batchName: selectedBatch,
+                        placedCompany: placementDetails.placedCompany,
+                        package: placementDetails.package,
+                        placementType: placementDetails.placementType
+                      });
+                      toast.success('Student moved to Placement Done group!');
+                      setShowProfileModal(false);
+                      setPlacementDone(false);
+                      setPlacementDetails({ placedCompany: '', package: '', placementType: '' });
+                      fetchAll();
+                      fetchPlacementDone();
+                      handleViewStudents(selectedBatch);
+                    } catch (err) {
+                      console.error('Failed to confirm placement:', err);
+                      const errorMessage = err.response?.data?.error || 'Failed to confirm placement. The student may already be in the placement list.';
+                      toast.error(errorMessage);
+                    }
+                  }}>
+                    <input
+                      type="text"
+                      className="input input-bordered w-full"
+                      placeholder="Placed Company"
+                      value={placementDetails.placedCompany}
+                      onChange={e => setPlacementDetails({ ...placementDetails, placedCompany: e.target.value })}
+                      required
+                    />
+                    <input
+                      type="text"
+                      className="input input-bordered w-full"
+                      placeholder="Package (e.g. 6 LPA)"
+                      value={placementDetails.package}
+                      onChange={e => setPlacementDetails({ ...placementDetails, package: e.target.value })}
+                      required
+                    />
+                    <select
+                      className="select select-bordered w-full max-w-xs"
+                      value={placementDetails.placementType}
+                      onChange={e => setPlacementDetails({ ...placementDetails, placementType: e.target.value })}
+                      required
+                    >
+                      <option value="">Select Placement Type</option>
+                      <option value="internship">Internship</option>
+                      <option value="internship+work">Internship + Work</option>
+                      <option value="work">Work</option>
+                    </select>
+                    <button type="submit" className="btn btn-success w-full mt-2">Confirm Placement</button>
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Placement Done Group Modal (improved) */}
+        {showPlacementDoneModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-base-100 rounded-2xl shadow-2xl w-[98vw] max-w-5xl max-h-[90vh] p-4 sm:p-8 relative flex flex-col">
+              <button
+                className="absolute top-3 right-3 btn btn-circle btn-sm btn-ghost"
+                onClick={() => setShowPlacementDoneModal(false)}
+                aria-label="Close"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-primary mb-4 text-center tracking-tight">Placement Done Students</h2>
+              <div className="overflow-x-auto flex-1 w-full">
+                <table className="min-w-[900px] w-full text-xs sm:text-sm md:text-base border-separate border-spacing-y-2">
+                  <thead>
+                    <tr className="bg-base-200 text-xs sm:text-sm uppercase text-gray-600">
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">S.No</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Reg No</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Name</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Department</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Company</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Package</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Type</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Batch</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Attendance %</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Efforts</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Presentation</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Assessment</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Assignment</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Personal Email</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">College Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {placementDoneStudents.length === 0 ? (
+                      <tr><td colSpan={15} className="text-center py-6 text-gray-400 font-semibold">No placement done students.</td></tr>
+                    ) : (
+                      placementDoneStudents.map((s, idx) => (
+                        <tr key={s._id} className="hover:bg-base-200 transition rounded-xl">
+                          <td className="px-2 py-2 font-semibold text-primary">{idx + 1}</td>
+                          <td className="px-2 py-2 font-mono">{s.regNo}</td>
+                          <td className="px-2 py-2 font-semibold">{s.name}</td>
+                          <td className="px-2 py-2">{s.department}</td>
+                          <td className="px-2 py-2">{s.placedCompany}</td>
+                          <td className="px-2 py-2">{s.package}</td>
+                          <td className="px-2 py-2 capitalize">{s.placementType.replace("+", " + ")}</td>
+                          <td className="px-2 py-2">{s.originalBatch}</td>
+                          <td className="px-2 py-2 text-center font-bold text-success">{s.attendancePercent ?? 0}%</td>
+                          <td className="px-2 py-2">{s.marks?.efforts ?? 0}</td>
+                          <td className="px-2 py-2">{s.marks?.presentation ?? 0}</td>
+                          <td className="px-2 py-2">{s.marks?.assessment ?? 0}</td>
+                          <td className="px-2 py-2">{s.marks?.assignment ?? 0}</td>
+                          <td className="px-2 py-2 font-mono text-xs">{s.personalEmail}</td>
+                          <td className="px-2 py-2 font-mono text-xs">{s.collegeEmail}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

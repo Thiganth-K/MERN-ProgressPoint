@@ -8,6 +8,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import ExcelJS from "exceljs";
 import rateLimit from "express-rate-limit";
+import PlacementDoneStudent from "./placementDone.model.js";
 dotenv.config();
 
 const app = express();
@@ -431,6 +432,73 @@ app.post("/api/batches/:batchName/marks", async (req, res) => {
   });
   await batch.save();
   res.json({ success: true });
+});
+
+// API to get all Placement Done students
+app.get("/api/placement-done", async (req, res) => {
+  try {
+    const students = await PlacementDoneStudent.find().sort({ movedAt: -1 });
+    res.json({ students });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch placement done students" });
+  }
+});
+
+// Export Placement Done students as Excel
+app.get("/api/placement-done/export", async (req, res) => {
+  try {
+    const students = await PlacementDoneStudent.find().sort({ movedAt: -1 });
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Placement Done Students");
+    worksheet.addRow([
+      "Reg No",
+      "Name",
+      "Department",
+      "Placed Company",
+      "Package",
+      "Placement Type",
+      "Original Batch",
+      "Attendance (%)",
+      "Efforts",
+      "Presentation",
+      "Assessment",
+      "Assignment",
+      "Personal Email",
+      "College Email",
+      "Moved At"
+    ]);
+    students.forEach(s => {
+      worksheet.addRow([
+        s.regNo,
+        s.name,
+        s.department,
+        s.placedCompany,
+        s.package,
+        s.placementType,
+        s.originalBatch,
+        s.attendancePercent ?? 0,
+        s.marks?.efforts ?? 0,
+        s.marks?.presentation ?? 0,
+        s.marks?.assessment ?? 0,
+        s.marks?.assignment ?? 0,
+        s.personalEmail,
+        s.collegeEmail,
+        s.movedAt ? new Date(s.movedAt).toLocaleString() : ''
+      ]);
+    });
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=placement_done_students.xlsx`
+    );
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    res.status(500).json({ error: "Failed to export placement done students" });
+  }
 });
 
 // Serve frontend in production

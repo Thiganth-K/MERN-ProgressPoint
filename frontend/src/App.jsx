@@ -10,6 +10,7 @@ import ViewAttendancePage from './pages/ViewAttendancePage';
 import MarkEntryPage from "./pages/MarkEntryPage";
 import SuperAdminPage from './pages/SuperAdminPage';
 import ManageAdminsPage from './pages/ManageAdminsPage';
+import PlacementDonePage from "./pages/PlacementDonePage.jsx";
 
 
 const App = () => {
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/markentry" element={<MarkEntryPage />} />
         <Route path="/superadmin" element={<SuperAdminPage />} />
         <Route path="/manage-admins" element={<ManageAdminsPage />} />
+        <Route path="/placement-done" element={<PlacementDonePage />} />
       </Routes>
     </div>
   );

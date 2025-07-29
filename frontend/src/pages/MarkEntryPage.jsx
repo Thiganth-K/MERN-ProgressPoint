@@ -23,6 +23,8 @@ const MarkEntryPage = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [existingMarksFound, setExistingMarksFound] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showMarkTable, setShowMarkTable] = useState(false); // NEW
+  const [openMarkRegNo, setOpenMarkRegNo] = useState(null); // NEW
   const query = useQuery();
   const batch = query.get('batch');
 
@@ -117,31 +119,25 @@ const MarkEntryPage = () => {
             />
             {isLoading && <div className="loading loading-spinner loading-md"></div>}
           </div>
-          {existingMarksFound && (
-            <div className="alert alert-info mb-4">
-              <span>Existing marks found for this date. You can update them below.</span>
-            </div>
-          )}
-          <div className="overflow-x-auto rounded-xl border border-base-200 mb-4">
-            <table className="table w-full text-base">
-              <thead>
-                <tr className="bg-base-200 text-base font-semibold text-primary">
-                  <th className="px-4 py-2 text-left">#</th>
-                  <th className="px-4 py-2 text-left">Reg No</th>
-                  <th className="px-4 py-2 text-left">Name</th>
-                  {columns.map(col => (
-                    <th key={col.key} className="px-4 py-2 text-center">{col.label}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((student, idx) => (
-                  <tr key={student.regNo} className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200"}>
-                    <td className="px-4 py-2">{idx + 1}</td>
-                    <td className="px-4 py-2 font-mono">{student.regNo}</td>
-                    <td className="px-4 py-2">{student.name}</td>
+          {/* Student List with Mark Entry Button */}
+          <div className="mb-6">
+            {students.map((student, idx) => (
+              <div key={student.regNo} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4 bg-base-200 p-4 rounded-xl">
+                <span className="font-semibold text-base text-primary flex-1">
+                  {idx + 1}. {student.name} <span className="text-xs text-secondary">({student.regNo})</span>
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-accent btn-sm"
+                  onClick={() => setOpenMarkRegNo(openMarkRegNo === student.regNo ? null : student.regNo)}
+                >
+                  {openMarkRegNo === student.regNo ? "Hide Marks" : "Enter Marks"}
+                </button>
+                {openMarkRegNo === student.regNo && (
+                  <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
                     {columns.map(col => (
-                      <td key={col.key} className="px-2 py-2 text-center">
+                      <div key={col.key} className="flex flex-col items-center">
+                        <label className="text-xs font-medium">{col.label}</label>
                         <input
                           type="number"
                           min={0}
@@ -151,12 +147,12 @@ const MarkEntryPage = () => {
                           className="input input-bordered input-sm w-20 text-center font-semibold"
                           required
                         />
-                      </td>
+                      </div>
                     ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
           <button
             type="submit"
@@ -191,5 +187,4 @@ const MarkEntryPage = () => {
     </div>
   );
 };
-
 export default MarkEntryPage;
