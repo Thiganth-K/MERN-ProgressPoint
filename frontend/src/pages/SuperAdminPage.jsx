@@ -94,7 +94,7 @@ const SuperAdminPage = () => {
   const [showStudentsModal, setShowStudentsModal] = useState(false);
   const [showLogsModal, setShowLogsModal] = useState(false);
   const [newBatchName, setNewBatchName] = useState('');
-  const [newBatchYear, setNewBatchYear] = useState(''); // <-- Add this state
+  const [newBatchYear, setNewBatchYear] = useState('');
   const [newBatchStudents, setNewBatchStudents] = useState('');
   const [newAdminName, setNewAdminName] = useState('');
   const [newAdminPassword, setNewAdminPassword] = useState('');
@@ -114,6 +114,16 @@ const SuperAdminPage = () => {
   const [attendanceBarData, setAttendanceBarData] = useState(null);
   const [attendancePieData, setAttendancePieData] = useState(null);
   const [placementDoneBatchStats, setPlacementDoneBatchStats] = useState({});
+  // Added: State for selected year
+  const [selectedYear, setSelectedYear] = useState(null);
+
+  // Extract available years from batches
+  const years = Array.from(new Set(batches.map(b => b.year))).sort();
+
+  // Set default selected year when batches load
+  useEffect(() => {
+    if (years.length > 0 && !selectedYear) setSelectedYear(years[0]);
+  }, [years, selectedYear]);
 
   useEffect(() => {
     fetchAll();
@@ -430,11 +440,97 @@ const SuperAdminPage = () => {
     ],
   };
 
-  // Group batches by year
+  // Filter batches and batchAverages for selected year
+  const batchesForYear = batches.filter(b => b.year === selectedYear);
+  const batchNamesForYear = batchesForYear.map(b => b.batchName);
+
+  const batchAveragesForYear = batchAverages.filter(b =>
+    batchNamesForYear.includes(b.batchName)
+  );
+
+  // Chart data for marks (for selected year)
+  const barDataForYear = {
+    labels: batchAveragesForYear.map(b => b.batchName),
+    datasets: [
+      { label: 'Efforts', data: batchAveragesForYear.map(b => b.averages.efforts), backgroundColor: '#60a5fa' },
+      { label: 'Presentation', data: batchAveragesForYear.map(b => b.averages.presentation), backgroundColor: '#fbbf24' },
+      { label: 'Assessment', data: batchAveragesForYear.map(b => b.averages.assessment), backgroundColor: '#34d399' },
+      { label: 'Assignment', data: batchAveragesForYear.map(b => b.averages.assignment), backgroundColor: '#f472b6' }
+    ]
+  };
+
+  const pieDataForYear = {
+    labels: batchAveragesForYear.map(b => b.batchName),
+    datasets: [
+      {
+        label: 'Average Total Marks',
+        data: batchAveragesForYear.map(b =>
+          b.averages.efforts + b.averages.presentation + b.averages.assessment + b.averages.assignment
+        ),
+        backgroundColor: ['#60a5fa', '#fbbf24', '#34d399', '#f472b6', '#818cf8', '#f87171']
+      }
+    ]
+  };
+
+  // Attendance chart data for selected year
+  const attendanceBarDataForYear = {
+    labels: batchAveragesForYear.map(b => b.batchName),
+    datasets: [
+      {
+        label: 'Average Attendance (%)',
+        data: batchAveragesForYear.map(b => b.attendancePercent ?? 0),
+        backgroundColor: 'rgba(34,197,94,0.7)',
+      },
+    ],
+  };
+
+  const attendancePieDataForYear = {
+    labels: batchAveragesForYear.map(b => b.batchName),
+    datasets: [
+      {
+        label: 'Attendance',
+        data: batchAveragesForYear.map(b => b.attendancePercent ?? 0),
+        backgroundColor: [
+          '#34d399', '#60a5fa', '#fbbf24', '#f87171', '#a78bfa', '#f472b6', '#38bdf8'
+        ],
+      },
+    ],
+  };
+
+  // Placement Done chart data for selected year
+  const placementDoneBatchNamesForYear = batchNamesForYear;
+  const placementDoneBatchCountsForYear = placementDoneBatchNamesForYear.map(
+    name => placementDoneBatchStats[name] || 0
+  );
+
+  const placementDoneBarDataForYear = {
+    labels: placementDoneBatchNamesForYear,
+    datasets: [
+      {
+        label: 'Placement Done Students',
+        data: placementDoneBatchCountsForYear,
+        backgroundColor: '#818cf8',
+      },
+    ],
+  };
+
+  const placementDonePieDataForYear = {
+    labels: placementDoneBatchNamesForYear,
+    datasets: [
+      {
+        label: 'Placement Done Students',
+        data: placementDoneBatchCountsForYear,
+        backgroundColor: [
+          '#818cf8', '#fbbf24', '#34d399', '#f472b6', '#60a5fa', '#f87171'
+        ],
+      },
+    ],
+  };
+
+  // Group batches by year for the table display
   const batchesByYear = batches.reduce((acc, batch) => {
-    const year = batch.year || 'Unknown';
-    if (!acc[year]) acc[year] = [];
-    acc[year].push(batch);
+    acc[batch.year] = acc[batch.year] || [];
+    acc[batch.year].push(batch);
     return acc;
   }, {});
 
@@ -445,106 +541,120 @@ const SuperAdminPage = () => {
         onViewPlacementDone={handleShowPlacementDone}
       />
       <main className="flex-1 flex flex-col items-center px-2 py-4 sm:py-8">
-        {/* Batch Comparison Charts */}
-        <section className="w-full max-w-7xl mb-8 bg-base-100 rounded-2xl shadow-xl p-6">
-          <h2 className="text-xl font-bold text-primary mb-4">Batch Wise Comparison</h2>
-          <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
-            {/* Bar Chart Section */}
-            <div className="w-full md:w-1/2">
-              <h3 className="text-lg font-semibold mb-2">Average Marks (Bar Chart)</h3>
-              <div style={{ width: '100%', height: 400 }}>
-                <Bar
-                  data={barData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } }
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Pie Chart Section */}
-            <div className="w-full md:w-1/2">
-              <h3 className="text-lg font-semibold mb-2">Total Average Marks (Pie Chart)</h3>
-              <div style={{ width: '100%', height: 400 }}>
-                <Pie
-                  data={pieData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } }
-                  }}
-                />
-              </div>
-            </div>
+        {/* Year Tabs for Chart Filtering (DaisyUI) */}
+        <div className="w-full flex justify-center mb-6">
+          <div role="tablist" className="tabs tabs-boxed">
+            {years.map(year => (
+              <button
+                key={year}
+                role="tab"
+                className={`tab ${year === selectedYear ? "tab-active" : ""}`}
+                onClick={() => setSelectedYear(year)}
+              >
+                {year}
+              </button>
+            ))}
           </div>
+        </div>
 
-          {/* Attendance Charts */}
-          <div className="flex flex-col md:flex-row gap-6 justify-center items-start mt-10">
-            <div className="w-full md:w-1/2">
-              <h3 className="text-lg font-semibold mb-2">Average Attendance (Bar Chart)</h3>
-              <div style={{ width: '100%', height: 400 }}>
-                {attendanceBarData && (
+        {/* Show charts only if a year is selected */}
+        {selectedYear && (
+          <section className="w-full max-w-7xl mb-8 bg-base-100 rounded-2xl shadow-xl p-6">
+            <h2 className="text-xl font-bold text-primary mb-4">
+              Batch Wise Comparison ({selectedYear})
+            </h2>
+            <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
+              {/* Bar Chart Section */}
+              <div className="w-full md:w-1/2">
+                <h3 className="text-lg font-semibold mb-2">Average Marks (Bar Chart)</h3>
+                <div style={{ width: '100%', height: 400 }}>
                   <Bar
-                    data={attendanceBarData}
+                    data={barDataForYear}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
                       plugins: { legend: { position: 'top' } }
                     }}
                   />
-                )}
+                </div>
               </div>
-            </div>
-            <div className="w-full md:w-1/2">
-              <h3 className="text-lg font-semibold mb-2">Total Average Attendance (Pie Chart)</h3>
-              <div style={{ width: '100%', height: 400 }}>
-                {attendancePieData && (
+              {/* Pie Chart Section */}
+              <div className="w-full md:w-1/2">
+                <h3 className="text-lg font-semibold mb-2">Total Average Marks (Pie Chart)</h3>
+                <div style={{ width: '100%', height: 400 }}>
                   <Pie
-                    data={attendancePieData}
+                    data={pieDataForYear}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
                       plugins: { legend: { position: 'top' } }
                     }}
                   />
-                )}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Placement Done Batch Stats Charts */}
-          <div className="flex flex-col md:flex-row gap-6 justify-center items-start mt-10">
-            <div className="w-full md:w-1/2">
-              <h3 className="text-lg font-semibold mb-2">Placement Done Students by Batch (Bar Chart)</h3>
-              <div style={{ width: '100%', height: 400 }}>
-                <Bar
-                  data={placementDoneBarData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } }
-                  }}
-                />
+            {/* Attendance Charts */}
+            <div className="flex flex-col md:flex-row gap-6 justify-center items-start mt-10">
+              <div className="w-full md:w-1/2">
+                <h3 className="text-lg font-semibold mb-2">Average Attendance (Bar Chart)</h3>
+                <div style={{ width: '100%', height: 400 }}>
+                  <Bar
+                    data={attendanceBarDataForYear}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: { legend: { position: 'top' } }
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="w-full md:w-1/2">
+                <h3 className="text-lg font-semibold mb-2">Total Average Attendance (Pie Chart)</h3>
+                <div style={{ width: '100%', height: 400 }}>
+                  <Pie
+                    data={attendancePieDataForYear}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: { legend: { position: 'top' } }
+                    }}
+                  />
+                </div>
               </div>
             </div>
-            <div className="w-full md:w-1/2">
-              <h3 className="text-lg font-semibold mb-2">Placement Done Students by Batch (Pie Chart)</h3>
-              <div style={{ width: '100%', height: 400 }}>
-                <Pie
-                  data={placementDonePieData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } }
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
 
+            {/* Placement Done Batch Stats Charts */}
+            <div className="flex flex-col md:flex-row gap-6 justify-center items-start mt-10">
+              <div className="w-full md:w-1/2">
+                <h3 className="text-lg font-semibold mb-2">Placement Done Students by Batch (Bar Chart)</h3>
+                <div style={{ width: '100%', height: 400 }}>
+                  <Bar
+                    data={placementDoneBarDataForYear}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: { legend: { position: 'top' } }
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="w-full md:w-1/2">
+                <h3 className="text-lg font-semibold mb-2">Placement Done Students by Batch (Pie Chart)</h3>
+                <div style={{ width: '100%', height: 400 }}>
+                  <Pie
+                    data={placementDonePieDataForYear}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: { legend: { position: 'top' } }
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Add Batch */}
         <section className="w-full mb-6">

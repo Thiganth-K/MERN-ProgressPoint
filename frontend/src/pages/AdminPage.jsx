@@ -36,6 +36,7 @@ const buttonIcons = {
 
 const AdminPage = () => {
   const [batches, setBatches] = useState([]);
+  const [selectedYear, setSelectedYear] = useState('');
   const [selectedBatch, setSelectedBatch] = useState(localStorage.getItem('selectedBatch') || '');
   const navigate = useNavigate();
 
@@ -47,6 +48,14 @@ const AdminPage = () => {
       setBatches(sortedBatches);
     });
   }, []);
+
+  // Extract unique years from batches
+  const years = Array.from(new Set(batches.map(b => b.year))).sort();
+
+  // Filter batches by selected year
+  const batchesForYear = selectedYear
+    ? batches.filter(b => b.year === Number(selectedYear))
+    : [];
 
   const handleSelectBatch = (batchName) => {
     setSelectedBatch(batchName);
@@ -85,9 +94,29 @@ const AdminPage = () => {
           <h2 className="mb-6 text-lg sm:text-xl font-semibold text-secondary text-center">
             Select a Batch
           </h2>
-          
-            <div className="flex flex-wrap justify-center gap-4 w-full mb-8">
-            {batches.map(batch => (
+
+          {/* Year Tabs */}
+          <div className="w-full flex justify-center mb-4">
+            <div role="tablist" className="tabs tabs-boxed">
+              {years.map(year => (
+                <button
+                  key={year}
+                  role="tab"
+                  className={`tab ${year === Number(selectedYear) ? "tab-active" : ""}`}
+                  onClick={() => {
+                    setSelectedYear(year);
+                    setSelectedBatch('');
+                  }}
+                >
+                  {year}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Batch Buttons for Selected Year */}
+          <div className="flex flex-wrap justify-center gap-4 w-full mb-8">
+            {batchesForYear.map(batch => (
               <button
                 key={batch.batchName}
                 className={`btn btn-md font-bold transition-all duration-150 ${
@@ -135,7 +164,7 @@ const AdminPage = () => {
               </button>
             </div>
           )}
-            {!selectedBatch && (
+          {!selectedBatch && (
             <p className="mb-6 text-sm text-center text-warning font-medium bg-warning/10 px-4 py-2 rounded-lg shadow-sm">
               <svg className="inline w-4 h-4 mr-1 mb-1 text-warning" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
