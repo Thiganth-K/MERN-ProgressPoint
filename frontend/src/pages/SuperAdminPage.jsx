@@ -94,6 +94,7 @@ const SuperAdminPage = () => {
   const [showStudentsModal, setShowStudentsModal] = useState(false);
   const [showLogsModal, setShowLogsModal] = useState(false);
   const [newBatchName, setNewBatchName] = useState('');
+  const [newBatchYear, setNewBatchYear] = useState(''); // <-- Add this state
   const [newBatchStudents, setNewBatchStudents] = useState('');
   const [newAdminName, setNewAdminName] = useState('');
   const [newAdminPassword, setNewAdminPassword] = useState('');
@@ -110,10 +111,15 @@ const SuperAdminPage = () => {
   const [showPlacementDoneModal, setShowPlacementDoneModal] = useState(false);
   const [placementDoneStudents, setPlacementDoneStudents] = useState([]);
   const [batchAverages, setBatchAverages] = useState([]);
+  const [attendanceBarData, setAttendanceBarData] = useState(null);
+  const [attendancePieData, setAttendancePieData] = useState(null);
+  const [placementDoneBatchStats, setPlacementDoneBatchStats] = useState({});
 
   useEffect(() => {
     fetchAll();
-    api.get('/batch-averages').then(res => setBatchAverages(res.data));
+    fetchAttendanceAverages();
+    fetchBatchAverages();
+    fetchPlacementDoneBatchStats(); // <-- Add this
     // eslint-disable-next-line
   }, []);
 
@@ -130,6 +136,65 @@ const SuperAdminPage = () => {
     setAdmins(adminRes.data.admins || []);
   };
 
+  // Fetch batch averages for marks charts
+  const fetchBatchAverages = async () => {
+    try {
+      const res = await api.get('/batch-averages');
+      setBatchAverages(res.data || []);
+    } catch {
+      toast.error('Failed to fetch batch averages');
+    }
+  };
+
+  // Fetch batch-wise attendance averages
+  const fetchAttendanceAverages = async () => {
+    const res = await api.get('/batch-averages');
+    const batches = res.data || [];
+    // Prepare attendance data for charts
+    const labels = batches.map(b => b.batchName);
+    const attendanceValues = batches.map(b => b.attendancePercent ?? 0);
+
+    setAttendanceBarData({
+      labels,
+      datasets: [
+        {
+          label: 'Average Attendance (%)',
+          data: attendanceValues,
+          backgroundColor: 'rgba(34,197,94,0.7)',
+        },
+      ],
+    });
+
+    setAttendancePieData({
+      labels,
+      datasets: [
+        {
+          label: 'Attendance',
+          data: attendanceValues,
+          backgroundColor: [
+            '#34d399', '#60a5fa', '#fbbf24', '#f87171', '#a78bfa', '#f472b6', '#38bdf8'
+          ],
+        },
+      ],
+    });
+  };
+
+  // Fetch Placement Done batch stats
+  const fetchPlacementDoneBatchStats = async () => {
+    try {
+      const res = await api.get('/placement-done');
+      const students = res.data.students || [];
+      // Count students per originalBatch
+      const batchCounts = {};
+      students.forEach(s => {
+        batchCounts[s.originalBatch] = (batchCounts[s.originalBatch] || 0) + 1;
+      });
+      setPlacementDoneBatchStats(batchCounts);
+    } catch {
+      toast.error('Failed to fetch placement done batch stats');
+    }
+  };
+
   const handleSuperAdminLogout = () => {
     localStorage.removeItem('adminName');
     localStorage.removeItem('role');
@@ -139,8 +204,8 @@ const SuperAdminPage = () => {
 
   const handleAddBatch = async (e) => {
     e.preventDefault();
-    if (!newBatchName.trim()) {
-      toast.error('Batch name required');
+    if (!newBatchName.trim() || !newBatchYear) {
+      toast.error('Batch name and year required');
       return;
     }
     const students = newBatchStudents
@@ -159,9 +224,10 @@ const SuperAdminPage = () => {
         };
       });
     try {
-      await api.post('/batches', { batchName: newBatchName, students });
+      await api.post('/batches', { batchName: newBatchName, students, year: Number(newBatchYear) }); // <-- Add year
       toast.success('Batch added!');
       setNewBatchName('');
+      setNewBatchYear('');
       setNewBatchStudents('');
       fetchAll();
     } catch (err) {
@@ -336,6 +402,42 @@ const SuperAdminPage = () => {
     navigate("/placement-done");
   };
 
+  // Prepare data for Placement Done batch charts
+  const placementDoneBatchNames = Object.keys(placementDoneBatchStats);
+  const placementDoneBatchCounts = Object.values(placementDoneBatchStats);
+
+  const placementDoneBarData = {
+    labels: placementDoneBatchNames,
+    datasets: [
+      {
+        label: 'Placement Done Students',
+        data: placementDoneBatchCounts,
+        backgroundColor: '#818cf8',
+      },
+    ],
+  };
+
+  const placementDonePieData = {
+    labels: placementDoneBatchNames,
+    datasets: [
+      {
+        label: 'Placement Done Students',
+        data: placementDoneBatchCounts,
+        backgroundColor: [
+          '#818cf8', '#fbbf24', '#34d399', '#f472b6', '#60a5fa', '#f87171'
+        ],
+      },
+    ],
+  };
+
+  // Group batches by year
+  const batchesByYear = batches.reduce((acc, batch) => {
+    const year = batch.year || 'Unknown';
+    if (!acc[year]) acc[year] = [];
+    acc[year].push(batch);
+    return acc;
+  }, {});
+
   return (
     <div className="min-h-screen flex flex-col bg-base-200">
       <SuperAdminNavBar
@@ -345,40 +447,103 @@ const SuperAdminPage = () => {
       <main className="flex-1 flex flex-col items-center px-2 py-4 sm:py-8">
         {/* Batch Comparison Charts */}
         <section className="w-full max-w-7xl mb-8 bg-base-100 rounded-2xl shadow-xl p-6">
-  <h2 className="text-xl font-bold text-primary mb-4">Batch Wise Comparison</h2>
+          <h2 className="text-xl font-bold text-primary mb-4">Batch Wise Comparison</h2>
+          <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
+            {/* Bar Chart Section */}
+            <div className="w-full md:w-1/2">
+              <h3 className="text-lg font-semibold mb-2">Average Marks (Bar Chart)</h3>
+              <div style={{ width: '100%', height: 400 }}>
+                <Bar
+                  data={barData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } }
+                  }}
+                />
+              </div>
+            </div>
 
-  <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
-    {/* Bar Chart Section */}
-    <div className="w-full md:w-1/2">
-      <h3 className="text-lg font-semibold mb-2">Average Marks (Bar Chart)</h3>
-      <div style={{ width: '100%', height: 400 }}>
-        <Bar
-          data={barData}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'top' } }
-          }}
-        />
-      </div>
-    </div>
+            {/* Pie Chart Section */}
+            <div className="w-full md:w-1/2">
+              <h3 className="text-lg font-semibold mb-2">Total Average Marks (Pie Chart)</h3>
+              <div style={{ width: '100%', height: 400 }}>
+                <Pie
+                  data={pieData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } }
+                  }}
+                />
+              </div>
+            </div>
+          </div>
 
-    {/* Pie Chart Section */}
-    <div className="w-full md:w-1/2">
-      <h3 className="text-lg font-semibold mb-2">Total Average Marks (Pie Chart)</h3>
-      <div style={{ width: '100%', height: 400 }}>
-        <Pie
-          data={pieData}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'top' } }
-          }}
-        />
-      </div>
-    </div>
-  </div>
-</section>
+          {/* Attendance Charts */}
+          <div className="flex flex-col md:flex-row gap-6 justify-center items-start mt-10">
+            <div className="w-full md:w-1/2">
+              <h3 className="text-lg font-semibold mb-2">Average Attendance (Bar Chart)</h3>
+              <div style={{ width: '100%', height: 400 }}>
+                {attendanceBarData && (
+                  <Bar
+                    data={attendanceBarData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: { legend: { position: 'top' } }
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+            <div className="w-full md:w-1/2">
+              <h3 className="text-lg font-semibold mb-2">Total Average Attendance (Pie Chart)</h3>
+              <div style={{ width: '100%', height: 400 }}>
+                {attendancePieData && (
+                  <Pie
+                    data={attendancePieData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: { legend: { position: 'top' } }
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Placement Done Batch Stats Charts */}
+          <div className="flex flex-col md:flex-row gap-6 justify-center items-start mt-10">
+            <div className="w-full md:w-1/2">
+              <h3 className="text-lg font-semibold mb-2">Placement Done Students by Batch (Bar Chart)</h3>
+              <div style={{ width: '100%', height: 400 }}>
+                <Bar
+                  data={placementDoneBarData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } }
+                  }}
+                />
+              </div>
+            </div>
+            <div className="w-full md:w-1/2">
+              <h3 className="text-lg font-semibold mb-2">Placement Done Students by Batch (Pie Chart)</h3>
+              <div style={{ width: '100%', height: 400 }}>
+                <Pie
+                  data={placementDonePieData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } }
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
 
 
         {/* Add Batch */}
@@ -393,6 +558,16 @@ const SuperAdminPage = () => {
               value={newBatchName}
               onChange={e => setNewBatchName(e.target.value)}
               className="input input-bordered"
+            />
+            <input
+              type="number"
+              placeholder="Year (e.g. 2026)"
+              value={newBatchYear}
+              onChange={e => setNewBatchYear(e.target.value)}
+              className="input input-bordered"
+              min={2000}
+              max={2100}
+              required
             />
             <textarea
               placeholder={`Enter students, one per line: regno,studentname\nExample:\n21IT001,John Doe\n21IT002,Jane Smith`}
@@ -412,45 +587,50 @@ const SuperAdminPage = () => {
           <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
             {icons.batch} Batches
           </h2>
-          <div className="overflow-x-auto rounded-xl shadow">
-            <table className="table w-full text-xs sm:text-sm md:text-base">
-              <thead>
-                <tr>
-                  <th className="text-left">Batch Name</th>
-                  <th className="text-left">Students</th>
-                  <th className="text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {batches.length === 0 ? (
-                  <tr>
-                    <td colSpan={3} className="text-center text-gray-400 py-6">No batches added yet.</td>
-                  </tr>
-                ) : (
-                  batches.map(batch => (
-                    <tr key={batch.batchName}>
-                      <td className="font-semibold">{batch.batchName}</td>
-                      <td>{batch.students?.length || 0}</td>
-                      <td className="flex flex-col sm:flex-row gap-2 py-2">
-                        <button
-                          className="btn btn-info btn-xs"
-                          onClick={() => handleViewStudents(batch.batchName)}
-                        >
-                          {icons.view} View
-                        </button>
-                        <button
-                          className="btn btn-error btn-xs"
-                          onClick={() => handleRemoveBatch(batch.batchName)}
-                        >
-                          {icons.remove} Remove
-                        </button>
-                      </td>
+          {Object.keys(batchesByYear).sort().map(year => (
+            <div key={year} className="mb-6">
+              <h3 className="text-base font-semibold text-primary mb-2">{year} Batches</h3>
+              <div className="overflow-x-auto rounded-xl shadow">
+                <table className="table w-full text-xs sm:text-sm md:text-base">
+                  <thead>
+                    <tr>
+                      <th className="text-left">Batch Name</th>
+                      <th className="text-left">Students</th>
+                      <th className="text-left">Actions</th>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                  </thead>
+                  <tbody>
+                    {batchesByYear[year].length === 0 ? (
+                      <tr>
+                        <td colSpan={3} className="text-center text-gray-400 py-6">No batches added yet.</td>
+                      </tr>
+                    ) : (
+                      batchesByYear[year].map(batch => (
+                        <tr key={batch.batchName}>
+                          <td className="font-semibold">{batch.batchName}</td>
+                          <td>{batch.students?.length || 0}</td>
+                          <td className="flex flex-col sm:flex-row gap-2 py-2">
+                            <button
+                              className="btn btn-info btn-xs"
+                              onClick={() => handleViewStudents(batch.batchName)}
+                            >
+                              {icons.view} View
+                            </button>
+                            <button
+                              className="btn btn-error btn-xs"
+                              onClick={() => handleRemoveBatch(batch.batchName)}
+                            >
+                              {icons.remove} Remove
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
         </section>
 
         {/* Add Admin */}

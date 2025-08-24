@@ -36,6 +36,7 @@ const studentSchema = new mongoose.Schema({
 
 const batchSchema = new mongoose.Schema({
   batchName: { type: String, required: true, unique: true },
+  year: { type: Number, required: true }, // <-- Add this line
   students: [studentSchema]
 });
 

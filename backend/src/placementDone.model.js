@@ -17,8 +17,9 @@ const placementDoneSchema = new mongoose.Schema({
   package: { type: String, required: true },
   placementType: { type: String, enum: ["internship", "internship+work", "work"], required: true },
   originalBatch: { type: String, required: true },
+  year: { type: Number, required: true },
   movedAt: { type: Date, default: Date.now }
 });
 
 const PlacementDoneStudent = mongoose.model("PlacementDoneStudent", placementDoneSchema);
-export default PlacementDoneStudent; 
+export default PlacementDoneStudent;

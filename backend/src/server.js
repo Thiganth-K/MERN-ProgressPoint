@@ -137,10 +137,11 @@ app.get("/api/batches", async (req, res) => {
   res.json({ batches });
 });
 app.post("/api/batches", async (req, res) => {
-  const { batchName, students } = req.body;
+  const { batchName, students, year } = req.body; // <-- Add year
   try {
     const batch = new Batch({
       batchName,
+      year, // <-- Add year
       students: (students || []).map(s => ({
         ...s,
         marks: { efforts: 0, presentation: 0, assessment: 0, assignment: 0 },
@@ -507,12 +508,13 @@ app.get('/api/batch-averages', async (req, res) => {
     const batches = await Batch.find({});
     const result = batches.map(batch => {
       const students = batch.students || [];
-      const total = { efforts: 0, presentation: 0, assignment: 0, assessment: 0 };
+      const total = { efforts: 0, presentation: 0, assignment: 0, assessment: 0, attendance: 0 };
       students.forEach(s => {
         total.efforts += s.marks?.efforts || 0;
         total.presentation += s.marks?.presentation || 0;
         total.assignment += s.marks?.assignment || 0;
         total.assessment += s.marks?.assessment || 0;
+        total.attendance += Number(s.attendancePercent) || 0;
       });
       const count = students.length || 1;
       return {
@@ -522,7 +524,8 @@ app.get('/api/batch-averages', async (req, res) => {
           presentation: +(total.presentation / count).toFixed(2),
           assignment: +(total.assignment / count).toFixed(2),
           assessment: +(total.assessment / count).toFixed(2),
-        }
+        },
+        attendancePercent: +(total.attendance / count).toFixed(2)
       };
     });
     res.json(result);
@@ -573,6 +576,7 @@ app.post("/api/placement-done", async (req, res) => {
       package: pkg,
       placementType,
       originalBatch: batchName,
+      year: batch.year, // <-- Add this line
       movedAt: new Date()
     });
     await placementDone.save();
