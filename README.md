@@ -49,6 +49,24 @@
   - Simple authentication for admins and superadmin.
   - Passwords stored securely in the database.
 
+- **Time Restriction:**
+  - The super admin can able to restrict the admin controllers by fixing the in and out of the admin activity.
+  - The time restrictions include for the Attendance management system and for the Mark management system too.
+
+- **Backup and Restore Feature:**
+  - The superadmin can able to create the baackup in the main mongo db.
+  - Then the superadmin can able to restore the backup by selective instance.
+
+- **Guest Access:**
+  - The users can login to this application without an account as a guest.
+  - The Guest access offers the guest to view the Placement done students data.
+
+- **Export Feature:**     
+  - The superadmin  can able to export thte attendance record in the Excel format.
+  - The Superadmin can able to export the student marks data with the attendance performance in the excel format.
+  - The superadmin can able to export the placement done students data in the excel format.
+
+
 ---
 
 ##  Tech Stack
@@ -91,6 +109,14 @@ ProgressPoint helps educational institutions and teachers:
 - Easily track and compare student performance and attendance
 - Save time on manual record-keeping
 
+## Production Notes
+
+Feed the .env ccredentials to the server side service
+
+  - Run the following cmd to build the project :-> `npm run build`
+  - Check the build logs and clear the unwanted errors, leave the chuncks if it cause an issue then reduce teh chunks
+  - To start this project now run this cmd to startt the service in the production environment: `npm run start`
+  - This starts the service in the production mode and the service continues in the port of `5001`
 ---
 
 signing off - Thiganth
