@@ -11,6 +11,18 @@ const api = axios.create({
   baseURL: BASE_URL,
 });
 
+// Add a request interceptor to include admin name in headers
+api.interceptors.request.use(
+  config => {
+    const adminName = localStorage.getItem('adminName');
+    if (adminName) {
+      config.headers['x-admin-name'] = adminName;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
 // Add a response interceptor for rate limiting
 api.interceptors.response.use(
   response => response,

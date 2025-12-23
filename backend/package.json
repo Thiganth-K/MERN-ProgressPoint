@@ -4,7 +4,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "backup": "node src/backup.js backup",
+    "backup:restore": "node src/backup.js restore",
+    "backup:list": "node src/backup.js list"
   },
   "type": "module",
   "keywords": [],

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import api from '../lib/axios';
+import toast from 'react-hot-toast';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -16,11 +17,36 @@ const MarkAttendancePage = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [existingAttendanceFound, setExistingAttendanceFound] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [timeRestrictionAlert, setTimeRestrictionAlert] = useState(null);
   const query = useQuery();
   const batch = query.get('batch');
 
+  // Check time restrictions for attendance
+  const checkTimeRestrictions = async () => {
+    try {
+      const response = await api.get('/time-restrictions/attendance/check');
+      if (!response.data.allowed) {
+        setTimeRestrictionAlert({
+          type: 'error',
+          message: response.data.message || 'Attendance marking is not allowed at this time'
+        });
+        return false;
+      } else {
+        setTimeRestrictionAlert(null);
+        return true;
+      }
+    } catch (error) {
+      // If there's an error checking restrictions, allow the action (fail open)
+      setTimeRestrictionAlert(null);
+      return true;
+    }
+  };
+
   useEffect(() => {
     if (batch) {
+      // Check time restrictions when component loads
+      checkTimeRestrictions();
+      
       api.get(`/batches/${batch}/students`)
         .then(res => {
           setStudents(res.data.students || []);
@@ -68,6 +94,14 @@ const MarkAttendancePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check time restrictions before submitting
+    const isAllowed = await checkTimeRestrictions();
+    if (!isAllowed) {
+      toast.error('Attendance marking is not allowed at this time');
+      return;
+    }
+    
     try {
       await api.post(`/batches/${batch}/attendance`, {
         date,
@@ -77,9 +111,14 @@ const MarkAttendancePage = () => {
       setShowSuccess(true);
       setExistingAttendanceFound(false); // Reset the flag after successful save
       setTimeout(() => setShowSuccess(false), 2200);
-    } catch {
+      toast.success('Attendance marked successfully!');
+    } catch (error) {
       setShowSuccess(false);
-      alert('Failed to mark attendance');
+      if (error.response?.status === 403) {
+        toast.error('Attendance marking is not allowed at this time');
+      } else {
+        toast.error('Failed to mark attendance');
+      }
     }
   };
 
@@ -101,6 +140,21 @@ const MarkAttendancePage = () => {
               <div>
                 <h3 className="font-bold">Existing Attendance Found!</h3>
                 <div className="text-xs">Previous attendance records for {date} ({session}) have been loaded. You can modify them below.</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Time Restriction Alert */}
+        {timeRestrictionAlert && (
+          <div className="w-full max-w-3xl mb-4">
+            <div className={`alert ${timeRestrictionAlert.type === 'error' ? 'alert-error' : 'alert-warning'} shadow-lg`}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L5.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+              <div>
+                <h3 className="font-bold">Access Restricted</h3>
+                <div className="text-xs">{timeRestrictionAlert.message}</div>
               </div>
             </div>
           </div>

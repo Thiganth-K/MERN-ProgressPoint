@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
 import api from "../lib/axios";
 import { useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
 
 const PlacementDonePage = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalStudent, setModalStudent] = useState(null);
+  const [editStudent, setEditStudent] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCompanies, setSelectedCompanies] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
+  const studentsPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,57 +34,285 @@ const PlacementDonePage = () => {
   // Modal close handler
   const closeModal = () => setModalStudent(null);
 
+  // Get unique companies for filter options
+  const uniqueCompanies = [...new Set(students.map(s => s.placedCompany).filter(Boolean))].sort();
+
+  // Filter students based on search term and selected companies
+  const filteredStudents = students.filter(student => {
+    const matchesSearch = student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         student.regNo?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesCompany = selectedCompanies.length === 0 || 
+                          selectedCompanies.includes(student.placedCompany);
+    
+    return matchesSearch && matchesCompany;
+  });
+
+  // Handle company filter change
+  const handleCompanyFilter = (company) => {
+    setSelectedCompanies(prev => 
+      prev.includes(company) 
+        ? prev.filter(c => c !== company)
+        : [...prev, company]
+    );
+  };
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSelectedCompanies([]);
+    setSearchTerm("");
+  };
+
+  // Pagination calculations (using filtered students)
+  const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
+  const startIndex = (currentPage - 1) * studentsPerPage;
+  const endIndex = startIndex + studentsPerPage;
+  const currentStudents = filteredStudents.slice(startIndex, endIndex);
+
+  // Reset to first page when search term or filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCompanies]);
+
+  // Pagination handlers
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-base-200 flex flex-col items-center py-8 px-2">
       <div className="w-full max-w-6xl flex flex-col items-center">
         <div className="w-full flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-primary tracking-tight">Placement Done Students</h1>
-          <button
-            className="btn btn-success font-semibold flex items-center px-4 py-2 text-base rounded-lg shadow hover:scale-105 transition-transform"
-            onClick={() => window.open("/api/placement-done/export", "_blank")}
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            Export as Excel
-          </button>
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            {students.length > 0 && (
+              <div className="text-sm text-gray-600 font-medium">
+                Showing {startIndex + 1}-{Math.min(endIndex, filteredStudents.length)} of {filteredStudents.length} students
+                {(searchTerm || selectedCompanies.length > 0) && ` (filtered from ${students.length} total)`}
+              </div>
+            )}
+            <button
+              className="btn btn-success font-semibold flex items-center px-4 py-2 text-base rounded-lg shadow hover:scale-105 transition-transform"
+              onClick={() => window.open("/api/placement-done/export", "_blank")}
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              Export as Excel
+            </button>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="w-full max-w-4xl mb-6 flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            {/* Search Input */}
+            <div className="relative flex-1 max-w-md">
+              <input
+                type="text"
+                placeholder="Search by name or reg number..."
+                className="input input-bordered w-full pl-10 pr-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <svg 
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth={2} 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              {searchTerm && (
+                <button
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  onClick={() => setSearchTerm("")}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+
+            {/* Filter Toggle Button */}
+            <button
+              className="btn btn-outline btn-primary font-semibold flex items-center gap-2"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              Filters
+              {selectedCompanies.length > 0 && (
+                <span className="badge badge-primary badge-sm">{selectedCompanies.length}</span>
+              )}
+            </button>
+
+            {/* Clear Filters Button */}
+            {(searchTerm || selectedCompanies.length > 0) && (
+              <button
+                className="btn btn-ghost btn-sm font-semibold text-error"
+                onClick={clearAllFilters}
+              >
+                Clear All
+              </button>
+            )}
+          </div>
+
+          {/* Company Filters */}
+          {showFilters && (
+            <div className="bg-base-100 rounded-xl p-4 shadow-lg border border-base-300">
+              <h3 className="font-semibold text-lg mb-3 text-primary">Filter by Company</h3>
+              {uniqueCompanies.length === 0 ? (
+                <p className="text-gray-500 text-sm">No companies available</p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-60 overflow-y-auto">
+                  {uniqueCompanies.map((company) => {
+                    const count = students.filter(s => s.placedCompany === company).length;
+                    const isSelected = selectedCompanies.includes(company);
+                    return (
+                      <button
+                        key={company}
+                        type="button"
+                        onClick={() => handleCompanyFilter(company)}
+                        className={`w-full flex items-center justify-between gap-3 p-3 rounded-lg border transition-shadow hover:shadow-sm focus:outline-none ${isSelected ? 'bg-primary text-white border-primary' : 'bg-base-100 border-base-300'}`}
+                        aria-pressed={isSelected}
+                        title={`${company} — ${count} student${count !== 1 ? 's' : ''}`}
+                      >
+                        <div className="truncate text-sm font-medium text-left">{company}</div>
+                        <div className={`badge ${isSelected ? 'badge-ghost text-white/90 bg-white/20' : 'badge-outline'}`}>{count}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
         </div>
         {loading ? (
           <div className="w-full flex justify-center items-center py-16">
             <span className="loading loading-spinner loading-lg text-primary"></span>
           </div>
-        ) : students.length === 0 ? (
-          <div className="w-full text-center text-gray-400 font-semibold py-16">No placement done students found.</div>
+        ) : currentStudents.length === 0 ? (
+          <div className="w-full text-center text-gray-400 font-semibold py-16">
+            {(searchTerm || selectedCompanies.length > 0) ? 
+              `No students found matching your filters` : 
+              "No placement done students found."
+            }
+          </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
-            {students.map((s, idx) => (
-              <div
-                key={s._id || idx}
-                className="bg-base-100 rounded-2xl shadow-xl p-6 flex flex-col gap-2 border border-base-300 hover:shadow-2xl transition cursor-pointer"
-                onClick={() => setModalStudent(s)}
-                tabIndex={0}
-                aria-label={`View details for ${s.name}`}
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold">
-                    {s.name?.[0] || '?'}
-                  </div>
-                  <div>
-                    <div className="font-extrabold text-lg text-primary">{s.name}</div>
-                    <div className="text-xs font-mono text-gray-500">Reg No: {s.regNo}</div>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                  <span><span className="font-semibold">Company:</span> {s.placedCompany}</span>
-                  <span><span className="font-semibold">Batch:</span> {s.originalBatch}</span>
-                </div>
-                <div className="flex justify-end mt-2">
-                  <span className="text-xs text-primary font-semibold">Click to view details</span>
-                </div>
-              </div>
-            ))}
+          <div className="w-full overflow-x-auto">
+            <table className="table table-zebra w-full bg-base-100 rounded-2xl shadow-xl">
+              <thead>
+                <tr className="border-b-2 border-primary text-primary">
+                  <th className="text-center font-bold">S.No</th>
+                  <th className="font-bold">Student Name</th>
+                  <th className="font-bold">Reg No</th>
+                  <th className="font-bold">Company</th>
+                  <th className="font-bold">Batch</th>
+                  <th className="font-bold">Package</th>
+                  <th className="font-bold">Type</th>
+                  <th className="text-center font-bold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentStudents.map((s, idx) => (
+                  <tr
+                    key={s._id || idx}
+                    className="hover:bg-base-300 cursor-pointer transition-colors"
+                    onClick={() => setModalStudent(s)}
+                    tabIndex={0}
+                    aria-label={`View details for ${s.name}`}
+                  >
+                    <td className="text-center font-semibold">{startIndex + idx + 1}</td>
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-lg font-bold">
+                          {s.name?.[0] || '?'}
+                        </div>
+                        <div className="font-semibold text-primary">{s.name}</div>
+                      </div>
+                    </td>
+                    <td className="font-mono text-sm">{s.regNo}</td>
+                    <td className="font-medium">{s.placedCompany}</td>
+                    <td className="font-medium">{s.originalBatch}</td>
+                    <td className="font-medium">{s.package || '-'}</td>
+                    <td className="capitalize font-medium">{s.placementType?.replace("+", " + ") || '-'}</td>
+                    <td className="text-center">
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                        <button
+                          className="btn btn-primary btn-sm font-semibold w-full sm:w-auto"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setModalStudent(s);
+                          }}
+                        >
+                          View Details
+                        </button>
+                        <button
+                          className="btn btn-ghost btn-sm font-semibold w-full sm:w-auto"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditStudent(s);
+                            setShowEditModal(true);
+                          }}
+                        >
+                          Edit Details
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
+
+        {/* Pagination Controls */}
+        {filteredStudents.length > studentsPerPage && (
+          <div className="flex flex-col sm:flex-row justify-between items-center w-full max-w-6xl mt-6 gap-4">
+            <div className="text-sm text-gray-600">
+              Page {currentPage} of {totalPages}
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                className={`btn btn-outline btn-primary btn-sm font-semibold ${
+                  currentPage === 1 ? 'btn-disabled' : ''
+                }`}
+                onClick={goToPreviousPage}
+                disabled={currentPage === 1}
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+              </button>
+              <button
+                className={`btn btn-outline btn-primary btn-sm font-semibold ${
+                  currentPage === totalPages ? 'btn-disabled' : ''
+                }`}
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+              >
+                Next
+                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
         <button
           className="btn btn-outline btn-primary mt-8 px-6 py-2 text-base font-semibold rounded-lg shadow-sm hover:scale-105 transition-transform"
           onClick={() => navigate(-1)}
@@ -94,7 +330,7 @@ const PlacementDonePage = () => {
           onClick={closeModal}
         >
           <div
-            className="bg-base-100 rounded-2xl shadow-2xl w-[95vw] max-w-md p-6 relative flex flex-col items-center"
+            className="bg-base-100 rounded-2xl shadow-2xl w-[95vw] max-w-lg p-4 sm:p-6 relative flex flex-col items-center max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
             <button
@@ -151,10 +387,274 @@ const PlacementDonePage = () => {
                   <div>College: <span className="font-mono">{modalStudent.collegeEmail || '-'}</span></div>
                 </div>
               </div>
+              
+              {/* Additional Offers */}
+              {modalStudent.additionalOffers && modalStudent.additionalOffers.length > 0 && (
+                <div className="flex flex-col gap-1 mt-2">
+                  <span className="font-semibold">Additional Offers:</span>
+                  <div className="ml-2 space-y-2">
+                    {modalStudent.additionalOffers.map((offer, index) => (
+                      <div key={index} className="p-2 bg-base-200 rounded text-xs">
+                        <div className="font-semibold">{offer.company}</div>
+                        <div>Package: {offer.package}</div>
+                        <div>Type: {offer.placementType}</div>
+                        <div>Status: <span className={`badge badge-xs ${
+                          offer.status === 'accepted' ? 'badge-success' : 
+                          offer.status === 'rejected' ? 'badge-error' : 'badge-warning'
+                        }`}>{offer.status}</span></div>
+                        {offer.notes && <div>Notes: {offer.notes}</div>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex justify-between mt-2 text-xs text-gray-400">
                 <span>Moved At:</span>
                 <span>{modalStudent.movedAt ? new Date(modalStudent.movedAt).toLocaleString() : '-'}</span>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal for student details */}
+      {showEditModal && editStudent && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+          onClick={() => setShowEditModal(false)}
+        >
+          <div
+            className="bg-base-100 rounded-2xl shadow-2xl w-[95vw] max-w-3xl p-4 sm:p-6 relative"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-3 right-3 btn btn-circle btn-sm btn-ghost"
+              onClick={() => setShowEditModal(false)}
+              aria-label="Close"
+            >
+              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 className="text-xl font-bold text-primary mb-3">Edit Placement Details</h2>
+            <div className="overflow-y-auto max-h-[70vh] pr-2">
+              {/* Primary Placement Details */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3 border-b pb-2">Primary Placement Details</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-sm">Company</label>
+                    <input className="input input-bordered w-full" value={editStudent.placedCompany || ''} onChange={e => setEditStudent(prev => ({...prev, placedCompany: e.target.value}))} />
+                  </div>
+
+                  <div>
+                    <label className="text-sm">Package</label>
+                    <input className="input input-bordered w-full" value={editStudent.package || ''} onChange={e => setEditStudent(prev => ({...prev, package: e.target.value}))} />
+                  </div>
+
+                  <div>
+                    <label className="text-sm">Placement Type</label>
+                    <select className="select select-bordered w-full" value={editStudent.placementType || ''} onChange={e => setEditStudent(prev => ({...prev, placementType: e.target.value}))}>
+                      <option value="">Select Type</option>
+                      <option value="internship">Internship</option>
+                      <option value="internship+work">Internship + Work</option>
+                      <option value="work">Work</option>
+                    </select>
+                  </div>
+
+                <div>
+                  <label className="text-sm">Batch</label>
+                  <input className="input input-bordered w-full" value={editStudent.originalBatch || ''} onChange={e => setEditStudent(prev => ({...prev, originalBatch: e.target.value}))} />
+                </div>
+
+                <div>
+                  <label className="text-sm">Year</label>
+                  <input type="number" min="2020" max="2030" className="input input-bordered w-full" value={editStudent.year || new Date().getFullYear()} onChange={e => setEditStudent(prev => ({...prev, year: Number(e.target.value)}))} />
+                </div>
+
+                <div>
+                  <label className="text-sm">Attendance %</label>
+                  <input type="number" min="0" max="100" className="input input-bordered w-full" value={editStudent.attendancePercent ?? 0} onChange={e => setEditStudent(prev => ({...prev, attendancePercent: Number(e.target.value)}))} />
+                </div>
+
+                <div>
+                  <label className="text-sm">Marks - Efforts</label>
+                  <input type="number" min="0" className="input input-bordered w-full" value={editStudent.marks?.efforts ?? 0} onChange={e => setEditStudent(prev => ({...prev, marks: {...prev.marks, efforts: Number(e.target.value)}}))} />
+                </div>
+
+                <div>
+                  <label className="text-sm">Marks - Presentation</label>
+                  <input type="number" min="0" className="input input-bordered w-full" value={editStudent.marks?.presentation ?? 0} onChange={e => setEditStudent(prev => ({...prev, marks: {...prev.marks, presentation: Number(e.target.value)}}))} />
+                </div>
+
+                <div>
+                  <label className="text-sm">Marks - Assessment</label>
+                  <input type="number" min="0" className="input input-bordered w-full" value={editStudent.marks?.assessment ?? 0} onChange={e => setEditStudent(prev => ({...prev, marks: {...prev.marks, assessment: Number(e.target.value)}}))} />
+                </div>
+
+                <div>
+                  <label className="text-sm">Marks - Assignment</label>
+                  <input type="number" min="0" className="input input-bordered w-full" value={editStudent.marks?.assignment ?? 0} onChange={e => setEditStudent(prev => ({...prev, marks: {...prev.marks, assignment: Number(e.target.value)}}))} />
+                </div>
+
+                <div>
+                  <label className="text-sm">Personal Email</label>
+                  <input className="input input-bordered w-full" value={editStudent.personalEmail || ''} onChange={e => setEditStudent(prev => ({...prev, personalEmail: e.target.value}))} />
+                </div>
+
+                <div>
+                  <label className="text-sm">College Email</label>
+                  <input className="input input-bordered w-full" value={editStudent.collegeEmail || ''} onChange={e => setEditStudent(prev => ({...prev, collegeEmail: e.target.value}))} />
+                </div>
+                </div>
+              </div>
+
+              {/* Additional Offers Section */}
+              <div className="mb-6">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-lg font-semibold border-b pb-2">Additional Offers</h3>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-primary"
+                    onClick={() => {
+                      const newOffer = {
+                        company: '',
+                        package: '',
+                        placementType: '',
+                        status: 'pending',
+                        notes: '',
+                        offerDate: new Date().toISOString().split('T')[0]
+                      };
+                      setEditStudent(prev => ({
+                        ...prev,
+                        additionalOffers: [...(prev.additionalOffers || []), newOffer]
+                      }));
+                    }}
+                  >
+                    Add Offer
+                  </button>
+                </div>
+
+                {(editStudent.additionalOffers || []).map((offer, index) => (
+                  <div key={index} className="border rounded-lg p-4 mb-3 bg-base-200">
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="font-semibold">Offer #{index + 1}</h4>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-error"
+                        onClick={() => {
+                          setEditStudent(prev => ({
+                            ...prev,
+                            additionalOffers: prev.additionalOffers.filter((_, i) => i !== index)
+                          }));
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-sm">Company</label>
+                        <input
+                          className="input input-bordered w-full"
+                          value={offer.company || ''}
+                          onChange={e => {
+                            const newOffers = [...(editStudent.additionalOffers || [])];
+                            newOffers[index] = { ...newOffers[index], company: e.target.value };
+                            setEditStudent(prev => ({ ...prev, additionalOffers: newOffers }));
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm">Package</label>
+                        <input
+                          className="input input-bordered w-full"
+                          value={offer.package || ''}
+                          onChange={e => {
+                            const newOffers = [...(editStudent.additionalOffers || [])];
+                            newOffers[index] = { ...newOffers[index], package: e.target.value };
+                            setEditStudent(prev => ({ ...prev, additionalOffers: newOffers }));
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm">Placement Type</label>
+                        <select
+                          className="select select-bordered w-full"
+                          value={offer.placementType || ''}
+                          onChange={e => {
+                            const newOffers = [...(editStudent.additionalOffers || [])];
+                            newOffers[index] = { ...newOffers[index], placementType: e.target.value };
+                            setEditStudent(prev => ({ ...prev, additionalOffers: newOffers }));
+                          }}
+                        >
+                          <option value="">Select Type</option>
+                          <option value="internship">Internship</option>
+                          <option value="internship+work">Internship + Work</option>
+                          <option value="work">Work</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-sm">Status</label>
+                        <select
+                          className="select select-bordered w-full"
+                          value={offer.status || 'pending'}
+                          onChange={e => {
+                            const newOffers = [...(editStudent.additionalOffers || [])];
+                            newOffers[index] = { ...newOffers[index], status: e.target.value };
+                            setEditStudent(prev => ({ ...prev, additionalOffers: newOffers }));
+                          }}
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="accepted">Accepted</option>
+                          <option value="rejected">Rejected</option>
+                        </select>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="text-sm">Notes</label>
+                        <textarea
+                          className="textarea textarea-bordered w-full"
+                          rows="2"
+                          value={offer.notes || ''}
+                          onChange={e => {
+                            const newOffers = [...(editStudent.additionalOffers || [])];
+                            newOffers[index] = { ...newOffers[index], notes: e.target.value };
+                            setEditStudent(prev => ({ ...prev, additionalOffers: newOffers }));
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 mt-3">
+              <button className="btn btn-ghost" onClick={() => setShowEditModal(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={async () => {
+                try {
+                  const payload = {
+                    placedCompany: editStudent.placedCompany,
+                    package: editStudent.package,
+                    placementType: editStudent.placementType,
+                    originalBatch: editStudent.originalBatch,
+                    attendancePercent: editStudent.attendancePercent,
+                    marks: editStudent.marks,
+                    personalEmail: editStudent.personalEmail,
+                    collegeEmail: editStudent.collegeEmail,
+                    additionalOffers: editStudent.additionalOffers || [],
+                    year: editStudent.year || new Date().getFullYear()
+                  };
+                  await api.put(`/placement-done/${editStudent._id}`, payload);
+                  toast.success('Student updated');
+                  setShowEditModal(false);
+                  fetchStudents();
+                } catch (err) {
+                  console.error(err);
+                  toast.error('Failed to update student');
+                }
+              }}>Save</button>
             </div>
           </div>
         </div>

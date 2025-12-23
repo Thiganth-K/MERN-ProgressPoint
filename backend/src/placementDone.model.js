@@ -16,6 +16,14 @@ const placementDoneSchema = new mongoose.Schema({
   placedCompany: { type: String, required: true },
   package: { type: String, required: true },
   placementType: { type: String, enum: ["internship", "internship+work", "work"], required: true },
+  additionalOffers: [{
+    company: { type: String, required: true },
+    package: { type: String, required: true },
+    placementType: { type: String, enum: ["internship", "internship+work", "work"], required: true },
+    status: { type: String, enum: ["accepted", "rejected", "pending"], default: "pending" },
+    notes: { type: String, default: "" },
+    offerDate: { type: Date, default: Date.now }
+  }],
   originalBatch: { type: String, required: true },
   year: { type: Number, required: true },
   movedAt: { type: Date, default: Date.now }

@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-12-02T07:32:49.473Z",
+  "collections": {
+    "admins": {
+      "documentCount": 5,
+      "filePath": "C:\\Users\\THIGANTH\\MERN-ProgressPoint\\backend\\backups\\backup_2025-12-02_07-32-49\\admins.json",
+      "fileSize": 77461
+    },
+    "batches": {
+      "documentCount": 11,
+      "filePath": "C:\\Users\\THIGANTH\\MERN-ProgressPoint\\backend\\backups\\backup_2025-12-02_07-32-49\\batches.json",
+      "fileSize": 1232342
+    },
+    "placementdone": {
+      "documentCount": 32,
+      "filePath": "C:\\Users\\THIGANTH\\MERN-ProgressPoint\\backend\\backups\\backup_2025-12-02_07-32-49\\placementdone.json",
+      "fileSize": 17212
+    },
+    "timerestrictions": {
+      "documentCount": 2,
+      "filePath": "C:\\Users\\THIGANTH\\MERN-ProgressPoint\\backend\\backups\\backup_2025-12-02_07-32-49\\timerestrictions.json",
+      "fileSize": 857
+    }
+  },
+  "totalDocuments": 50
+}

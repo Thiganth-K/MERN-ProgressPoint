@@ -1,0 +1,2532 @@
+[
+  {
+    "_id": "6858ec5485f026d979d85e6f",
+    "adminName": "08itjla",
+    "adminPassword": "08itjla",
+    "logs": [
+      {
+        "type": "login",
+        "timestamp": "2025-06-30T04:59:01.097Z",
+        "_id": "686219959f0883d1047cf612"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-06-30T05:12:29.773Z",
+        "_id": "68621cbd9f0883d1047de374"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-06-30T06:34:27.965Z",
+        "_id": "68622ff355add54983754b67"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-01T11:14:32.353Z",
+        "_id": "6863c3183e621943d798e316"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-08T06:36:24.519Z",
+        "_id": "686cbc68421f8ae39a68a9b3"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-08T06:43:45.327Z",
+        "_id": "686cbe21421f8ae39a6ae0fc"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-09T10:18:58.664Z",
+        "_id": "686e4212b18bfe57784435b8"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-09T13:23:43.487Z",
+        "_id": "686e6d5f0f0600a5f5085a49"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-09T13:31:21.811Z",
+        "_id": "686e6f290f0600a5f509802d"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-10T07:35:02.562Z",
+        "_id": "686f6d2662a794271ac802de"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-10T07:35:12.069Z",
+        "_id": "686f6d3062a794271ac8140f"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-23T10:57:04.572Z",
+        "_id": "6880c000f9b1337d5886b9ef"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-24T05:36:30.314Z",
+        "_id": "6881c65eed782738c18fa5c1"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-01T04:41:29.971Z",
+        "_id": "688c45790af25ebb267e8066"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-01T05:07:32.218Z",
+        "_id": "688c4b940f87da203e7b4d8e"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-01T05:21:11.330Z",
+        "_id": "688c4ec70f87da203e7b4da0"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-01T12:59:18.727Z",
+        "_id": "688cba2691b78febadb7186b"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-01T12:59:50.426Z",
+        "_id": "688cba4691b78febadb72dfa"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-05T06:28:55.805Z",
+        "_id": "6891a4a74eaa6912da2e5a17"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-05T07:34:07.233Z",
+        "_id": "6891b3eff7936b38e2e44f3e"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-05T12:00:44.011Z",
+        "_id": "6891f26ca20bac6ecea45731"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-05T12:27:47.046Z",
+        "_id": "6891f8c3da1fece54681d552"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-05T12:27:47.267Z",
+        "_id": "6891f8c3da1fece54681d569"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-05T12:28:05.335Z",
+        "_id": "6891f8d5da1fece54681d585"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-18T09:41:05.832Z",
+        "_id": "68a2f531daabb4d56a3270f2"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-23T10:36:14.503Z",
+        "_id": "68d2781eca04f68b2217e5b9"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-30T07:16:21.208Z",
+        "_id": "690310c5304b652b1e242823"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-10-30T07:20:50.049Z",
+        "_id": "690311d2304b652b1e25dbba"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-11-17T06:36:18.704Z",
+        "_id": "691ac262c9af6d0f708e7de5"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-11-17T06:45:29.565Z",
+        "_id": "691ac489c9af6d0f708f64e6"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-11-17T06:47:00.693Z",
+        "_id": "691ac4e4c9af6d0f708f6507"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-11-17T06:47:36.742Z",
+        "_id": "691ac508c9af6d0f70904c0a"
+      }
+    ],
+    "__v": 61
+  },
+  {
+    "_id": "6858ec6b85f026d979d85f64",
+    "adminName": "07itkar",
+    "adminPassword": "07itkar",
+    "logs": [
+      {
+        "type": "login",
+        "timestamp": "2025-06-30T05:23:15.799Z",
+        "_id": "68621f439f0883d1047e40b4"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-06-30T06:33:33.980Z",
+        "_id": "68622fbd55add5498374eaac"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-06-30T06:33:44.575Z",
+        "_id": "68622fc855add5498374fe98"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-06-30T06:42:28.852Z",
+        "_id": "686231d455add54983761b2a"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-06-30T06:42:38.372Z",
+        "_id": "686231de55add54983762fd5"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-06-30T11:01:41.430Z",
+        "_id": "68626e9577f04caf301392c2"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-01T06:46:55.650Z",
+        "_id": "6863845f8db63c46b44f58ab"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-02T10:36:30.009Z",
+        "_id": "68650bae38f678b1b73d0634"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-02T10:36:40.714Z",
+        "_id": "68650bb838f678b1b73d063f"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-03T10:51:00.788Z",
+        "_id": "68666094ece540f6dbbff1b1"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-03T10:51:00.780Z",
+        "_id": "68666094ece540f6dbbff1a5"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-03T10:50:52.296Z",
+        "_id": "6866608cece540f6dbbfb47a"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-03T10:51:04.002Z",
+        "_id": "68666098ece540f6dbc014b5"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-04T10:51:50.418Z",
+        "_id": "6867b246b51b14b86624b2aa"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-04T10:51:54.407Z",
+        "_id": "6867b24ab51b14b86624c28c"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-04T10:51:54.624Z",
+        "_id": "6867b24ab51b14b86624c29e"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-09T13:16:46.214Z",
+        "_id": "686e6bbe0f0600a5f5070b02"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-18T11:59:25.481Z",
+        "_id": "687a371dff6ee69b916b80dc"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-18T13:06:58.456Z",
+        "_id": "687a46f20c77a90463c6acb6"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-18T13:28:02.735Z",
+        "_id": "687a4be20c77a90463c8677f"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-04T11:56:08.452Z",
+        "_id": "68909fd83b19b4552fdb98da"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-04T12:53:14.008Z",
+        "_id": "6890ad3a25b6ae0c095a5a05"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-05T11:50:36.869Z",
+        "_id": "6891f00ca20bac6ece9edd2d"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-18T09:39:31.899Z",
+        "_id": "68a2f4d3daabb4d56a3146ab"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-18T09:40:50.426Z",
+        "_id": "68a2f522daabb4d56a3270d7"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-20T12:03:43.479Z",
+        "_id": "68a5b99f20e4d8c689f68646"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-20T12:03:59.614Z",
+        "_id": "68a5b9af20e4d8c689f6d121"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-20T12:07:17.397Z",
+        "_id": "68a5ba7520e4d8c689f840f7"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-20T13:27:37.043Z",
+        "_id": "68a5cd497b98315801e35aac"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-21T10:41:46.858Z",
+        "_id": "68a6f7eae8337bd6d27d28fd"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-28T11:43:48.092Z",
+        "_id": "68b040f48c9ffe7cf8c6942c"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-28T11:43:50.951Z",
+        "_id": "68b040f68c9ffe7cf8c6944f"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-28T11:45:01.540Z",
+        "_id": "68b0413d8c9ffe7cf8c840e1"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-28T13:09:32.175Z",
+        "_id": "68b0550cdb012bc04d3d3e80"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-28T13:12:00.139Z",
+        "_id": "68b055a0db012bc04d3dd1ca"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-28T13:13:57.445Z",
+        "_id": "68b05615d556e3bc7eb5afe3"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-28T13:14:14.698Z",
+        "_id": "68b05626d556e3bc7eb68044"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-28T13:16:49.321Z",
+        "_id": "68b056c1d556e3bc7eb89911"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-28T13:17:41.924Z",
+        "_id": "68b056f5d556e3bc7eb936cb"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-28T13:17:53.113Z",
+        "_id": "68b05701d556e3bc7eb936f5"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-28T13:52:21.320Z",
+        "_id": "68b05f15d556e3bc7ec1cb35"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-29T11:36:29.493Z",
+        "_id": "68b190bd0b2ead1314ecd5e5"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-29T12:09:08.125Z",
+        "_id": "68b198647a2fc82cb8e29c81"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-29T12:20:28.781Z",
+        "_id": "68b19b0c7a2fc82cb8e4a662"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-29T12:20:40.595Z",
+        "_id": "68b19b187a2fc82cb8e4eff0"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-29T19:06:06.669Z",
+        "_id": "6902659e55832cfe3336ea6f"
+      },
+      {
+        "type": "batch_selection",
+        "timestamp": "2025-10-29T19:06:25.401Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "Selected batch: Batch-[0]"
+        },
+        "_id": "690265b155832cfe3337840d"
+      },
+      {
+        "type": "mark_attendance",
+        "timestamp": "2025-10-29T19:06:27.356Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "Navigated to markattendance for batch: Batch-[0]",
+          "metadata": {
+            "page": "markattendance"
+          }
+        },
+        "_id": "690265b355832cfe3337b764"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T19:06:27.542Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "690265b355832cfe3337b824"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T19:06:27.701Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "690265b355832cfe3337b8e4"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-29T19:07:22.835Z",
+        "details": {
+          "studentRegNo": "61782323110115",
+          "action": "Search student by registration number",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "regNo": "61782323110115"
+            }
+          }
+        },
+        "_id": "690265ea55832cfe3338d25f"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-29T19:07:22.858Z",
+        "details": {
+          "studentRegNo": "61782323110115",
+          "action": "Searched for student: 61782323110115"
+        },
+        "_id": "690265ea55832cfe3338d293"
+      },
+      {
+        "type": "batch_selection",
+        "timestamp": "2025-10-29T19:07:59.496Z",
+        "details": {
+          "batchName": "Batch-[3]",
+          "action": "Selected batch: Batch-[3]"
+        },
+        "_id": "6902660f55832cfe3338d2cb"
+      },
+      {
+        "type": "batch_selection",
+        "timestamp": "2025-10-29T19:08:01.054Z",
+        "details": {
+          "batchName": "Batch-[1]",
+          "action": "Selected batch: Batch-[1]"
+        },
+        "_id": "6902661155832cfe33390626"
+      },
+      {
+        "type": "batch_selection",
+        "timestamp": "2025-10-29T19:08:01.850Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "Selected batch: Batch-[0]"
+        },
+        "_id": "6902661155832cfe33391ff2"
+      },
+      {
+        "type": "view_leaderboard",
+        "timestamp": "2025-10-29T19:08:11.783Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "Navigated to leaderboard for batch: Batch-[0]",
+          "metadata": {
+            "page": "leaderboard"
+          }
+        },
+        "_id": "6902661b55832cfe3339a007"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T19:08:11.992Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "6902661b55832cfe3339a0cf"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T19:08:12.174Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "6902661c55832cfe3339a197"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T19:08:19.156Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "6902662355832cfe333a08aa"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T19:08:19.421Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "6902662355832cfe333a0974"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T19:08:23.155Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "6902662755832cfe333a7089"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T19:08:23.543Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "6902662755832cfe333a8ae6"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-10-29T19:08:29.803Z",
+        "_id": "6902662d55832cfe333ad7dd"
+      }
+    ],
+    "__v": 95
+  },
+  {
+    "_id": "685a541ce873d7865e3221f8",
+    "adminName": "test123",
+    "adminPassword": "test123",
+    "logs": [
+      {
+        "type": "login",
+        "timestamp": "2025-07-06T09:18:26.462Z",
+        "_id": "686a3f62afc237b75728c62f"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-06T09:18:58.130Z",
+        "_id": "686a3f82afc237b757296215"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-08T10:13:14.500Z",
+        "_id": "686cef3a5795ee4d7e7b508e"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-08T10:14:14.127Z",
+        "_id": "686cef765795ee4d7e7c3a71"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-10T08:52:31.262Z",
+        "_id": "686f7f4fa1c7521f80a7c7a3"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-11T11:07:00.124Z",
+        "_id": "6870f05417a66ff3967146b5"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-11T11:10:13.073Z",
+        "_id": "6870f11517a66ff3967241a7"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-12T00:59:09.641Z",
+        "_id": "6871b35dd05b85aa6a398d1f"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-12T15:26:18.453Z",
+        "_id": "68727e9ac9f67a0824b571de"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-14T13:14:17.573Z",
+        "_id": "687502a9d6d25535e02a10ea"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-16T12:46:45.738Z",
+        "_id": "68779f35f9da306540c69810"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-16T23:49:14.698Z",
+        "_id": "68783a7a12f58da1f131377e"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-17T05:15:12.158Z",
+        "_id": "687886e0e413d773b8936587"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-17T05:27:29.469Z",
+        "_id": "687889c1e413d773b895cf3d"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-17T12:05:38.791Z",
+        "_id": "6878e712cf5b16187f13c312"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-17T12:07:48.820Z",
+        "_id": "6878e794cf5b16187f145035"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-17T12:08:23.211Z",
+        "_id": "6878e7b7cf5b16187f15629f"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-17T12:08:25.364Z",
+        "_id": "6878e7b9cf5b16187f157598"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-17T12:35:27.401Z",
+        "_id": "6878ee0feaf6448b35a54589"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-18T05:01:40.352Z",
+        "_id": "6879d534e851c37eb58d6562"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-18T12:10:29.460Z",
+        "_id": "687a39b5ff6ee69b916d1216"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-18T12:15:54.631Z",
+        "_id": "687a3afaff6ee69b916def3d"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-18T12:29:41.218Z",
+        "_id": "687a3e35ff6ee69b916fa29c"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-18T15:39:14.358Z",
+        "_id": "687a6aa28b74e08458f379ff"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-18T15:40:33.925Z",
+        "_id": "687a6af18b74e08458f590c2"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-18T15:41:08.579Z",
+        "_id": "687a6b142566a93d81ec3992"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-21T13:15:18.434Z",
+        "_id": "687e3d668a6f0f9c78089731"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-22T08:29:49.477Z",
+        "_id": "687f4bfd6bd2e56b62d05519"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-22T08:29:49.865Z",
+        "_id": "687f4bfd6bd2e56b62d05538"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-22T08:36:41.579Z",
+        "_id": "687f4d99c77145c00b739acc"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-22T08:36:41.461Z",
+        "_id": "687f4d99c77145c00b739aad"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-23T10:28:59.107Z",
+        "_id": "6880b96bf9b1337d5882001b"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-23T10:28:59.805Z",
+        "_id": "6880b96bf9b1337d5882003e"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-23T10:31:55.989Z",
+        "_id": "6880ba1bf9b1337d5883e222"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-23T10:39:11.242Z",
+        "_id": "6880bbcff9b1337d58850e85"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-23T10:48:08.103Z",
+        "_id": "6880bde8f9b1337d58868894"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-23T10:48:08.825Z",
+        "_id": "6880bde8f9b1337d588688bb"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-23T12:02:01.739Z",
+        "_id": "6880cf39a2f694320c4dbe3c"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-23T12:03:14.253Z",
+        "_id": "6880cf82a2f694320c4eabfa"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-23T12:20:48.087Z",
+        "_id": "6880d3a04288294686e90db0"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-24T12:10:44.591Z",
+        "_id": "688222c46b4afd3b1146f0f3"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-26T09:53:53.523Z",
+        "_id": "6884a5b1e287ef0ca6c40d2a"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-26T09:54:53.244Z",
+        "_id": "6884a5ede287ef0ca6c4cf17"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-26T09:55:29.102Z",
+        "_id": "6884a611e287ef0ca6c53e55"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-28T08:21:20.654Z",
+        "_id": "688733008166b9e51f31808d"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-28T08:24:07.582Z",
+        "_id": "688733a78166b9e51f332c23"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-28T11:27:27.124Z",
+        "_id": "68875e9f5b779694f05298bf"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-28T11:27:45.117Z",
+        "_id": "68875eb15b779694f0539173"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-28T11:35:54.815Z",
+        "_id": "6887609a5b779694f054374a"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-28T11:37:55.171Z",
+        "_id": "688761135b779694f0578cf8"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-28T11:42:10.913Z",
+        "_id": "688762125b779694f0578d2d"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-28T11:45:24.252Z",
+        "_id": "688762d4903a0891eaa1a055"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-29T06:04:57.351Z",
+        "_id": "68886489a1e5cacd4d24b89f"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-29T06:05:00.227Z",
+        "_id": "6888648ca1e5cacd4d24b8d6"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-29T06:05:00.564Z",
+        "_id": "6888648ca1e5cacd4d24b90e"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-29T06:20:12.004Z",
+        "_id": "6888681ca1e5cacd4d2681b1"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-29T06:34:31.041Z",
+        "_id": "68886b775f256ac4589728e7"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-29T06:35:43.036Z",
+        "_id": "68886bbf5f256ac45898e59d"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-30T12:46:02.832Z",
+        "_id": "688a140a8b43daea56210ed0"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-30T12:46:56.581Z",
+        "_id": "688a14408b43daea56218fea"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-30T12:48:00.481Z",
+        "_id": "688a14808b43daea56219029"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-30T12:48:06.319Z",
+        "_id": "688a14868b43daea56221145"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-30T12:49:41.655Z",
+        "_id": "688a14e58b43daea56229266"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-30T12:50:55.980Z",
+        "_id": "688a152f8b43daea56231384"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-31T06:38:58.998Z",
+        "_id": "688b0f82e33e428f4f5210b5"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-07-31T06:39:14.954Z",
+        "_id": "688b0f92e33e428f4f531aae"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-31T07:28:46.925Z",
+        "_id": "688b1b2e9ba6af8030fb08eb"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-07-31T07:28:47.493Z",
+        "_id": "688b1b2f9ba6af8030fb0931"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-02T02:24:16.647Z",
+        "_id": "688d76d0138fa66d61781762"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-02T02:25:53.883Z",
+        "_id": "688d7731138fa66d61799ac2"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-06T10:40:22.937Z",
+        "_id": "6893311667cf1e292e498dee"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-06T10:40:28.466Z",
+        "_id": "6893311c67cf1e292e4a23b4"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-06T10:40:39.217Z",
+        "_id": "6893312767cf1e292e4a2400"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-06T10:41:21.608Z",
+        "_id": "6893315167cf1e292e4c9cc4"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-06T10:41:21.711Z",
+        "_id": "6893315167cf1e292e4c9d10"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-13T11:57:27.604Z",
+        "_id": "689c7da72617e2e8bb2a9da1"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-20T11:26:06.129Z",
+        "_id": "68a5b0cef969d6065f7faa70"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-20T11:26:07.400Z",
+        "_id": "68a5b0cff969d6065f7faac0"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-23T09:41:33.498Z",
+        "_id": "68a98ccd4becdc451482be9b"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-23T09:52:38.628Z",
+        "_id": "68a98f664becdc451483596d"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-23T09:56:05.569Z",
+        "_id": "68a990354becdc451484c9a3"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-23T09:57:46.819Z",
+        "_id": "68a9909a4becdc4514863b68"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-24T07:14:44.136Z",
+        "_id": "68aabbe4f6a552ca15a48253"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-24T07:22:43.474Z",
+        "_id": "68aabdc3f6a552ca15a59dc8"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-24T07:23:02.827Z",
+        "_id": "68aabdd6f6a552ca15a59e1f"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-24T07:24:28.635Z",
+        "_id": "68aabe2cf6a552ca15a96557"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-24T07:24:32.344Z",
+        "_id": "68aabe30f6a552ca15a965b0"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-24T07:25:00.080Z",
+        "_id": "68aabe4cf6a552ca15aa0078"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-24T10:48:03.268Z",
+        "_id": "68aaede3037bb561070da913"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-24T10:48:33.477Z",
+        "_id": "68aaee01037bb561070e1063"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-24T16:57:35.546Z",
+        "_id": "68ab447f493927733fdd261f"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-24T17:04:24.942Z",
+        "_id": "68ab4618493927733fe32e4d"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-25T12:06:49.886Z",
+        "_id": "68ac51d990849aceaf9b8bfa"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-25T12:21:32.478Z",
+        "_id": "68ac554c90849aceaf9df669"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-26T04:44:36.240Z",
+        "_id": "68ad3bb4f1f30cd07bddcce7"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-08-26T04:44:50.124Z",
+        "_id": "68ad3bc2f1f30cd07bdde70f"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-08-26T04:44:59.922Z",
+        "_id": "68ad3bcbf1f30cd07bde34c7"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-04T10:41:27.866Z",
+        "_id": "68b96cd759a88b245760bfaf"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-09-04T10:44:17.541Z",
+        "_id": "68b96d8159a88b2457621211"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-04T10:53:43.902Z",
+        "_id": "68b96fb759a88b2457627249"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-10T09:41:13.142Z",
+        "_id": "68c147b9f5a846c83f9420b0"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-09-10T09:42:58.742Z",
+        "_id": "68c14822f5a846c83f950452"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-10T09:52:06.174Z",
+        "_id": "68c14a46f5a846c83f955de2"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-09-10T09:59:26.120Z",
+        "_id": "68c14bfef5a846c83f9611fd"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-10T09:59:31.820Z",
+        "_id": "68c14c03f5a846c83f961268"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-12T09:32:14.047Z",
+        "_id": "68c3e89ea637d7d3b35ed2ae"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-09-12T09:36:07.029Z",
+        "_id": "68c3e987a637d7d3b36090f3"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-17T09:43:38.395Z",
+        "_id": "68ca82ca263996407c34918e"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-09-17T09:43:47.754Z",
+        "_id": "68ca82d3263996407c34c65d"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-17T09:43:51.557Z",
+        "_id": "68ca82d7263996407c34e0fd"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-09-17T09:44:20.820Z",
+        "_id": "68ca82f4263996407c3598e2"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-17T11:59:48.562Z",
+        "_id": "68caa2b42d63612d58898671"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-09-17T12:53:02.454Z",
+        "_id": "68caaf2e2c463c746dbfa0cf"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-18T12:32:48.803Z",
+        "_id": "68cbfbf049bdc039baca0f9a"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-09-18T12:35:01.412Z",
+        "_id": "68cbfc7549bdc039bacac94d"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-19T12:15:13.344Z",
+        "_id": "68cd4951b0089941b8924ddf"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-22T04:33:11.654Z",
+        "_id": "68d0d187761ef68fcb57e834"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-22T04:33:11.875Z",
+        "_id": "68d0d187761ef68fcb57e8aa"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-25T13:02:13.562Z",
+        "_id": "68d53d55b366b41dbbf991d3"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-09-28T16:26:16.200Z",
+        "_id": "68d961a894b4bfbd68932d95"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-07T09:48:55.473Z",
+        "_id": "68e4e207a02fe7a51110b20e"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-10-07T09:51:33.418Z",
+        "_id": "68e4e2a5a02fe7a511110255"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-10-07T09:51:34.298Z",
+        "_id": "68e4e2a6a02fe7a5111102d2"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-07T09:51:35.628Z",
+        "_id": "68e4e2a7a02fe7a511110350"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-10-07T09:54:48.695Z",
+        "_id": "68e4e368a02fe7a51111539a"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-07T11:46:59.539Z",
+        "_id": "68e4fdb3b61eb4f04e473b50"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-09T12:01:51.764Z",
+        "_id": "68e7a42f6bf6b042e7dd7e90"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-16T10:15:01.016Z",
+        "_id": "68f0c5a5dbae582711393f98"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-28T05:36:46.151Z",
+        "_id": "6900566e3322f629accb14fe"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-29T17:01:01.274Z",
+        "_id": "6902484dbdad2f5f597ce34a"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-10-29T17:01:31.486Z",
+        "_id": "6902486bbdad2f5f597d7df3"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-29T17:02:01.698Z",
+        "_id": "69024889bdad2f5f597d7f44"
+      },
+      {
+        "type": "batch_selection",
+        "timestamp": "2025-10-29T17:02:12.244Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "Selected batch: Batch-[0]"
+        },
+        "_id": "69024894bdad2f5f597e1926"
+      },
+      {
+        "type": "mark_attendance",
+        "timestamp": "2025-10-29T17:02:14.028Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "Navigated to markattendance for batch: Batch-[0]",
+          "metadata": {
+            "page": "markattendance"
+          }
+        },
+        "_id": "69024896bdad2f5f597e333e"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T17:02:14.265Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "69024896bdad2f5f597e34e1"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T17:02:14.377Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "69024896bdad2f5f597e3569"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T17:02:24.968Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "690248a0bdad2f5f597eb5dc"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T17:02:25.000Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "690248a1bdad2f5f597eb666"
+      },
+      {
+        "type": "view_attendance",
+        "timestamp": "2025-10-29T17:02:33.215Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View attendance for 2025-10-22 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch ",
+              "date": "2025-10-22",
+              "session": "AN"
+            },
+            "date": "2025-10-22",
+            "session": "AN"
+          }
+        },
+        "_id": "690248a9bdad2f5f597eea2d"
+      },
+      {
+        "type": "view_attendance",
+        "timestamp": "2025-10-29T17:02:33.234Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View attendance for 2025-10-22 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch ",
+              "date": "2025-10-22",
+              "session": "AN"
+            },
+            "date": "2025-10-22",
+            "session": "AN"
+          }
+        },
+        "_id": "690248a9bdad2f5f597eeab9"
+      },
+      {
+        "type": "mark_attendance",
+        "timestamp": "2025-10-29T17:02:45.005Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "Mark attendance for 2025-10-22 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            },
+            "date": "2025-10-22",
+            "session": "AN",
+            "studentsCount": 3
+          }
+        },
+        "_id": "690248b5bdad2f5f597eeb69"
+      },
+      {
+        "type": "mark_attendance",
+        "timestamp": "2025-10-29T17:02:45.065Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "Mark attendance for 2025-10-22 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            },
+            "date": "2025-10-22",
+            "session": "AN",
+            "studentsCount": 3
+          }
+        },
+        "_id": "690248b5bdad2f5f597eebf7"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T17:12:54.811Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "69024b16bdad2f5f597eed80"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T17:12:54.848Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "69024b16bdad2f5f597eee10"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-29T17:12:56.482Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "69024b18bdad2f5f597f21e4"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-10-29T17:13:30.483Z",
+        "_id": "69024b3abdad2f5f597fefe5"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-30T07:28:09.026Z",
+        "_id": "690313898931c4208b2aa92c"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T07:28:37.010Z",
+        "details": {
+          "studentRegNo": "61782323106001",
+          "action": "Search student by registration number",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "regNo": "61782323106001"
+            }
+          }
+        },
+        "_id": "690313a58931c4208b2b5d01"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T07:28:37.361Z",
+        "details": {
+          "studentRegNo": "61782323106001",
+          "action": "Search student by registration number",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "regNo": "61782323106001"
+            }
+          }
+        },
+        "_id": "690313a58931c4208b2b5d96"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T07:28:37.394Z",
+        "details": {
+          "studentRegNo": "61782323106001",
+          "action": "Searched for student: 61782323106001"
+        },
+        "_id": "690313a58931c4208b2b5e2b"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T07:29:09.629Z",
+        "details": {
+          "studentRegNo": "61782323106072",
+          "action": "Search student by registration number",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "regNo": "61782323106072"
+            }
+          }
+        },
+        "_id": "690313c58931c4208b2b7861"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T07:29:09.723Z",
+        "details": {
+          "studentRegNo": "61782323106072",
+          "action": "Search student by registration number",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "regNo": "61782323106072"
+            }
+          }
+        },
+        "_id": "690313c58931c4208b2b78f9"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T07:29:09.761Z",
+        "details": {
+          "studentRegNo": "61782323106072",
+          "action": "Searched for student: 61782323106072"
+        },
+        "_id": "690313c58931c4208b2b7991"
+      },
+      {
+        "type": "view_marks",
+        "timestamp": "2025-10-30T07:30:14.070Z",
+        "details": {
+          "batchName": "NOT WILLING ",
+          "action": "View marks for date 2025-10-30",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "NOT WILLING ",
+              "date": "2025-10-30"
+            },
+            "date": "2025-10-30"
+          }
+        },
+        "_id": "690314068931c4208b2c494a"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T07:30:14.104Z",
+        "details": {
+          "batchName": "NOT WILLING ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "NOT WILLING "
+            }
+          }
+        },
+        "_id": "690314068931c4208b2c49e5"
+      },
+      {
+        "type": "view_marks",
+        "timestamp": "2025-10-30T07:30:14.271Z",
+        "details": {
+          "batchName": "NOT WILLING ",
+          "action": "View marks for date 2025-10-30",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "NOT WILLING ",
+              "date": "2025-10-30"
+            },
+            "date": "2025-10-30"
+          }
+        },
+        "_id": "690314068931c4208b2c4a80"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T07:30:16.076Z",
+        "details": {
+          "batchName": "NOT WILLING ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "NOT WILLING "
+            }
+          }
+        },
+        "_id": "690314088931c4208b2c65d9"
+      },
+      {
+        "type": "view_marks",
+        "timestamp": "2025-10-30T07:30:16.107Z",
+        "details": {
+          "batchName": "NOT WILLING ",
+          "action": "View marks for date 2025-10-30",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "NOT WILLING ",
+              "date": "2025-10-30"
+            },
+            "date": "2025-10-30"
+          }
+        },
+        "_id": "690314088931c4208b2c6677"
+      },
+      {
+        "type": "view_leaderboard",
+        "timestamp": "2025-10-30T07:31:21.616Z",
+        "details": {
+          "batchName": "NOT WILLING ",
+          "action": "Navigated to leaderboard for batch: NOT WILLING ",
+          "metadata": {
+            "page": "leaderboard"
+          }
+        },
+        "_id": "690314498931c4208b2d6728"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T07:31:30.273Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "690314528931c4208b2e1b93"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T07:32:05.980Z",
+        "details": {
+          "batchName": "Batch-[1]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[1]"
+            }
+          }
+        },
+        "_id": "690314758931c4208b2e4f96"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T07:33:24.338Z",
+        "details": {
+          "batchName": "Batch-[3]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[3]"
+            }
+          }
+        },
+        "_id": "690314c48931c4208b2e8416"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T07:33:42.171Z",
+        "details": {
+          "batchName": "Batch-[1]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[1]"
+            }
+          }
+        },
+        "_id": "690314d68931c4208b2eb81a"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T07:33:44.479Z",
+        "details": {
+          "batchName": "Batch-[0]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[0]"
+            }
+          }
+        },
+        "_id": "690314d88931c4208b2eb94e"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-30T07:33:48.535Z",
+        "_id": "690314dc8931c4208b2ed390"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T07:34:18.288Z",
+        "details": {
+          "studentRegNo": "61782323106030",
+          "action": "Search student by registration number",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "regNo": "61782323106030"
+            }
+          }
+        },
+        "_id": "690314fa8931c4208b2f6de0"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T07:34:31.783Z",
+        "details": {
+          "studentRegNo": "61782323106030",
+          "action": "Searched for student: 61782323106030"
+        },
+        "_id": "690315078931c4208b3054f9"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T07:34:34.050Z",
+        "details": {
+          "studentRegNo": "61782323106030",
+          "action": "Search student by registration number",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "regNo": "61782323106030"
+            }
+          }
+        },
+        "_id": "6903150a8931c4208b3088d6"
+      },
+      {
+        "type": "view_leaderboard",
+        "timestamp": "2025-10-30T07:34:47.399Z",
+        "details": {
+          "batchName": "NOT WILLING",
+          "action": "Navigated to leaderboard for batch: NOT WILLING",
+          "metadata": {
+            "page": "leaderboard"
+          }
+        },
+        "_id": "690315178931c4208b308984"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T07:35:19.181Z",
+        "details": {
+          "batchName": "Batch-[3]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[3]"
+            }
+          }
+        },
+        "_id": "690315378931c4208b310add"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T08:17:35.907Z",
+        "details": {
+          "batchName": "Batch-[3]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "Batch-[3]"
+            }
+          }
+        },
+        "_id": "69031f1fb95366c65ad61b29"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-30T08:18:13.935Z",
+        "_id": "69031f45b95366c65ad63571"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T08:18:30.135Z",
+        "details": {
+          "studentRegNo": "61782323110033",
+          "action": "Search student by registration number",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "regNo": "61782323110033"
+            }
+          }
+        },
+        "_id": "69031f56b95366c65ad6e95f"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T08:18:30.187Z",
+        "details": {
+          "studentRegNo": "61782323110033",
+          "action": "Search student by registration number",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "regNo": "61782323110033"
+            }
+          }
+        },
+        "_id": "69031f56b95366c65ad6ea0e"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-10-30T08:18:31.697Z",
+        "details": {
+          "studentRegNo": "61782323110033",
+          "action": "Searched for student: 61782323110033"
+        },
+        "_id": "69031f57b95366c65ad70458"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-10-30T08:18:57.471Z",
+        "_id": "69031f71b95366c65ad7050a"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-30T08:22:35.629Z",
+        "_id": "6903204bb95366c65ad7a06f"
+      },
+      {
+        "type": "batch_selection",
+        "timestamp": "2025-10-30T08:22:43.683Z",
+        "details": {
+          "batchName": "BATCH - [2]",
+          "action": "Selected batch: BATCH - [2]"
+        },
+        "_id": "69032053b95366c65ad8078f"
+      },
+      {
+        "type": "mark_attendance",
+        "timestamp": "2025-10-30T08:22:51.090Z",
+        "details": {
+          "batchName": "BATCH - [2]",
+          "action": "Navigated to markattendance for batch: BATCH - [2]",
+          "metadata": {
+            "page": "markattendance"
+          }
+        },
+        "_id": "6903205bb95366c65ad86eb1"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T08:22:52.670Z",
+        "details": {
+          "batchName": "BATCH - [2]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "BATCH - [2]"
+            }
+          }
+        },
+        "_id": "6903205cb95366c65ad8920a"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T08:22:52.696Z",
+        "details": {
+          "batchName": "BATCH - [2]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "BATCH - [2]"
+            }
+          }
+        },
+        "_id": "6903205cb95366c65ad892bf"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-10-30T08:22:54.367Z",
+        "details": {
+          "batchName": "BATCH - [2]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "BATCH - [2]"
+            }
+          }
+        },
+        "_id": "6903205eb95366c65ad8b618"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-10-30T08:22:54.526Z",
+        "_id": "6903205eb95366c65ad8b6d2"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-10-30T08:23:07.220Z",
+        "_id": "6903206bb95366c65ad8eac1"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-10-30T08:23:13.783Z",
+        "_id": "69032071b95366c65ad951e8"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-11-06T10:36:14.375Z",
+        "_id": "690c7a1ec5cc6bfa4433f9bd"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-11-06T10:36:32.630Z",
+        "details": {
+          "studentRegNo": "61782323110115",
+          "action": "Search student by registration number",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "regNo": "61782323110115"
+            }
+          }
+        },
+        "_id": "690c7a30c5cc6bfa4434adb8"
+      },
+      {
+        "type": "search_student",
+        "timestamp": "2025-11-06T10:36:32.695Z",
+        "details": {
+          "studentRegNo": "61782323110115",
+          "action": "Searched for student: 61782323110115"
+        },
+        "_id": "690c7a30c5cc6bfa4434ae74"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-11-06T10:37:20.038Z",
+        "_id": "690c7a60c5cc6bfa4434af33"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-11-06T16:23:51.906Z",
+        "_id": "690ccb97eec8aaabf5a4b078"
+      },
+      {
+        "type": "batch_selection",
+        "timestamp": "2025-11-06T16:24:01.200Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "Selected batch: test batch "
+        },
+        "_id": "690ccba1eec8aaabf5a54adc"
+      },
+      {
+        "type": "mark_attendance",
+        "timestamp": "2025-11-06T16:24:02.530Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "Navigated to markattendance for batch: test batch ",
+          "metadata": {
+            "page": "markattendance"
+          }
+        },
+        "_id": "690ccba2eec8aaabf5a57ed5"
+      },
+      {
+        "type": "view_attendance",
+        "timestamp": "2025-11-06T16:24:17.894Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View attendance for 2025-11-06 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch ",
+              "date": "2025-11-06",
+              "session": "AN"
+            },
+            "date": "2025-11-06",
+            "session": "AN"
+          }
+        },
+        "_id": "690ccbb1eec8aaabf5a5e646"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-06T16:24:17.979Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "690ccbb1eec8aaabf5a5e7ca"
+      },
+      {
+        "type": "view_attendance",
+        "timestamp": "2025-11-06T16:24:17.944Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View attendance for 2025-11-06 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch ",
+              "date": "2025-11-06",
+              "session": "AN"
+            },
+            "date": "2025-11-06",
+            "session": "AN"
+          }
+        },
+        "_id": "690ccbb1eec8aaabf5a5e708"
+      },
+      {
+        "type": "mark_attendance",
+        "timestamp": "2025-11-06T16:29:36.886Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "Mark attendance for 2025-11-06 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            },
+            "date": "2025-11-06",
+            "session": "AN",
+            "studentsCount": 3
+          }
+        },
+        "_id": "690cccf0eec8aaabf5a61beb"
+      },
+      {
+        "type": "mark_attendance",
+        "timestamp": "2025-11-06T16:29:36.963Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "Mark attendance for 2025-11-06 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            },
+            "date": "2025-11-06",
+            "session": "AN",
+            "studentsCount": 3
+          }
+        },
+        "_id": "690cccf0eec8aaabf5a61cb0"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-06T16:32:45.253Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "690ccdadeec8aaabf5a61dbf"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-06T16:32:45.299Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "690ccdadeec8aaabf5a61e86"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-06T16:32:45.328Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "690ccdadeec8aaabf5a61f4d"
+      },
+      {
+        "type": "view_attendance",
+        "timestamp": "2025-11-06T16:32:52.455Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View attendance for 2025-11-07 FN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch ",
+              "date": "2025-11-07",
+              "session": "FN"
+            },
+            "date": "2025-11-07",
+            "session": "FN"
+          }
+        },
+        "_id": "690ccdb4eec8aaabf5a686b2"
+      },
+      {
+        "type": "view_attendance",
+        "timestamp": "2025-11-06T16:32:52.502Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View attendance for 2025-11-07 FN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch ",
+              "date": "2025-11-07",
+              "session": "FN"
+            },
+            "date": "2025-11-07",
+            "session": "FN"
+          }
+        },
+        "_id": "690ccdb4eec8aaabf5a6877c"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-11-06T16:33:04.075Z",
+        "_id": "690ccdc0eec8aaabf5a6884a"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-11-06T16:33:05.767Z",
+        "_id": "690ccdc1eec8aaabf5a68918"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-06T16:33:13.141Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "690ccdc9eec8aaabf5a78a36"
+      },
+      {
+        "type": "view_attendance",
+        "timestamp": "2025-11-06T16:33:18.942Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View attendance for 2025-11-07 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch ",
+              "date": "2025-11-07",
+              "session": "AN"
+            },
+            "date": "2025-11-07",
+            "session": "AN"
+          }
+        },
+        "_id": "690ccdceeec8aaabf5a7be64"
+      },
+      {
+        "type": "view_attendance",
+        "timestamp": "2025-11-06T16:33:18.991Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View attendance for 2025-11-07 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch ",
+              "date": "2025-11-07",
+              "session": "AN"
+            },
+            "date": "2025-11-07",
+            "session": "AN"
+          }
+        },
+        "_id": "690ccdceeec8aaabf5a7bf33"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-11-07T10:34:22.051Z",
+        "_id": "690dcb2e89a329d678a45a56"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-07T10:34:31.338Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "690dcb3789a329d678a57518"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-11-07T10:34:40.987Z",
+        "_id": "690dcb4089a329d678a58f89"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-11-07T10:35:22.785Z",
+        "_id": "690dcb6a89a329d678a62a1f"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-07T10:35:32.457Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            }
+          }
+        },
+        "_id": "690dcb7489a329d678a72b46"
+      },
+      {
+        "type": "view_attendance",
+        "timestamp": "2025-11-07T10:35:39.112Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "View attendance for 2025-11-07 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch ",
+              "date": "2025-11-07",
+              "session": "AN"
+            },
+            "date": "2025-11-07",
+            "session": "AN"
+          }
+        },
+        "_id": "690dcb7b89a329d678a75f7a"
+      },
+      {
+        "type": "mark_attendance",
+        "timestamp": "2025-11-07T10:35:40.752Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "Mark attendance for 2025-11-07 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            },
+            "date": "2025-11-07",
+            "session": "AN",
+            "studentsCount": 3
+          }
+        },
+        "_id": "690dcb7c89a329d678a7607c"
+      },
+      {
+        "type": "mark_attendance",
+        "timestamp": "2025-11-07T10:35:40.810Z",
+        "details": {
+          "batchName": "test batch ",
+          "action": "Mark attendance for 2025-11-07 AN",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "test batch "
+            },
+            "date": "2025-11-07",
+            "session": "AN",
+            "studentsCount": 3
+          }
+        },
+        "_id": "690dcb7c89a329d678a76153"
+      },
+      {
+        "type": "logout",
+        "timestamp": "2025-11-07T10:35:55.151Z",
+        "_id": "690dcb8b89a329d678a7622d"
+      },
+      {
+        "type": "login",
+        "timestamp": "2025-11-19T12:28:39.532Z",
+        "_id": "691db7f72affa1787a924e11"
+      },
+      {
+        "type": "batch_selection",
+        "timestamp": "2025-11-19T12:29:43.555Z",
+        "details": {
+          "batchName": "BATCH - [1A]",
+          "action": "Selected batch: BATCH - [1A]"
+        },
+        "_id": "691db8372affa1787a92e8c0"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-19T12:29:58.986Z",
+        "details": {
+          "batchName": "BATCH - [1A]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "BATCH - [1A]"
+            }
+          }
+        },
+        "_id": "691db8462affa1787a93096a"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-19T12:29:59.302Z",
+        "details": {
+          "batchName": "BATCH - [1A]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "BATCH - [1A]"
+            }
+          }
+        },
+        "_id": "691db8472affa1787a930a46"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-19T12:29:59.750Z",
+        "details": {
+          "batchName": "BATCH - [1A]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "BATCH - [1A]"
+            }
+          }
+        },
+        "_id": "691db8472affa1787a93114c"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-19T15:44:21.523Z",
+        "details": {
+          "batchName": "BATCH - [1A]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "BATCH - [1A]"
+            }
+          }
+        },
+        "_id": "691de5d52affa1787a93b225"
+      },
+      {
+        "type": "view_batch_students",
+        "timestamp": "2025-11-19T15:44:23.668Z",
+        "details": {
+          "batchName": "BATCH - [1A]",
+          "action": "View batch students",
+          "metadata": {
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0",
+            "ip": "::1",
+            "params": {
+              "batchName": "BATCH - [1A]"
+            }
+          }
+        },
+        "_id": "691de5d72affa1787a93d2d1"
+      }
+    ],
+    "__v": 295
+  },
+  {
+    "_id": "685d51191b34406364caa06b",
+    "adminName": "98csejak",
+    "adminPassword": "98csejak",
+    "logs": [],
+    "__v": 0
+  },
+  {
+    "_id": "690f38965f39dc727ac145b2",
+    "adminName": "thiganth",
+    "adminPassword": "thiganth07",
+    "logs": [],
+    "__v": 0
+  }
+]

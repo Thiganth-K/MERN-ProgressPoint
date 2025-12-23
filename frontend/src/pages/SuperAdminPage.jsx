@@ -4,23 +4,33 @@ import api from '../lib/axios';
 import toast from 'react-hot-toast';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js';
+import AdminLogsModal from '../components/AdminLogsModal';
+import BackupManager from '../components/BackupManager';
 Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 // Minimal SuperAdmin NavBar and Footer
 const SuperAdminNavBar = ({ onLogout, onViewPlacementDone }) => (
-  <nav className="w-full h-16 flex items-center justify-between px-4 sm:px-6 bg-base-100 shadow z-50">
-    <span className="text-lg sm:text-xl font-extrabold text-primary tracking-tight">ProgressPoint</span>
-    <div className="flex items-center gap-2">
+  <nav className="w-full bg-base-100 shadow z-50">
+    {/* Title Bar */}
+    <div className="flex items-center justify-center px-4 sm:px-6 py-3">
+      <span className="text-lg sm:text-xl font-extrabold text-primary tracking-tight">ProgressPoint</span>
+    </div>
+    
+    {/* Mobile Action Buttons */}
+    <div className="flex items-center justify-center gap-2 px-4 pb-3 sm:hidden">
       <button
-        className="btn btn-success btn-sm font-semibold flex items-center"
-        onClick={onViewPlacementDone}
+        className="btn btn-error btn-xs font-semibold flex items-center gap-1 flex-1"
+        onClick={onLogout}
       >
-        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
         </svg>
-        Placement Done
+        <span className="text-xs">Logout</span>
       </button>
+    </div>
+
+    {/* Desktop Action Buttons */}
+    <div className="hidden sm:flex items-center justify-end gap-2 px-4 sm:px-6 pb-3">
       <button
         className="btn btn-error btn-sm font-semibold flex items-center"
         onClick={onLogout}
@@ -82,6 +92,11 @@ const icons = {
       <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
     </svg>
   ),
+  time: (
+    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
 };
 
 const SuperAdminPage = () => {
@@ -104,6 +119,11 @@ const SuperAdminPage = () => {
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showRemoveBatchModal, setShowRemoveBatchModal] = useState(false);
   const [batchToRemove, setBatchToRemove] = useState(null);
+  const [showEditBatchModal, setShowEditBatchModal] = useState(false);
+  const [batchToEdit, setBatchToEdit] = useState(null);
+  const [showBackupManager, setShowBackupManager] = useState(false);
+  const [editBatchName, setEditBatchName] = useState('');
+  const [editBatchYear, setEditBatchYear] = useState('');
   const [profileStudent, setProfileStudent] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [placementDone, setPlacementDone] = useState(false);
@@ -114,6 +134,28 @@ const SuperAdminPage = () => {
   const [attendanceBarData, setAttendanceBarData] = useState(null);
   const [attendancePieData, setAttendancePieData] = useState(null);
   const [placementDoneBatchStats, setPlacementDoneBatchStats] = useState({});
+  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showAddBatch, setShowAddBatch] = useState(false);
+  const [showBatches, setShowBatches] = useState(false);
+  const [showAddAdmin, setShowAddAdmin] = useState(false);
+  const [showViewAdmin, setShowViewAdmin] = useState(false);
+  const [showTimeRestrictions, setShowTimeRestrictions] = useState(false);
+  const [timeRestrictions, setTimeRestrictions] = useState({
+    attendance: {
+      isEnabled: false,
+      startTime: '09:00',
+      endTime: '17:00',
+      allowedDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      allowWeekends: true
+    },
+    marks: {
+      isEnabled: false,
+      startTime: '09:00',
+      endTime: '17:00', 
+      allowedDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      allowWeekends: true
+    }
+  });
   // Added: State for selected year
   const [selectedYear, setSelectedYear] = useState(null);
 
@@ -144,6 +186,48 @@ const SuperAdminPage = () => {
       )
     );
     setAdmins(adminRes.data.admins || []);
+    fetchTimeRestrictions();
+  };
+
+  // Fetch time restrictions
+  const fetchTimeRestrictions = async () => {
+    try {
+      const res = await api.get('/time-restrictions');
+      const restrictions = res.data.restrictions || [];
+      
+      const formattedRestrictions = {
+        attendance: {
+          isEnabled: false,
+          startTime: '09:00',
+          endTime: '17:00',
+          allowedDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+          allowWeekends: true
+        },
+        marks: {
+          isEnabled: false,
+          startTime: '09:00',
+          endTime: '17:00',
+          allowedDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+          allowWeekends: true
+        }
+      };
+
+      restrictions.forEach(restriction => {
+        if (formattedRestrictions[restriction.type]) {
+          formattedRestrictions[restriction.type] = {
+            isEnabled: restriction.isEnabled,
+            startTime: restriction.startTime,
+            endTime: restriction.endTime,
+            allowedDays: restriction.allowedDays || [],
+            allowWeekends: restriction.allowWeekends
+          };
+        }
+      });
+
+      setTimeRestrictions(formattedRestrictions);
+    } catch (error) {
+      console.error('Failed to fetch time restrictions:', error);
+    }
   };
 
   // Fetch batch averages for marks charts
@@ -272,6 +356,44 @@ const SuperAdminPage = () => {
     setBatchToRemove(null);
   };
 
+  const handleEditBatch = (batch) => {
+    setBatchToEdit(batch);
+    setEditBatchName(batch.batchName);
+    setEditBatchYear(batch.year.toString());
+    setShowEditBatchModal(true);
+  };
+
+  const confirmEditBatch = async () => {
+    if (!batchToEdit || !editBatchName.trim() || !editBatchYear.trim()) {
+      toast.error('Please fill all fields');
+      return;
+    }
+
+    try {
+      await api.put(`/batches/${batchToEdit.batchName}`, {
+        newBatchName: editBatchName.trim(),
+        newYear: parseInt(editBatchYear)
+      });
+      toast.success('Batch updated successfully!');
+      fetchAll();
+      setShowEditBatchModal(false);
+      setBatchToEdit(null);
+      setEditBatchName('');
+      setEditBatchYear('');
+    } catch (error) {
+      console.error('Edit batch error:', error);
+      const errorMsg = error.response?.data?.error || 'Failed to update batch';
+      toast.error(errorMsg);
+    }
+  };
+
+  const cancelEditBatch = () => {
+    setShowEditBatchModal(false);
+    setBatchToEdit(null);
+    setEditBatchName('');
+    setEditBatchYear('');
+  };
+
   const handleAddAdmin = async (e) => {
     e.preventDefault();
     if (!newAdminName.trim() || !newAdminPassword.trim()) {
@@ -357,9 +479,7 @@ const SuperAdminPage = () => {
     }
   };
 
-  const handleViewLogs = async () => {
-    const res = await api.get('/superadmin/logs');
-    setLogs(res.data.logs || []);
+  const handleViewLogs = () => {
     setShowLogsModal(true);
   };
 
@@ -371,6 +491,101 @@ const SuperAdminPage = () => {
       setLogs([]);
     } catch {
       toast.error('Failed to clear logs');
+    }
+  };
+
+  // Time Restriction Handlers
+  const handleTimeRestrictionChange = (type, field, value) => {
+    setTimeRestrictions(prev => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleDayToggle = (type, day) => {
+    setTimeRestrictions(prev => {
+      const currentDays = prev[type].allowedDays || [];
+      const newDays = currentDays.includes(day)
+        ? currentDays.filter(d => d !== day)
+        : [...currentDays, day];
+      
+      return {
+        ...prev,
+        [type]: {
+          ...prev[type],
+          allowedDays: newDays,
+          allowWeekends: newDays.includes('Saturday') || newDays.includes('Sunday')
+        }
+      };
+    });
+  };
+
+  const handleSaveTimeRestriction = async () => {
+    try {
+      // Validate attendance times if enabled
+      if (timeRestrictions.attendance.isEnabled && 
+          timeRestrictions.attendance.startTime >= timeRestrictions.attendance.endTime) {
+        toast.error('Attendance end time must be after start time');
+        return;
+      }
+
+      // Validate marks times if enabled
+      if (timeRestrictions.marks.isEnabled && 
+          timeRestrictions.marks.startTime >= timeRestrictions.marks.endTime) {
+        toast.error('Marks end time must be after start time');
+        return;
+      }
+
+      // Validate that at least one day is selected for each enabled restriction
+      if (timeRestrictions.attendance.isEnabled && timeRestrictions.attendance.allowedDays.length === 0) {
+        toast.error('Please select at least one day for attendance restrictions');
+        return;
+      }
+
+      if (timeRestrictions.marks.isEnabled && timeRestrictions.marks.allowedDays.length === 0) {
+        toast.error('Please select at least one day for marks restrictions');
+        return;
+      }
+
+      // Save attendance restrictions
+      await api.post('/time-restrictions', {
+        type: 'attendance',
+        isEnabled: timeRestrictions.attendance.isEnabled,
+        startTime: timeRestrictions.attendance.startTime,
+        endTime: timeRestrictions.attendance.endTime,
+        allowedDays: timeRestrictions.attendance.allowedDays,
+        allowWeekends: timeRestrictions.attendance.allowWeekends
+      });
+
+      // Save marks restrictions
+      await api.post('/time-restrictions', {
+        type: 'marks',
+        isEnabled: timeRestrictions.marks.isEnabled,
+        startTime: timeRestrictions.marks.startTime,
+        endTime: timeRestrictions.marks.endTime,
+        allowedDays: timeRestrictions.marks.allowedDays,
+        allowWeekends: timeRestrictions.marks.allowWeekends
+      });
+
+      toast.success('Time restrictions saved successfully!');
+      fetchTimeRestrictions();
+      setShowTimeRestrictions(false);
+    } catch (error) {
+      console.error('Time restriction save error:', error);
+      let errorMsg = 'Failed to save time restrictions';
+      
+      if (error.response?.data?.error) {
+        errorMsg = error.response.data.error;
+      } else if (error.response?.data?.message) {
+        errorMsg = error.response.data.message;
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+      
+      toast.error(errorMsg);
     }
   };
 
@@ -540,54 +755,231 @@ const SuperAdminPage = () => {
         onLogout={handleSuperAdminLogout}
         onViewPlacementDone={handleShowPlacementDone}
       />
-      <main className="flex-1 flex flex-col items-center px-2 py-4 sm:py-8">
-        {/* Year Tabs for Chart Filtering (DaisyUI) */}
-        <div className="w-full flex justify-center mb-6">
-          <div role="tablist" className="tabs tabs-boxed">
-            {years.map(year => (
-              <button
-                key={year}
-                role="tab"
-                className={`tab ${year === selectedYear ? "tab-active" : ""}`}
-                onClick={() => setSelectedYear(year)}
-              >
-                {year}
-              </button>
-            ))}
-          </div>
-        </div>
+      <main className="flex-1 flex flex-col items-center px-2 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+        {/* Control Buttons as Cards */}
+        <section className="w-full max-w-4xl mb-4 sm:mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Card: View Analysis */}
+            <button
+              onClick={() => setShowAnalysis(!showAnalysis)}
+              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-primary"> 
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="font-semibold text-lg">{showAnalysis ? 'Hide Analysis' : 'View Analysis'}</div>
+                  <p className="text-sm sm:text-base text-gray-500">Visualize batch metrics, attendance and placement charts.</p>
+                </div>
+              </div>
+            </button>
 
-        {/* Show charts only if a year is selected */}
-        {selectedYear && (
-          <section className="w-full max-w-7xl mb-8 bg-base-100 rounded-2xl shadow-xl p-6">
-            <h2 className="text-xl font-bold text-primary mb-4">
+            {/* Card: Add Batch */}
+            <button
+              onClick={() => setShowAddBatch(!showAddBatch)}
+              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-success">{icons.add}</div>
+                <div>
+                  <div className="font-semibold text-lg">{showAddBatch ? 'Hide Add Batch' : 'Add Batch'}</div>
+                  <p className="text-sm sm:text-base text-gray-500">Create a new batch with students and assign a year.</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Card: View Batches */}
+            <button
+              onClick={() => setShowBatches(!showBatches)}
+              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-primary">{icons.batch}</div>
+                <div>
+                  <div className="font-semibold text-lg">{showBatches ? 'Hide Batches' : 'View Batches'}</div>
+                  <p className="text-sm sm:text-base text-gray-500">Browse and manage existing batches (edit/remove students).</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Card: Add Admin */}
+            <button
+              onClick={() => setShowAddAdmin(!showAddAdmin)}
+              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-success">{icons.add}</div>
+                <div>
+                  <div className="font-semibold text-lg">{showAddAdmin ? 'Hide Add Admin' : 'Add Admin'}</div>
+                  <p className="text-sm sm:text-base text-gray-500">Create admin accounts for marking attendance and entering marks.</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Card: View Admins */}
+            <button
+              onClick={() => setShowViewAdmin(!showViewAdmin)}
+              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-primary">{icons.admin}</div>
+                <div>
+                  <div className="font-semibold text-lg">{showViewAdmin ? 'Hide Admins' : 'View Admins'}</div>
+                  <p className="text-sm sm:text-base text-gray-500">Manage admin users and edit their credentials.</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Card: View Admin Logs */}
+            <button
+              onClick={handleViewLogs}
+              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-warning">{icons.logs}</div>
+                <div>
+                  <div className="font-semibold text-lg">View Admin Logs</div>
+                  <p className="text-sm sm:text-base text-gray-500">See activity logs for admins and clear them if needed.</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Card: Time Restrictions */}
+            <button
+              onClick={() => setShowTimeRestrictions(!showTimeRestrictions)}
+              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-secondary">{icons.time}</div>
+                <div>
+                  <div className="font-semibold text-lg">{showTimeRestrictions ? 'Hide Time Settings' : 'Time Restrictions'}</div>
+                  <p className="text-sm sm:text-base text-gray-500">Configure when admins can mark attendance and enter marks.</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Card: Placement Done */}
+            <button
+              onClick={handleShowPlacementDone}
+              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-accent">{icons.view}</div>
+                <div>
+                  <div className="font-semibold text-lg">Placement Done</div>
+                  <p className="text-sm sm:text-base text-gray-500">Open placement dashboard showing placed students.</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Card: Database Backup */}
+            <button
+              onClick={() => setShowBackupManager(!showBackupManager)}
+              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-info">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="font-semibold text-lg">{showBackupManager ? 'Hide Backup Manager' : 'Database Backup'}</div>
+                  <p className="text-sm sm:text-base text-gray-500">Create, restore, and manage database backups for data protection.</p>
+                </div>
+              </div>
+            </button>
+          </div>
+        </section>
+
+        {/* Year Tabs for Chart Filtering (DaisyUI) - Only show when analysis is visible */}
+        {showAnalysis && (
+          <div className="w-full flex justify-center mb-4 sm:mb-6">
+            <div role="tablist" className="tabs tabs-boxed tabs-sm sm:tabs-md">
+              {years.map(year => (
+                <button
+                  key={year}
+                  role="tab"
+                  className={`tab text-xs sm:text-sm ${year === selectedYear ? "tab-active" : ""}`}
+                  onClick={() => setSelectedYear(year)}
+                >
+                  {year}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Show charts only if analysis is visible and a year is selected */}
+        {showAnalysis && selectedYear && (
+          <section className="w-full max-w-7xl mb-6 sm:mb-8 bg-base-100 rounded-xl sm:rounded-2xl shadow-xl p-3 sm:p-4 lg:p-6">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-primary mb-3 sm:mb-4 text-center sm:text-left">
               Batch Wise Comparison ({selectedYear})
             </h2>
-            <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
+            
+            {/* Marks Charts */}
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 justify-center items-start mb-6 sm:mb-8">
               {/* Bar Chart Section */}
-              <div className="w-full md:w-1/2">
-                <h3 className="text-lg font-semibold mb-2">Average Marks (Bar Chart)</h3>
-                <div style={{ width: '100%', height: 400 }}>
+              <div className="w-full lg:w-1/2">
+                <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-2 text-center lg:text-left">Average Marks (Bar Chart)</h3>
+                <div className="w-full h-[250px] sm:h-[300px] lg:h-[400px]">
                   <Bar
                     data={barDataForYear}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
-                      plugins: { legend: { position: 'top' } }
+                      plugins: { 
+                        legend: { 
+                          position: 'top',
+                          labels: {
+                            font: {
+                              size: window.innerWidth < 640 ? 10 : 12
+                            }
+                          }
+                        } 
+                      },
+                      scales: {
+                        x: {
+                          ticks: {
+                            font: {
+                              size: window.innerWidth < 640 ? 8 : 10
+                            }
+                          }
+                        },
+                        y: {
+                          ticks: {
+                            font: {
+                              size: window.innerWidth < 640 ? 8 : 10
+                            }
+                          }
+                        }
+                      }
                     }}
                   />
                 </div>
               </div>
               {/* Pie Chart Section */}
-              <div className="w-full md:w-1/2">
-                <h3 className="text-lg font-semibold mb-2">Total Average Marks (Pie Chart)</h3>
-                <div style={{ width: '100%', height: 400 }}>
+              <div className="w-full lg:w-1/2">
+                <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-2 text-center lg:text-left">Total Average Marks (Pie Chart)</h3>
+                <div className="w-full h-[250px] sm:h-[300px] lg:h-[400px]">
                   <Pie
                     data={pieDataForYear}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
-                      plugins: { legend: { position: 'top' } }
+                      plugins: { 
+                        legend: { 
+                          position: 'top',
+                          labels: {
+                            font: {
+                              size: window.innerWidth < 640 ? 10 : 12
+                            }
+                          }
+                        } 
+                      }
                     }}
                   />
                 </div>
@@ -595,29 +987,63 @@ const SuperAdminPage = () => {
             </div>
 
             {/* Attendance Charts */}
-            <div className="flex flex-col md:flex-row gap-6 justify-center items-start mt-10">
-              <div className="w-full md:w-1/2">
-                <h3 className="text-lg font-semibold mb-2">Average Attendance (Bar Chart)</h3>
-                <div style={{ width: '100%', height: 400 }}>
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 justify-center items-start mb-6 sm:mb-8">
+              <div className="w-full lg:w-1/2">
+                <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-2 text-center lg:text-left">Average Attendance (Bar Chart)</h3>
+                <div className="w-full h-[250px] sm:h-[300px] lg:h-[400px]">
                   <Bar
                     data={attendanceBarDataForYear}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
-                      plugins: { legend: { position: 'top' } }
+                      plugins: { 
+                        legend: { 
+                          position: 'top',
+                          labels: {
+                            font: {
+                              size: window.innerWidth < 640 ? 10 : 12
+                            }
+                          }
+                        } 
+                      },
+                      scales: {
+                        x: {
+                          ticks: {
+                            font: {
+                              size: window.innerWidth < 640 ? 8 : 10
+                            }
+                          }
+                        },
+                        y: {
+                          ticks: {
+                            font: {
+                              size: window.innerWidth < 640 ? 8 : 10
+                            }
+                          }
+                        }
+                      }
                     }}
                   />
                 </div>
               </div>
-              <div className="w-full md:w-1/2">
-                <h3 className="text-lg font-semibold mb-2">Total Average Attendance (Pie Chart)</h3>
-                <div style={{ width: '100%', height: 400 }}>
+              <div className="w-full lg:w-1/2">
+                <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-2 text-center lg:text-left">Total Average Attendance (Pie Chart)</h3>
+                <div className="w-full h-[250px] sm:h-[300px] lg:h-[400px]">
                   <Pie
                     data={attendancePieDataForYear}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
-                      plugins: { legend: { position: 'top' } }
+                      plugins: { 
+                        legend: { 
+                          position: 'top',
+                          labels: {
+                            font: {
+                              size: window.innerWidth < 640 ? 10 : 12
+                            }
+                          }
+                        } 
+                      }
                     }}
                   />
                 </div>
@@ -625,29 +1051,63 @@ const SuperAdminPage = () => {
             </div>
 
             {/* Placement Done Batch Stats Charts */}
-            <div className="flex flex-col md:flex-row gap-6 justify-center items-start mt-10">
-              <div className="w-full md:w-1/2">
-                <h3 className="text-lg font-semibold mb-2">Placement Done Students by Batch (Bar Chart)</h3>
-                <div style={{ width: '100%', height: 400 }}>
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 justify-center items-start">
+              <div className="w-full lg:w-1/2">
+                <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-2 text-center lg:text-left">Placement Done Students by Batch (Bar Chart)</h3>
+                <div className="w-full h-[250px] sm:h-[300px] lg:h-[400px]">
                   <Bar
                     data={placementDoneBarDataForYear}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
-                      plugins: { legend: { position: 'top' } }
+                      plugins: { 
+                        legend: { 
+                          position: 'top',
+                          labels: {
+                            font: {
+                              size: window.innerWidth < 640 ? 10 : 12
+                            }
+                          }
+                        } 
+                      },
+                      scales: {
+                        x: {
+                          ticks: {
+                            font: {
+                              size: window.innerWidth < 640 ? 8 : 10
+                            }
+                          }
+                        },
+                        y: {
+                          ticks: {
+                            font: {
+                              size: window.innerWidth < 640 ? 8 : 10
+                            }
+                          }
+                        }
+                      }
                     }}
                   />
                 </div>
               </div>
-              <div className="w-full md:w-1/2">
-                <h3 className="text-lg font-semibold mb-2">Placement Done Students by Batch (Pie Chart)</h3>
-                <div style={{ width: '100%', height: 400 }}>
+              <div className="w-full lg:w-1/2">
+                <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-2 text-center lg:text-left">Placement Done Students by Batch (Pie Chart)</h3>
+                <div className="w-full h-[250px] sm:h-[300px] lg:h-[400px]">
                   <Pie
                     data={placementDonePieDataForYear}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
-                      plugins: { legend: { position: 'top' } }
+                      plugins: { 
+                        legend: { 
+                          position: 'top',
+                          labels: {
+                            font: {
+                              size: window.innerWidth < 640 ? 10 : 12
+                            }
+                          }
+                        } 
+                      }
                     }}
                   />
                 </div>
@@ -656,216 +1116,252 @@ const SuperAdminPage = () => {
           </section>
         )}
 
-        {/* Add Batch */}
-        <section className="w-full mb-6">
-          <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
-            {icons.batch} Add New Batch
-          </h2>
-          <form onSubmit={handleAddBatch} className="flex flex-col gap-3 bg-base-200 rounded-xl p-3 sm:p-4 shadow">
-            <input
-              type="text"
-              placeholder="Batch Name"
-              value={newBatchName}
-              onChange={e => setNewBatchName(e.target.value)}
-              className="input input-bordered"
-            />
-            <input
-              type="number"
-              placeholder="Year (e.g. 2026)"
-              value={newBatchYear}
-              onChange={e => setNewBatchYear(e.target.value)}
-              className="input input-bordered"
-              min={2000}
-              max={2100}
-              required
-            />
-            <textarea
-              placeholder={`Enter students, one per line: regno,studentname\nExample:\n21IT001,John Doe\n21IT002,Jane Smith`}
-              value={newBatchStudents}
-              onChange={e => setNewBatchStudents(e.target.value)}
-              className="textarea textarea-bordered"
-              rows={3}
-            />
-            <button type="submit" className="btn btn-primary font-semibold flex items-center w-full sm:w-fit self-end">
-              {icons.add} Add Batch
-            </button>
-          </form>
-        </section>
-
-        {/* Batches Table */}
-        <section className="w-full mb-6">
-          <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
-            {icons.batch} Batches
-          </h2>
-          {Object.keys(batchesByYear).sort().map(year => (
-            <div key={year} className="mb-6">
-              <h3 className="text-base font-semibold text-primary mb-2">{year} Batches</h3>
-              <div className="overflow-x-auto rounded-xl shadow">
-                <table className="table w-full text-xs sm:text-sm md:text-base">
-                  <thead>
-                    <tr>
-                      <th className="text-left">Batch Name</th>
-                      <th className="text-left">Students</th>
-                      <th className="text-left">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {batchesByYear[year].length === 0 ? (
-                      <tr>
-                        <td colSpan={3} className="text-center text-gray-400 py-6">No batches added yet.</td>
-                      </tr>
-                    ) : (
-                      batchesByYear[year].map(batch => (
-                        <tr key={batch.batchName}>
-                          <td className="font-semibold">{batch.batchName}</td>
-                          <td>{batch.students?.length || 0}</td>
-                          <td className="flex flex-col sm:flex-row gap-2 py-2">
-                            <button
-                              className="btn btn-info btn-xs"
-                              onClick={() => handleViewStudents(batch.batchName)}
-                            >
-                              {icons.view} View
-                            </button>
-                            <button
-                              className="btn btn-error btn-xs"
-                              onClick={() => handleRemoveBatch(batch.batchName)}
-                            >
-                              {icons.remove} Remove
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+        {/* Add Batch Form - Only show when showAddBatch is true */}
+        {showAddBatch && (
+          <section className="w-full max-w-4xl mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center mb-3 sm:mb-4">
+              {icons.batch} Add New Batch
+            </h2>
+            <form onSubmit={handleAddBatch} className="flex flex-col gap-3 sm:gap-4 bg-base-200 rounded-xl p-3 sm:p-4 lg:p-6 shadow">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <input
+                  type="text"
+                  placeholder="Batch Name"
+                  value={newBatchName}
+                  onChange={e => setNewBatchName(e.target.value)}
+                  className="input input-bordered input-sm sm:input-md"
+                />
+                <input
+                  type="number"
+                  placeholder="Year (e.g. 2026)"
+                  value={newBatchYear}
+                  onChange={e => setNewBatchYear(e.target.value)}
+                  className="input input-bordered input-sm sm:input-md"
+                  min={2000}
+                  max={2100}
+                  required
+                />
               </div>
+              <textarea
+                placeholder={`Enter students, one per line: regno,studentname\nExample:\n21IT001,John Doe\n21IT002,Jane Smith`}
+                value={newBatchStudents}
+                onChange={e => setNewBatchStudents(e.target.value)}
+                className="textarea textarea-bordered text-xs sm:text-sm"
+                rows={window.innerWidth < 640 ? 3 : 4}
+              />
+              <button type="submit" className="btn btn-primary btn-sm sm:btn-md font-semibold flex items-center w-full sm:w-fit self-end">
+                {icons.add} Add Batch
+              </button>
+            </form>
+          </section>
+        )}
+
+        {/* Batches Table - Only show when showBatches is true */}
+        {showBatches && (
+          <section className="w-full max-w-6xl mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center mb-3 sm:mb-4">
+              {icons.batch} Batches
+            </h2>
+            {Object.keys(batchesByYear).sort().map(year => (
+              <div key={year} className="mb-4 sm:mb-6">
+                <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-primary mb-2 sm:mb-3">{year} Batches</h3>
+                <div className="overflow-x-auto rounded-xl shadow bg-base-100">
+                  <table className="table table-zebra w-full text-xs sm:text-sm">
+                    <thead>
+                      <tr className="bg-base-200">
+                        <th className="text-left px-2 sm:px-4 py-2 sm:py-3 font-semibold">Batch Name</th>
+                        <th className="text-center px-2 sm:px-4 py-2 sm:py-3 font-semibold">Students</th>
+                        <th className="text-center px-2 sm:px-4 py-2 sm:py-3 font-semibold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {batchesByYear[year].length === 0 ? (
+                        <tr>
+                          <td colSpan={3} className="text-center text-gray-400 py-6 sm:py-8">No batches added yet.</td>
+                        </tr>
+                      ) : (
+                        batchesByYear[year].map(batch => (
+                          <tr key={batch.batchName} className="hover:bg-base-50">
+                            <td className="font-semibold px-2 sm:px-4 py-2 sm:py-3">{batch.batchName}</td>
+                            <td className="text-center px-2 sm:px-4 py-2 sm:py-3">
+                              <span className="badge badge-info badge-sm">{batch.students?.length || 0}</span>
+                            </td>
+                            <td className="px-2 sm:px-4 py-2 sm:py-3">
+                              <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 justify-center">
+                                <button
+                                  className="btn btn-info btn-xs text-xs"
+                                  onClick={() => handleViewStudents(batch.batchName)}
+                                  title="View Students"
+                                >
+                                  {icons.view} <span className="hidden sm:inline">View</span>
+                                </button>
+                                <button
+                                  className="btn btn-warning btn-xs text-xs"
+                                  onClick={() => handleEditBatch(batch)}
+                                  title="Edit Batch"
+                                >
+                                  {icons.edit} <span className="hidden sm:inline">Edit</span>
+                                </button>
+                                <button
+                                  className="btn btn-error btn-xs text-xs"
+                                  onClick={() => {
+                                    setBatchToRemove(batch);
+                                    setShowRemoveBatchModal(true);
+                                  }}
+                                  title="Remove Batch"
+                                >
+                                  {icons.remove} <span className="hidden sm:inline">Remove</span>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
+        {/* Add Admin Form - Only show when showAddAdmin is true */}
+        {showAddAdmin && (
+          <section className="w-full max-w-4xl mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center mb-3 sm:mb-4">
+              {icons.admin} Add New Admin
+            </h2>
+            <form onSubmit={handleAddAdmin} className="flex flex-col sm:flex-row gap-3 sm:gap-4 bg-base-200 rounded-xl p-3 sm:p-4 lg:p-6 shadow">
+              <input
+                type="text"
+                placeholder="Admin Name"
+                value={newAdminName}
+                onChange={e => setNewAdminName(e.target.value)}
+                className="input input-bordered input-sm sm:input-md flex-1"
+              />
+              <input
+                type="password"
+                placeholder="Admin Password"
+                value={newAdminPassword}
+                onChange={e => setNewAdminPassword(e.target.value)}
+                className="input input-bordered input-sm sm:input-md flex-1"
+                autoComplete="new-password"
+              />
+              <button type="submit" className="btn btn-success btn-sm sm:btn-md font-semibold flex items-center w-full sm:w-fit">
+                {icons.add} Add Admin
+              </button>
+            </form>
+          </section>
+        )}
+
+        {/* Admins List - Only show when showViewAdmin is true */}
+        {showViewAdmin && (
+          <section className="w-full max-w-4xl mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center mb-3 sm:mb-4">
+              {icons.admin} Admins
+            </h2>
+            <div className="bg-base-200 rounded-xl shadow p-3 sm:p-4 lg:p-6">
+              {admins.length === 0 ? (
+                <div className="text-center text-gray-400 py-6 sm:py-8">No admins available.</div>
+              ) : (
+                <div className="grid grid-cols-1 gap-3 sm:gap-4">
+                  {admins.map(a => (
+                    <div
+                      key={a._id}
+                      className="bg-base-100 rounded-lg p-3 sm:p-4 shadow-sm border border-base-300"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <span className="text-primary shrink-0">{icons.admin}</span>
+                          <div className="min-w-0">
+                            <span className="font-semibold text-sm sm:text-base block truncate">{a.adminName}</span>
+                            <span className="text-xs text-gray-500 font-mono block">
+                              {a.adminPassword ? '*'.repeat(Math.min(a.adminPassword.length, 8)) : ''}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 sm:gap-3">
+                          <button
+                            className="btn btn-xs sm:btn-sm btn-info flex-1 sm:flex-none"
+                            onClick={() => handleShowAdmin(a)}
+                            title="Edit Admin"
+                          >
+                            {icons.edit} <span className="hidden sm:inline">Edit</span>
+                          </button>
+                          <button
+                            className="btn btn-xs sm:btn-sm btn-error flex-1 sm:flex-none"
+                            onClick={() => handleRemoveAdmin(a._id)}
+                            title="Remove Admin"
+                          >
+                            {icons.remove} <span className="hidden sm:inline">Remove</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          ))}
-        </section>
+          </section>
+        )}
 
-        {/* Add Admin */}
-        <section className="w-full mb-6">
-          <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
-            {icons.admin} Add New Admin
-          </h2>
-          <form onSubmit={handleAddAdmin} className="flex flex-col sm:flex-row gap-3 bg-base-200 rounded-xl p-3 sm:p-4 shadow">
-            <input
-              type="text"
-              placeholder="Admin Name"
-              value={newAdminName}
-              onChange={e => setNewAdminName(e.target.value)}
-              className="input input-bordered flex-1"
-            />
-            <input
-              type="password"
-              placeholder="Admin Password"
-              value={newAdminPassword}
-              onChange={e => setNewAdminPassword(e.target.value)}
-              className="input input-bordered flex-1"
-              autoComplete="new-password"
-            />
-            <button type="submit" className="btn btn-success font-semibold flex items-center w-full sm:w-fit">
-              {icons.add} Add Admin
-            </button>
-          </form>
-        </section>
 
-        {/* Admins List */}
-        <section className="w-full mb-6">
-          <h2 className="text-lg sm:text-xl font-bold text-secondary flex items-center mb-2">
-            {icons.admin} Admins
-          </h2>
-          <div className="bg-base-200 rounded-xl shadow p-3 sm:p-4">
-            {admins.length === 0 ? (
-              <div className="text-center text-gray-400 py-6">No admins available.</div>
-            ) : (
-              <ul className="divide-y divide-base-300">
-                {admins.map(a => (
-                  <li
-                    key={a._id}
-                    className="py-2 flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-1"
-                  >
-                    <div className="flex-1 flex items-center gap-2">
-                      {icons.admin}
-                      <span className="font-semibold">{a.adminName}</span>
-                      <span className="ml-2 text-gray-500 font-mono">
-                        {a.adminPassword ? '*'.repeat(a.adminPassword.length) : ''}
-                      </span>
-                    </div>
-                    <div className="flex gap-2 mt-1 sm:mt-0">
-                      <button
-                        className="btn btn-xs btn-info"
-                        onClick={() => handleShowAdmin(a)}
-                        title="Edit"
-                      >
-                        {icons.edit} Edit
-                      </button>
-                      <button
-                        className="btn btn-xs btn-error"
-                        onClick={() => handleRemoveAdmin(a._id)}
-                        title="Remove"
-                      >
-                        {icons.remove} Remove
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </section>
-
-        {/* Admin Logs */}
-        <section className="w-full mb-2">
-          <button className="btn btn-warning font-semibold flex items-center w-full sm:w-fit" onClick={handleViewLogs}>
-            {icons.logs} View Admin Logs
-          </button>
-        </section>
 
         {/* Students Modal */}
         {showStudentsModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-            <div className="bg-base-100 rounded-2xl shadow-2xl w-[98vw] max-w-3xl max-h-[90vh] p-2 sm:p-6 relative flex flex-col">
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-2 sm:p-4">
+            <div className="bg-base-100 rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] sm:max-h-[90vh] relative flex flex-col">
               <button
-                className="absolute top-3 right-3 btn btn-circle btn-sm btn-ghost"
+                className="absolute top-2 right-2 sm:top-3 sm:right-3 btn btn-circle btn-xs sm:btn-sm btn-ghost"
                 onClick={() => setShowStudentsModal(false)}
                 aria-label="Close"
               >
-                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
-              <div className="flex items-center gap-3 mb-4 mt-2">
-                <span className="inline-flex items-center justify-center bg-primary rounded-full w-9 h-9">
-                  {icons.view}
-                </span>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-primary tracking-tight">
-                  Students in <span className="text-accent">{selectedBatch}</span>
-                </h3>
+              
+              {/* Header */}
+              <div className="p-3 sm:p-4 lg:p-6 border-b border-base-300">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="inline-flex items-center justify-center bg-primary rounded-full w-6 h-6 sm:w-8 sm:h-8 lg:w-9 lg:h-9 shrink-0">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 616 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </span>
+                  <h3 className="text-sm sm:text-lg lg:text-xl font-extrabold text-primary tracking-tight">
+                    Students in <span className="text-accent">{selectedBatch}</span>
+                  </h3>
+                </div>
+                
+                {/* Export Buttons */}
+                <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-2 justify-end">
+                  <button
+                    className="btn btn-outline btn-xs sm:btn-sm font-semibold flex items-center gap-1"
+                    onClick={() => handleExportStudents(selectedBatch, 'csv')}
+                    title="Export as CSV"
+                  >
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span className="hidden sm:inline">CSV</span>
+                  </button>
+                  <button
+                    className="btn btn-outline btn-xs sm:btn-sm font-semibold flex items-center gap-1"
+                    onClick={() => handleExportStudents(selectedBatch, 'pdf')}
+                    title="Export as PDF"
+                  >
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    <span className="hidden sm:inline">PDF</span>
+                  </button>
+                </div>
               </div>
-              {/* Export Buttons */}
-              <div className="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4 justify-end items-stretch sm:items-center">
-                <button
-                  className="btn btn-accent font-semibold text-base flex-1 sm:flex-none"
-                  onClick={() => window.open(`/api/batches/${encodeURIComponent(selectedBatch)}/export`, "_blank")}
-                >
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Export Students as Excel
-                </button>
-                <button
-                  className="btn btn-secondary font-semibold text-base flex-1 sm:flex-none"
-                  onClick={() => window.open(`/api/batches/${encodeURIComponent(selectedBatch)}/export-attendance`, "_blank")}
-                >
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Export Attendance as Excel
-                </button>
-              </div>
-              {/* Responsive Table Container */}
-              <div className="overflow-x-auto flex-1 w-full">
+              
+              {/* Table Container */}
+              <div className="overflow-x-auto flex-1 w-full p-3 sm:p-4 lg:p-6">
                 <table className="min-w-[600px] w-full text-xs sm:text-sm md:text-base">
                   <thead>
                     <tr className="bg-base-200 text-xs sm:text-sm uppercase text-gray-600">
@@ -944,75 +1440,17 @@ const SuperAdminPage = () => {
           </div>
         )}
 
-        {/* Logs Modal */}
-        {showLogsModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-            <div className="bg-base-100 rounded-xl shadow-2xl p-4 sm:p-6 w-full max-w-2xl relative">
-              <button className="absolute top-2 right-2 btn btn-xs btn-ghost" onClick={() => setShowLogsModal(false)}>
-                ✕
-              </button>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-                <h3 className="text-lg sm:text-2xl font-bold text-primary flex items-center gap-2">
-                  {icons.logs} Admin Logs
-                </h3>
-                <button
-                  className="btn btn-xs btn-error font-semibold flex items-center gap-1"
-                  onClick={handleClearAllLogs}
-                >
-                  {icons.remove} Clear All
-                </button>
-              </div>
-              <div className="overflow-x-auto max-h-[400px]">
-                <table className="table w-full text-xs sm:text-sm">
-                  <thead>
-                    <tr className="bg-base-200 text-primary text-xs sm:text-base">
-                      <th className="px-4 py-2 text-left font-semibold">Admin Name</th>
-                      <th className="px-4 py-2 text-left font-semibold">Action</th>
-                      <th className="px-4 py-2 text-left font-semibold">Time</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {logs.length === 0 && (
-                      <tr>
-                        <td colSpan={3} className="text-center py-8 text-gray-400 font-semibold">
-                          No logs found.
-                        </td>
-                      </tr>
-                    )}
-                    {logs
-                      .flatMap((log) =>
-                        (log.logs && log.logs.length > 0)
-                          ? log.logs.map((l) => ({
-                              adminName: log.adminName,
-                              ...l,
-                            }))
-                          : [{
-                              adminName: log.adminName,
-                              type: 'No actions',
-                              timestamp: null,
-                            }]
-                      )
-                      .sort((a, b) => {
-                        if (a.timestamp && b.timestamp) {
-                          return new Date(b.timestamp) - new Date(a.timestamp);
-                        }
-                        if (a.timestamp) return -1;
-                        if (b.timestamp) return 1;
-                        return 0;
-                      })
-                      .map((entry, idx) => (
-                        <tr key={idx}>
-                          <td>{entry.adminName}</td>
-                          <td>{entry.type === 'No actions' ? <span className="text-gray-400">No actions</span> : (entry.type.charAt(0).toUpperCase() + entry.type.slice(1))}</td>
-                          <td>{entry.timestamp ? new Date(entry.timestamp).toLocaleString() : '-'}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Enhanced Admin Logs Modal */}
+        <AdminLogsModal 
+          isOpen={showLogsModal} 
+          onClose={() => setShowLogsModal(false)} 
+        />
+
+        {/* Database Backup Manager Modal */}
+        <BackupManager 
+          isOpen={showBackupManager} 
+          onClose={() => setShowBackupManager(false)} 
+        />
 
         {/* Admin Edit Modal */}
         {showAdminModal && selectedAdmin && (
@@ -1075,6 +1513,57 @@ const SuperAdminPage = () => {
               <div className="flex gap-4">
                 <button className="btn btn-error font-semibold" onClick={confirmRemoveBatch}>Yes, Remove</button>
                 <button className="btn btn-ghost font-semibold" onClick={cancelRemoveBatch}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Batch Modal */}
+        {showEditBatchModal && batchToEdit && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-base-100 rounded-2xl shadow-2xl w-[90vw] max-w-md p-6">
+              <h3 className="text-xl font-bold text-warning mb-4 flex items-center">
+                {icons.edit} Edit Batch
+              </h3>
+              <div className="flex flex-col gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Batch Name</label>
+                  <input
+                    type="text"
+                    value={editBatchName}
+                    onChange={(e) => setEditBatchName(e.target.value)}
+                    className="input input-bordered w-full"
+                    placeholder="Enter batch name"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Year</label>
+                  <input
+                    type="number"
+                    value={editBatchYear}
+                    onChange={(e) => setEditBatchYear(e.target.value)}
+                    className="input input-bordered w-full"
+                    placeholder="Enter year (e.g. 2026)"
+                    min={2000}
+                    max={2100}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-4 justify-end">
+                <button 
+                  className="btn btn-ghost font-semibold" 
+                  onClick={cancelEditBatch}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="btn btn-warning font-semibold" 
+                  onClick={confirmEditBatch}
+                  disabled={!editBatchName.trim() || !editBatchYear.trim()}
+                >
+                  Update Batch
+                </button>
               </div>
             </div>
           </div>
@@ -1253,6 +1742,205 @@ const SuperAdminPage = () => {
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Time Restrictions Management Modal */}
+        {showTimeRestrictions && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-base-100 rounded-2xl shadow-2xl w-[98vw] max-w-4xl max-h-[90vh] p-4 sm:p-8 relative flex flex-col">
+              <button
+                className="absolute top-3 right-3 btn btn-circle btn-sm btn-ghost"
+                onClick={() => setShowTimeRestrictions(false)}
+                aria-label="Close"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-primary mb-6 text-center tracking-tight">
+                {icons.time} Time Restrictions Management
+              </h2>
+              
+              <div className="overflow-y-auto flex-1 space-y-6">
+                {/* Attendance Time Restrictions */}
+                <div className="bg-base-200 rounded-xl p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-secondary mb-4 flex items-center gap-2">
+                    📊 Attendance Marking Time Restrictions
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    {/* Enable/Disable Toggle */}
+                    <div className="form-control">
+                      <label className="label cursor-pointer justify-start gap-3">
+                        <input
+                          type="checkbox"
+                          className="toggle toggle-primary"
+                          checked={timeRestrictions.attendance.isEnabled}
+                          onChange={(e) => handleTimeRestrictionChange('attendance', 'isEnabled', e.target.checked)}
+                        />
+                        <span className="label-text font-semibold">Enable Attendance Time Restrictions</span>
+                      </label>
+                    </div>
+
+                    {/* Time Settings - Only show when enabled */}
+                    {timeRestrictions.attendance.isEnabled && (
+                      <>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="form-control">
+                            <label className="label">
+                              <span className="label-text font-medium">Start Time</span>
+                            </label>
+                            <input
+                              type="time"
+                              className="input input-bordered"
+                              value={timeRestrictions.attendance.startTime}
+                              onChange={(e) => handleTimeRestrictionChange('attendance', 'startTime', e.target.value)}
+                            />
+                          </div>
+                          
+                          <div className="form-control">
+                            <label className="label">
+                              <span className="label-text font-medium">End Time</span>
+                            </label>
+                            <input
+                              type="time"
+                              className="input input-bordered"
+                              value={timeRestrictions.attendance.endTime}
+                              onChange={(e) => handleTimeRestrictionChange('attendance', 'endTime', e.target.value)}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Allowed Days */}
+                        <div className="form-control">
+                          <label className="label">
+                            <span className="label-text font-medium">Allowed Days</span>
+                          </label>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                              <label key={day} className="label cursor-pointer justify-start gap-2">
+                                <input
+                                  type="checkbox"
+                                  className="checkbox checkbox-primary checkbox-sm"
+                                  checked={timeRestrictions.attendance.allowedDays.includes(day)}
+                                  onChange={(e) => {
+                                    const days = timeRestrictions.attendance.allowedDays;
+                                    if (e.target.checked) {
+                                      handleTimeRestrictionChange('attendance', 'allowedDays', [...days, day]);
+                                    } else {
+                                      handleTimeRestrictionChange('attendance', 'allowedDays', days.filter(d => d !== day));
+                                    }
+                                  }}
+                                />
+                                <span className="label-text text-xs">{day.slice(0, 3)}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Marks Time Restrictions */}
+                <div className="bg-base-200 rounded-xl p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-accent mb-4 flex items-center gap-2">
+                    📝 Marks Entry Time Restrictions
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    {/* Enable/Disable Toggle */}
+                    <div className="form-control">
+                      <label className="label cursor-pointer justify-start gap-3">
+                        <input
+                          type="checkbox"
+                          className="toggle toggle-accent"
+                          checked={timeRestrictions.marks.isEnabled}
+                          onChange={(e) => handleTimeRestrictionChange('marks', 'isEnabled', e.target.checked)}
+                        />
+                        <span className="label-text font-semibold">Enable Marks Entry Time Restrictions</span>
+                      </label>
+                    </div>
+
+                    {/* Time Settings - Only show when enabled */}
+                    {timeRestrictions.marks.isEnabled && (
+                      <>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="form-control">
+                            <label className="label">
+                              <span className="label-text font-medium">Start Time</span>
+                            </label>
+                            <input
+                              type="time"
+                              className="input input-bordered"
+                              value={timeRestrictions.marks.startTime}
+                              onChange={(e) => handleTimeRestrictionChange('marks', 'startTime', e.target.value)}
+                            />
+                          </div>
+                          
+                          <div className="form-control">
+                            <label className="label">
+                              <span className="label-text font-medium">End Time</span>
+                            </label>
+                            <input
+                              type="time"
+                              className="input input-bordered"
+                              value={timeRestrictions.marks.endTime}
+                              onChange={(e) => handleTimeRestrictionChange('marks', 'endTime', e.target.value)}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Allowed Days */}
+                        <div className="form-control">
+                          <label className="label">
+                            <span className="label-text font-medium">Allowed Days</span>
+                          </label>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                              <label key={day} className="label cursor-pointer justify-start gap-2">
+                                <input
+                                  type="checkbox"
+                                  className="checkbox checkbox-accent checkbox-sm"
+                                  checked={timeRestrictions.marks.allowedDays.includes(day)}
+                                  onChange={(e) => {
+                                    const days = timeRestrictions.marks.allowedDays;
+                                    if (e.target.checked) {
+                                      handleTimeRestrictionChange('marks', 'allowedDays', [...days, day]);
+                                    } else {
+                                      handleTimeRestrictionChange('marks', 'allowedDays', days.filter(d => d !== day));
+                                    }
+                                  }}
+                                />
+                                <span className="label-text text-xs">{day.slice(0, 3)}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+                  <button
+                    className="btn btn-primary flex-1"
+                    onClick={handleSaveTimeRestriction}
+                  >
+                     Save Time Restrictions
+                  </button>
+                  <button
+                    className="btn btn-ghost flex-1"
+                    onClick={() => setShowTimeRestrictions(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>

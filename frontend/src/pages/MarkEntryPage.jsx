@@ -26,11 +26,36 @@ const MarkEntryPage = () => {
   const [showMarkTable, setShowMarkTable] = useState(false); // NEW
   const [openMarkRegNo, setOpenMarkRegNo] = useState(null); // NEW
   const [prevMarks, setPrevMarks] = useState({}); // NEW
+  const [timeRestrictionAlert, setTimeRestrictionAlert] = useState(null);
   const query = useQuery();
   const batch = query.get('batch');
 
+  // Check time restrictions for marks entry
+  const checkTimeRestrictions = async () => {
+    try {
+      const response = await api.get('/time-restrictions/marks/check');
+      if (!response.data.allowed) {
+        setTimeRestrictionAlert({
+          type: 'error',
+          message: response.data.message || 'Marks entry is not allowed at this time'
+        });
+        return false;
+      } else {
+        setTimeRestrictionAlert(null);
+        return true;
+      }
+    } catch (error) {
+      // If there's an error checking restrictions, allow the action (fail open)
+      setTimeRestrictionAlert(null);
+      return true;
+    }
+  };
+
   useEffect(() => {
     if (batch) {
+      // Check time restrictions when component loads
+      checkTimeRestrictions();
+      
       api.get(`/batches/${batch}/students`).then(res => {
         setStudents(res.data.students || []);
         // Initialize marks with zeros
@@ -91,6 +116,14 @@ const MarkEntryPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check time restrictions before submitting
+    const isAllowed = await checkTimeRestrictions();
+    if (!isAllowed) {
+      toast.error('Marks entry is not allowed at this time');
+      return;
+    }
+    
     try {
       await api.post(`/batches/${batch}/marks`, {
         date,
@@ -100,8 +133,12 @@ const MarkEntryPage = () => {
       setShowMessage(true);
       setTimeout(() => setShowMessage(false), 2200);
       setExistingMarksFound(true);
-    } catch {
-      toast.error('Failed to update marks');
+    } catch (error) {
+      if (error.response?.status === 403) {
+        toast.error('Marks entry is not allowed at this time');
+      } else {
+        toast.error('Failed to update marks');
+      }
     }
   };
 
@@ -112,6 +149,22 @@ const MarkEntryPage = () => {
         <h1 className="mb-8 text-3xl sm:text-4xl font-extrabold text-primary text-center tracking-tight">
           Mark Entry <span className="text-accent">{batch ? `- ${batch}` : ''}</span>
         </h1>
+        
+        {/* Time Restriction Alert */}
+        {timeRestrictionAlert && (
+          <div className="w-full max-w-4xl mb-4">
+            <div className={`alert ${timeRestrictionAlert.type === 'error' ? 'alert-error' : 'alert-warning'} shadow-lg`}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L5.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+              <div>
+                <h3 className="font-bold">Access Restricted</h3>
+                <div className="text-xs">{timeRestrictionAlert.message}</div>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <form
           onSubmit={handleSubmit}
           className="w-full max-w-4xl bg-base-100 p-6 rounded-2xl shadow-2xl relative"
