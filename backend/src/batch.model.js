@@ -6,6 +6,7 @@ const studentSchema = new mongoose.Schema({
   department: { type: String, default: "" },
   personalEmail: { type: String, default: "" },
   collegeEmail: { type: String, default: "" },
+  mobile: { type: String, default: "" },
   marks: {
     efforts: { type: Number, default: 0 },
     presentation: { type: Number, default: 0 },

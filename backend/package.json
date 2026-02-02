@@ -7,7 +7,10 @@
     "start": "node src/server.js",
     "backup": "node src/backup.js backup",
     "backup:restore": "node src/backup.js restore",
-    "backup:list": "node src/backup.js list"
+    "backup:list": "node src/backup.js list",
+    "data:export": "node src/dataExportImport.js export",
+    "data:import": "node src/dataExportImport.js import",
+    "data:list": "node src/dataExportImport.js list"
   },
   "type": "module",
   "keywords": [],

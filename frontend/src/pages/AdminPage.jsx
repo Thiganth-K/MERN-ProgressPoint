@@ -42,45 +42,34 @@ const buttonIcons = {
 };
 
 const AdminPage = () => {
-  const [batches, setBatches] = useState([]);
-  const [selectedYear, setSelectedYear] = useState('');
-  const [selectedBatch, setSelectedBatch] = useState(localStorage.getItem('selectedBatch') || '');
+  const [departments, setDepartments] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState(localStorage.getItem('selectedDepartment') || '');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get('/batches').then(res => {
-      const sortedBatches = (res.data.batches || []).sort((a, b) =>
-        a.batchName.localeCompare(b.batchName)
-      );
-      setBatches(sortedBatches);
+    api.get('/departments').then(res => {
+      const sortedDepartments = (res.data.departments || []).sort();
+      setDepartments(sortedDepartments);
     });
   }, []);
 
-  // Extract unique years from batches
-  const years = Array.from(new Set(batches.map(b => b.year))).sort();
-
-  // Filter batches by selected year
-  const batchesForYear = selectedYear
-    ? batches.filter(b => b.year === Number(selectedYear))
-    : [];
-
-  const handleSelectBatch = (batchName) => {
-    setSelectedBatch(batchName);
-    localStorage.setItem('selectedBatch', batchName);
+  const handleSelectDepartment = (department) => {
+    setSelectedDepartment(department);
+    localStorage.setItem('selectedDepartment', department);
     
-    // Log batch selection
-    AdminLogger.logBatchSelection(batchName);
+    // Log department selection
+    AdminLogger.logBatchSelection(department); // Reusing the same log type for consistency
     
-    navigate(`/admin?batch=${batchName}`);
+    navigate(`/admin?department=${encodeURIComponent(department)}`);
   };
 
   const goTo = (path) => {
-    if (selectedBatch) {
+    if (selectedDepartment) {
       // Extract page name from path for logging
       const pageName = path.substring(1); // Remove leading slash
-      AdminLogger.logPageNavigation(pageName, selectedBatch);
-      navigate(`${path}?batch=${selectedBatch}`);
+      AdminLogger.logPageNavigation(pageName, selectedDepartment);
+      navigate(`${path}?department=${encodeURIComponent(selectedDepartment)}`);
     } else {
       navigate(path);
     }
@@ -94,7 +83,7 @@ const AdminPage = () => {
       } catch (err) {}
     }
     localStorage.removeItem('adminName');
-    localStorage.removeItem('selectedBatch');
+    localStorage.removeItem('selectedDepartment');
     navigate('/');
   };
 
@@ -107,7 +96,7 @@ const AdminPage = () => {
             Admin Dashboard
           </h1>
           <h2 className="mb-6 text-lg sm:text-xl font-semibold text-secondary text-center">
-            Select a Batch
+            Select a Department
           </h2>
 
           {/* Search Bar */}
@@ -121,42 +110,23 @@ const AdminPage = () => {
             </button>
           </div>
 
-          {/* Year Tabs */}
-          <div className="w-full flex justify-center mb-4">
-            <div role="tablist" className="tabs tabs-boxed">
-              {years.map(year => (
-                <button
-                  key={year}
-                  role="tab"
-                  className={`tab ${year === Number(selectedYear) ? "tab-active" : ""}`}
-                  onClick={() => {
-                    setSelectedYear(year);
-                    setSelectedBatch('');
-                  }}
-                >
-                  {year}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Batch Buttons for Selected Year */}
+          {/* Department Buttons */}
           <div className="flex flex-wrap justify-center gap-4 w-full mb-8">
-            {batchesForYear.map(batch => (
+            {departments.map(department => (
               <button
-                key={batch.batchName}
+                key={department}
                 className={`btn btn-md font-bold transition-all duration-150 ${
-                  selectedBatch === batch.batchName
+                  selectedDepartment === department
                     ? 'btn-primary scale-105 shadow-lg'
                     : 'btn-outline'
                 }`}
-                onClick={() => handleSelectBatch(batch.batchName)}
+                onClick={() => handleSelectDepartment(department)}
               >
-                {batch.batchName}
+                {department}
               </button>
             ))}
           </div>
-          {selectedBatch && (
+          {selectedDepartment && (
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
               <button
                 className="btn btn-info h-14 font-semibold text-base flex items-center justify-center w-full"
@@ -190,12 +160,12 @@ const AdminPage = () => {
               </button>
             </div>
           )}
-          {!selectedBatch && (
+          {!selectedDepartment && (
             <p className="mb-6 text-sm text-center text-warning font-medium bg-warning/10 px-4 py-2 rounded-lg shadow-sm">
               <svg className="inline w-4 h-4 mr-1 mb-1 text-warning" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              If the batch is not selected, the other pages will be visible in empty slots.
+              If the department is not selected, the other pages will be visible in empty slots.
             </p>
           )}
         </div>

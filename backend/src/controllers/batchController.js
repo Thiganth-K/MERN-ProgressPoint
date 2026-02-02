@@ -10,6 +10,15 @@ export const getAllBatches = async (req, res) => {
 // Create new batch
 export const createBatch = async (req, res) => {
   const { batchName, students, year } = req.body;
+  
+  // Validate required fields
+  if (!batchName || !year) {
+    return res.status(400).json({ 
+      success: false, 
+      error: "Batch name and year are required" 
+    });
+  }
+  
   try {
     const batch = new Batch({
       batchName,
@@ -25,8 +34,15 @@ export const createBatch = async (req, res) => {
     await batch.save();
     res.json({ success: true, batch });
   } catch (err) {
+    console.error("Error creating batch:", err);
     if (err.code === 11000) {
       return res.status(400).json({ success: false, error: "Batch name already exists" });
+    }
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ 
+        success: false, 
+        error: err.message 
+      });
     }
     res.status(500).json({ success: false, error: err.message });
   }

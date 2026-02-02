@@ -6,6 +6,7 @@ const placementDoneSchema = new mongoose.Schema({
   department: { type: String, default: "" },
   personalEmail: { type: String, default: "" },
   collegeEmail: { type: String, default: "" },
+  mobile: { type: String, default: "" },
   attendancePercent: { type: Number, default: 0 },
   marks: {
     efforts: { type: Number, default: 0 },

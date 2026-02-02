@@ -11,6 +11,7 @@ function useQuery() {
 
 const MarkAttendancePage = () => {
   const [students, setStudents] = useState([]);
+  const [allStudents, setAllStudents] = useState([]);
   const [attendance, setAttendance] = useState({});
   const [date, setDate] = useState('');
   const [session, setSession] = useState('');
@@ -18,8 +19,9 @@ const MarkAttendancePage = () => {
   const [existingAttendanceFound, setExistingAttendanceFound] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timeRestrictionAlert, setTimeRestrictionAlert] = useState(null);
+  const [selectedBatchFilter, setSelectedBatchFilter] = useState('');
   const query = useQuery();
-  const batch = query.get('batch');
+  const department = query.get('department');
 
   // Check time restrictions for attendance
   const checkTimeRestrictions = async () => {
@@ -43,47 +45,60 @@ const MarkAttendancePage = () => {
   };
 
   useEffect(() => {
-    if (batch) {
+    if (department) {
       // Check time restrictions when component loads
       checkTimeRestrictions();
       
-      api.get(`/batches/${batch}/students`)
+      api.get(`/departments/${encodeURIComponent(department)}/students`)
         .then(res => {
-          setStudents(res.data.students || []);
+          const fetchedStudents = res.data.students || [];
+          setAllStudents(fetchedStudents);
+          setStudents(fetchedStudents);
           const initial = {};
-          (res.data.students || []).forEach(s => {
+          fetchedStudents.forEach(s => {
             initial[s.regNo] = 'Present'; // Default to Present
           });
           setAttendance(initial);
         });
     }
-  }, [batch]);
+  }, [department]);
 
-  // Fetch existing attendance when date and session are selected
+  // Filter students by batch
   useEffect(() => {
-    if (batch && date && session) {
-      setIsLoading(true);
-      api.get(`/batches/${batch}/attendance/${date}/${session}`)
-        .then(res => {
-          if (res.data.attendance && Object.keys(res.data.attendance).length > 0) {
-            setAttendance(prev => ({
-              ...prev,
-              ...res.data.attendance
-            }));
-            setExistingAttendanceFound(true);
-          } else {
-            setExistingAttendanceFound(false);
-          }
-        })
-        .catch(err => {
-          console.error('Error fetching existing attendance:', err);
-          setExistingAttendanceFound(false);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+    if (selectedBatchFilter) {
+      const filtered = allStudents.filter(s => s.batchName === selectedBatchFilter);
+      setStudents(filtered);
+      // Update attendance state to only include filtered students
+      const initial = {};
+      filtered.forEach(s => {
+        initial[s.regNo] = attendance[s.regNo] || 'Present';
+      });
+      setAttendance(initial);
+    } else {
+      setStudents(allStudents);
+      // Reset attendance for all students
+      const initial = {};
+      allStudents.forEach(s => {
+        initial[s.regNo] = attendance[s.regNo] || 'Present';
+      });
+      setAttendance(initial);
     }
-  }, [batch, date, session]);
+  }, [selectedBatchFilter, allStudents]);
+
+  // Get unique batches for filter
+  const uniqueBatches = [...new Set(allStudents.map(s => s.batchName))].filter(Boolean).sort();
+
+  // Note: Fetching existing attendance by department would require a new backend endpoint
+  // For now, we'll skip existing attendance fetch for department view
+  useEffect(() => {
+    if (department && date && session) {
+      setIsLoading(true);
+      // This would need a new backend endpoint to fetch attendance by department
+      // For now, skipping existing attendance fetch for department view
+      setExistingAttendanceFound(false);
+      setIsLoading(false);
+    }
+  }, [department, date, session]);
 
   const handleAttendanceChange = (regNo, value) => {
     setAttendance(prev => ({
@@ -103,15 +118,28 @@ const MarkAttendancePage = () => {
     }
     
     try {
-      await api.post(`/batches/${batch}/attendance`, {
-        date,
-        session,
-        attendance
+      // Group students by batch since attendance is batch-specific
+      const batchGroups = {};
+      students.forEach(student => {
+        if (!batchGroups[student.batchName]) {
+          batchGroups[student.batchName] = {};
+        }
+        batchGroups[student.batchName][student.regNo] = attendance[student.regNo];
       });
+      
+      // Mark attendance for each batch
+      for (const [batchName, batchAttendance] of Object.entries(batchGroups)) {
+        await api.post(`/batches/${batchName}/attendance`, {
+          date,
+          session,
+          attendance: batchAttendance
+        });
+      }
+      
       setShowSuccess(true);
       setExistingAttendanceFound(false); // Reset the flag after successful save
       setTimeout(() => setShowSuccess(false), 2200);
-      toast.success('Attendance marked successfully!');
+      toast.success('Attendance marked successfully for all students!');
     } catch (error) {
       setShowSuccess(false);
       if (error.response?.status === 403) {
@@ -127,12 +155,12 @@ const MarkAttendancePage = () => {
       <NavBar />
       <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-base-200 px-2 py-8">
         <h1 className="mb-6 text-3xl font-extrabold text-primary text-center tracking-tight">
-          Mark Attendance <span className="text-accent">{batch ? `- ${batch}` : ''}</span>
+          Mark Attendance <span className="text-accent">{department ? `- ${department}` : ''}</span>
         </h1>
         
         {/* Existing Attendance Alert */}
         {existingAttendanceFound && (
-          <div className="w-full max-w-3xl mb-4">
+          <div className="w-full max-w-6xl mb-4">
             <div className="alert alert-info shadow-lg">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -147,7 +175,7 @@ const MarkAttendancePage = () => {
 
         {/* Time Restriction Alert */}
         {timeRestrictionAlert && (
-          <div className="w-full max-w-3xl mb-4">
+          <div className="w-full max-w-6xl mb-4">
             <div className={`alert ${timeRestrictionAlert.type === 'error' ? 'alert-error' : 'alert-warning'} shadow-lg`}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L5.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
@@ -162,32 +190,61 @@ const MarkAttendancePage = () => {
 
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-3xl bg-base-100 p-6 rounded-2xl shadow-xl relative"
+          className="w-full max-w-6xl bg-base-100 p-6 rounded-2xl shadow-xl relative"
         >
-          <div className="mb-6 flex flex-col sm:flex-row items-center gap-4">
-            <label className="font-semibold text-lg text-secondary">Date:</label>
-            <input
-              type="date"
-              value={date}
-              onChange={e => setDate(e.target.value)}
-              className="input input-bordered input-md max-w-xs"
-              required
-            />
-            <label className="font-semibold text-lg text-secondary">Session:</label>
-            <select
-              value={session}
-              onChange={e => setSession(e.target.value)}
-              className="select select-bordered input-md max-w-xs"
-              required
-            >
-              <option value="">Select Session</option>
-              <option value="FN">FN</option>
-              <option value="AN">AN</option>
-            </select>
-            {isLoading && (
-              <div className="loading loading-spinner loading-md"></div>
-            )}
+          <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+            <div className="flex flex-col gap-1">
+              <label className="font-semibold text-sm text-secondary">Date:</label>
+              <input
+                type="date"
+                value={date}
+                onChange={e => setDate(e.target.value)}
+                className="input input-bordered input-md"
+                required
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="font-semibold text-sm text-secondary">Session:</label>
+              <select
+                value={session}
+                onChange={e => setSession(e.target.value)}
+                className="select select-bordered input-md"
+                required
+              >
+                <option value="">Select Session</option>
+                <option value="FN">FN</option>
+                <option value="AN">AN</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="font-semibold text-sm text-secondary">Filter by Batch:</label>
+              <select
+                value={selectedBatchFilter}
+                onChange={e => setSelectedBatchFilter(e.target.value)}
+                className="select select-bordered input-md"
+              >
+                <option value="">All Batches</option>
+                {uniqueBatches.map(batch => (
+                  <option key={batch} value={batch}>{batch}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center justify-center">
+              {isLoading && (
+                <div className="loading loading-spinner loading-md"></div>
+              )}
+            </div>
           </div>
+          
+          {selectedBatchFilter && (
+            <div className="mb-4 alert alert-info">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span className="text-sm">Showing {students.length} student{students.length !== 1 ? 's' : ''} from <strong>{selectedBatchFilter}</strong></span>
+            </div>
+          )}
+          
           <div className="overflow-x-auto rounded-xl border border-base-200">
             <table className="table w-full text-base">
               <thead>
@@ -195,16 +252,22 @@ const MarkAttendancePage = () => {
                   <th className="px-4 py-2 text-left">#</th>
                   <th className="px-4 py-2 text-left">Reg No</th>
                   <th className="px-4 py-2 text-left">Name</th>
+                  <th className="px-4 py-2 text-left">Batch</th>
+                  <th className="px-4 py-2 text-left">Email</th>
                   <th className="px-4 py-2 text-left">Attendance %</th>
                   <th className="px-4 py-2 text-left">Attendance</th>
                 </tr>
               </thead>
               <tbody>
-                {students.map((student, idx) => (
-                  <tr key={student.regNo} className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200"}>
+                {students.map((student, idx) => {
+                  const uniqueKey = `${student.batchName}-${student.regNo}`;
+                  return (
+                  <tr key={uniqueKey} className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200"}>
                     <td className="px-4 py-2">{idx + 1}</td>
                     <td className="px-4 py-2 font-mono">{student.regNo}</td>
                     <td className="px-4 py-2">{student.name}</td>
+                    <td className="px-4 py-2 font-semibold text-primary">{student.batchName || '-'}</td>
+                    <td className="px-4 py-2 text-sm">{student.personalEmail || student.collegeEmail || '-'}</td>
                     <td className="px-4 py-2 min-w-[90px] text-center">
                       <span
                         className={`font-extrabold text-base sm:text-lg
@@ -238,7 +301,8 @@ const MarkAttendancePage = () => {
                       </select>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

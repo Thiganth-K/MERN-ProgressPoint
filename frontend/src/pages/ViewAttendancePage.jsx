@@ -15,7 +15,15 @@ function groupAttendanceByDateSession(students) {
     (student.attendance || []).forEach(record => {
       const key = `${record.date}__${record.session}`;
       if (!map[key]) map[key] = [];
-      map[key].push({ ...record, regNo: student.regNo, name: student.name });
+      map[key].push({ 
+        ...record, 
+        regNo: student.regNo, 
+        name: student.name,
+        batchName: student.batchName,
+        department: student.department,
+        personalEmail: student.personalEmail,
+        collegeEmail: student.collegeEmail
+      });
     });
   });
   return map;
@@ -27,9 +35,19 @@ const ViewAttendancePage = () => {
   const [selectedDateSession, setSelectedDateSession] = useState(null);
   const query = useQuery();
   const batch = query.get('batch');
+  const department = query.get('department');
 
   useEffect(() => {
-    if (batch) {
+    if (department) {
+      // Fetch students by department
+      api.get(`/departments/${encodeURIComponent(department)}/students`)
+        .then(res => {
+          setStudents(res.data.students || []);
+          const grouped = groupAttendanceByDateSession(res.data.students || []);
+          setAttendanceByDate(grouped);
+        });
+    } else if (batch) {
+      // Fetch students by batch (legacy support)
       api.get(`/batches/${batch}/students`)
         .then(res => {
           setStudents(res.data.students || []);
@@ -37,7 +55,7 @@ const ViewAttendancePage = () => {
           setAttendanceByDate(grouped);
         });
     }
-  }, [batch]);
+  }, [batch, department]);
 
   // Get sorted date-session keys (latest first, FN before AN)
   const dateSessionKeys = Object.keys(attendanceByDate).sort((a, b) => {
@@ -52,10 +70,10 @@ const ViewAttendancePage = () => {
       <NavBar />
       <div className="min-h-[calc(100vh-64px)] flex flex-col items-center bg-base-200 px-2 py-8">
         <h1 className="mb-8 text-3xl sm:text-4xl font-extrabold text-primary text-center tracking-tight">
-          Attendance Records <span className="text-accent">{batch ? `- ${batch}` : ''}</span>
+          Attendance Records <span className="text-accent">{department ? `- ${department}` : batch ? `- ${batch}` : ''}</span>
         </h1>
         {!selectedDateSession ? (
-          <div className="w-full max-w-4xl flex flex-wrap gap-6 justify-center">
+          <div className="w-full max-w-6xl flex flex-wrap gap-6 justify-center">
             {dateSessionKeys.length === 0 && (
               <div className="text-gray-500 text-lg font-medium">No attendance records found.</div>
             )}
@@ -89,7 +107,7 @@ const ViewAttendancePage = () => {
             })}
           </div>
         ) : (
-          <div className="w-full max-w-4xl bg-base-100 p-6 rounded-2xl shadow-2xl">
+          <div className="w-full max-w-6xl bg-base-100 p-6 rounded-2xl shadow-2xl">
             <h2 className="text-2xl font-bold mb-4 text-primary text-center">
               Attendance on <span className="text-accent">
                 {(() => {
@@ -105,6 +123,8 @@ const ViewAttendancePage = () => {
                     <th className="px-4 py-2 text-left">#</th>
                     <th className="px-4 py-2 text-left">Reg No</th>
                     <th className="px-4 py-2 text-left">Name</th>
+                    <th className="px-4 py-2 text-left">Batch</th>
+                    <th className="px-4 py-2 text-left">Email</th>
                     <th className="px-4 py-2 text-left">Status</th>
                   </tr>
                 </thead>
@@ -114,6 +134,8 @@ const ViewAttendancePage = () => {
                       <td className="px-4 py-2">{idx + 1}</td>
                       <td className="px-4 py-2 font-mono">{record.regNo}</td>
                       <td className="px-4 py-2">{record.name}</td>
+                      <td className="px-4 py-2 font-semibold text-primary">{record.batchName || '-'}</td>
+                      <td className="px-4 py-2 text-sm">{record.personalEmail || record.collegeEmail || '-'}</td>
                       <td className="px-4 py-2">
                         {record.status === 'Present' && <span className="text-success font-semibold">Present</span>}
                         {record.status === 'Absent' && <span className="text-error font-semibold">Absent</span>}

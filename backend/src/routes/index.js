@@ -7,6 +7,8 @@ import marksRoutes from "./marksRoutes.js";
 import placementRoutes from "./placementRoutes.js";
 import timeRestrictionRoutes from "./timeRestrictionRoutes.js";
 import backupRoutes from "./backupRoutes.js";
+import dataExportImportRoutes from "./dataExportImportRoutes.js";
+import departmentRoutes from "./departmentRoutes.js";
 // Import batch controller for batch averages
 import { getBatchAverages } from "../controllers/batchController.js";
 
@@ -21,6 +23,8 @@ router.use("/batches", marksRoutes);
 router.use("/placement-done", placementRoutes);
 router.use("/time-restrictions", timeRestrictionRoutes);
 router.use("/backup", backupRoutes);
+router.use("/data", dataExportImportRoutes);
+router.use("/departments", departmentRoutes);
 
 // Keep the /admins endpoint for backward compatibility
 router.use("/admins", adminRoutes);

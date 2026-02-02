@@ -47,6 +47,9 @@ const LeaderBoard = () => {
     return {
       name: student.name,
       regNo: student.regNo,
+      department: student.department,
+      personalEmail: student.personalEmail,
+      collegeEmail: student.collegeEmail,
       total,
       attendancePercent: Number(attendancePercent),
       ...student.marks,
@@ -74,6 +77,8 @@ const LeaderBoard = () => {
                 <th className="px-4 py-2 text-left">Rank</th>
                 <th className="px-4 py-2 text-left">Student</th>
                 <th className="px-4 py-2 text-left">Reg No</th>
+                <th className="px-4 py-2 text-left">Dept</th>
+                <th className="px-4 py-2 text-left">Email</th>
                 <th className="px-4 py-2 text-center">Efforts</th>
                 <th className="px-4 py-2 text-center">Presentation</th>
                 <th className="px-4 py-2 text-center">Assessment</th>
@@ -86,7 +91,7 @@ const LeaderBoard = () => {
             <tbody>
               {leaderboard.length === 0 && (
                 <tr>
-                  <td colSpan={10} className="text-center py-8 text-gray-400 font-semibold">
+                  <td colSpan={12} className="text-center py-8 text-gray-400 font-semibold">
                     No students found for this batch.
                   </td>
                 </tr>
@@ -98,6 +103,8 @@ const LeaderBoard = () => {
                   </td>
                   <td className="px-4 py-2 font-semibold">{student.name}</td>
                   <td className="px-4 py-2 font-mono">{student.regNo}</td>
+                  <td className="px-4 py-2">{student.department || '-'}</td>
+                  <td className="px-4 py-2">{student.personalEmail || student.collegeEmail || '-'}</td>
                   <td className="px-4 py-2 text-center">{student.efforts}</td>
                   <td className="px-4 py-2 text-center">{student.presentation}</td>
                   <td className="px-4 py-2 text-center">{student.assessment}</td>

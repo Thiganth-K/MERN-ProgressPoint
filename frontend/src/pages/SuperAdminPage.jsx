@@ -140,6 +140,12 @@ const SuperAdminPage = () => {
   const [showAddAdmin, setShowAddAdmin] = useState(false);
   const [showViewAdmin, setShowViewAdmin] = useState(false);
   const [showTimeRestrictions, setShowTimeRestrictions] = useState(false);
+  const [showDepartments, setShowDepartments] = useState(false);
+  const [departments, setDepartments] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [departmentStudents, setDepartmentStudents] = useState([]);
+  const [showDepartmentStudentsModal, setShowDepartmentStudentsModal] = useState(false);
+  const [departmentStats, setDepartmentStats] = useState([]);
   const [timeRestrictions, setTimeRestrictions] = useState({
     attendance: {
       isEnabled: false,
@@ -172,6 +178,8 @@ const SuperAdminPage = () => {
     fetchAttendanceAverages();
     fetchBatchAverages();
     fetchPlacementDoneBatchStats(); // <-- Add this
+    fetchDepartments();
+    fetchDepartmentStats();
     // eslint-disable-next-line
   }, []);
 
@@ -307,10 +315,15 @@ const SuperAdminPage = () => {
       .map(line => line.trim())
       .filter(Boolean)
       .map(line => {
-        const [regNo, name] = line.split(',').map(s => s.trim());
+        const parts = line.split(',').map(s => s.trim());
+        const [regNo, name, department, email, mobile] = parts;
         return {
           regNo,
           name: name || regNo,
+          department: department || '',
+          personalEmail: email || '',
+          collegeEmail: '',
+          mobile: mobile || '',
           marks: { efforts: 0, presentation: 0, assessment: 0, assignment: 0 },
           marksLastUpdated: null,
           attendance: [],
@@ -594,6 +607,42 @@ const SuperAdminPage = () => {
     setPlacementDoneStudents(res.data.students || []);
   };
 
+  const fetchDepartments = async () => {
+    try {
+      const res = await api.get('/departments');
+      setDepartments((res.data.departments || []).sort());
+    } catch {
+      toast.error('Failed to fetch departments');
+    }
+  };
+
+  const fetchDepartmentStats = async () => {
+    try {
+      const res = await api.get('/departments/stats');
+      setDepartmentStats(res.data.stats || []);
+    } catch {
+      toast.error('Failed to fetch department stats');
+    }
+  };
+
+  const handleViewDepartmentStudents = async (department) => {
+    try {
+      setSelectedDepartment(department);
+      const res = await api.get(`/departments/${encodeURIComponent(department)}/students`);
+      setDepartmentStudents(res.data.students || []);
+      setShowDepartmentStudentsModal(true);
+    } catch {
+      toast.error('Failed to fetch department students');
+    }
+  };
+
+  const handleExportDepartmentStudents = (department, format) => {
+    if (format === 'excel') {
+      window.location.href = `http://localhost:5001/api/departments/${encodeURIComponent(department)}/export`;
+      toast.success(`Exporting ${department} students...`);
+    }
+  };
+
   // Prepare data for charts
   const batchNames = batchAverages.map(b => b.batchName);
   const efforts = batchAverages.map(b => b.averages.efforts);
@@ -829,6 +878,24 @@ const SuperAdminPage = () => {
                 <div>
                   <div className="font-semibold text-lg">{showViewAdmin ? 'Hide Admins' : 'View Admins'}</div>
                   <p className="text-sm sm:text-base text-gray-500">Manage admin users and edit their credentials.</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Card: View Departments */}
+            <button
+              onClick={() => setShowDepartments(!showDepartments)}
+              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-secondary">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="font-semibold text-lg">{showDepartments ? 'Hide Departments' : 'View Departments'}</div>
+                  <p className="text-sm sm:text-base text-gray-500">View students grouped by department across all batches.</p>
                 </div>
               </div>
             </button>
@@ -1143,11 +1210,11 @@ const SuperAdminPage = () => {
                 />
               </div>
               <textarea
-                placeholder={`Enter students, one per line: regno,studentname\nExample:\n21IT001,John Doe\n21IT002,Jane Smith`}
+                placeholder={`Enter students in CSV format: regno,name,dept,email,mobile\nExample:\n21IT001,John Doe,CSE,john@email.com,9876543210\n21IT002,Jane Smith,IT,jane@email.com,9876543211`}
                 value={newBatchStudents}
                 onChange={e => setNewBatchStudents(e.target.value)}
                 className="textarea textarea-bordered text-xs sm:text-sm"
-                rows={window.innerWidth < 640 ? 3 : 4}
+                rows={window.innerWidth < 640 ? 4 : 6}
               />
               <button type="submit" className="btn btn-primary btn-sm sm:btn-md font-semibold flex items-center w-full sm:w-fit self-end">
                 {icons.add} Add Batch
@@ -1205,7 +1272,7 @@ const SuperAdminPage = () => {
                                 <button
                                   className="btn btn-error btn-xs text-xs"
                                   onClick={() => {
-                                    setBatchToRemove(batch);
+                                    setBatchToRemove(batch.batchName);
                                     setShowRemoveBatchModal(true);
                                   }}
                                   title="Remove Batch"
@@ -1307,6 +1374,73 @@ const SuperAdminPage = () => {
 
 
 
+        {/* Departments List - Only show when showDepartments is true */}
+        {showDepartments && (
+          <section className="w-full max-w-6xl mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center mb-3 sm:mb-4">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              Departments
+            </h2>
+            <div className="bg-base-200 rounded-xl shadow p-3 sm:p-4 lg:p-6">
+              {departments.length === 0 ? (
+                <div className="text-center text-gray-400 py-6 sm:py-8">No departments found. Add students with department information.</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="table w-full text-xs sm:text-sm">
+                    <thead>
+                      <tr className="bg-base-300">
+                        <th className="text-left">Department</th>
+                        <th className="text-center">Total Students</th>
+                        <th className="text-center">Avg Marks</th>
+                        <th className="text-center">Avg Attendance</th>
+                        <th className="text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {departments.map(dept => {
+                        const stats = departmentStats.find(s => s.department === dept) || {};
+                        return (
+                          <tr key={dept} className="hover:bg-base-300 transition">
+                            <td className="font-semibold text-primary">{dept}</td>
+                            <td className="text-center">{stats.totalStudents || 0}</td>
+                            <td className="text-center">{stats.averageMarks || '0.00'}</td>
+                            <td className="text-center">{stats.averageAttendance || '0.00'}%</td>
+                            <td className="text-center">
+                              <div className="flex gap-2 justify-center">
+                                <button
+                                  className="btn btn-info btn-xs"
+                                  onClick={() => handleViewDepartmentStudents(dept)}
+                                  title="View Students"
+                                >
+                                  {icons.view} <span className="hidden sm:inline">View</span>
+                                </button>
+                                <button
+                                  className="btn btn-success btn-xs"
+                                  onClick={() => handleExportDepartmentStudents(dept, 'excel')}
+                                  title="Export to Excel"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  </svg>
+                                  <span className="hidden sm:inline">Export</span>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+
+
         {/* Students Modal */}
         {showStudentsModal && (
           <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-2 sm:p-4">
@@ -1362,12 +1496,14 @@ const SuperAdminPage = () => {
               
               {/* Table Container */}
               <div className="overflow-x-auto flex-1 w-full p-3 sm:p-4 lg:p-6">
-                <table className="min-w-[600px] w-full text-xs sm:text-sm md:text-base">
+                <table className="min-w-[800px] w-full text-xs sm:text-sm md:text-base">
                   <thead>
                     <tr className="bg-base-200 text-xs sm:text-sm uppercase text-gray-600">
                       <th className="px-2 py-2 text-left font-bold whitespace-nowrap">S.No</th>
                       <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Reg No</th>
                       <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Name</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Dept</th>
+                      <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Email</th>
                       <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Profile</th>
                       <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Attendance</th>
                       <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Move</th>
@@ -1377,7 +1513,7 @@ const SuperAdminPage = () => {
                   <tbody>
                     {studentsInBatch.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="text-center py-6 text-gray-400 font-semibold">
+                        <td colSpan={9} className="text-center py-6 text-gray-400 font-semibold">
                           <span className="inline-flex items-center gap-2">
                             {icons.add}
                             No students in this batch.
@@ -1390,6 +1526,8 @@ const SuperAdminPage = () => {
                           <td className="px-2 py-2 text-xs sm:text-sm text-gray-500 whitespace-nowrap">{idx + 1}</td>
                           <td className="px-2 py-2 font-mono text-xs sm:text-sm whitespace-nowrap">{student.regNo}</td>
                           <td className="px-2 py-2 text-xs sm:text-sm whitespace-nowrap">{student.name}</td>
+                          <td className="px-2 py-2 text-xs sm:text-sm whitespace-nowrap">{student.department || '-'}</td>
+                          <td className="px-2 py-2 text-xs sm:text-sm whitespace-nowrap">{student.personalEmail || student.collegeEmail || '-'}</td>
                           <td className="px-2 py-2 text-center whitespace-nowrap">
                             <button
                               className="btn btn-secondary btn-sm w-24 flex items-center gap-1 justify-center"
