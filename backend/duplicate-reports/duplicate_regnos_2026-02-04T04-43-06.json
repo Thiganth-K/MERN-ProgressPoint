@@ -1,0 +1,1283 @@
+{
+  "metadata": {
+    "searchDate": "2026-02-04T04:43:06.428Z",
+    "totalDuplicateRegNos": 20,
+    "totalStudentsAffected": 40,
+    "description": "Students with duplicate registration numbers across all batches"
+  },
+  "duplicates": {
+    "61782323110003": [
+      {
+        "regNo": "61782323110003",
+        "name": "Anand P",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110003",
+          "name": "Anand P",
+          "department": "IT",
+          "personalEmail": "anand.23it@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9442261244",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a09a0806ae03bf28e80a"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072cfd9acfb8c431f2115",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110003",
+        "name": "Abinaya S",
+        "batchName": "BATCH -  [2]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110003",
+          "name": "Abinaya S",
+          "department": "AI&DS",
+          "personalEmail": "abinaya.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9087653460",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3670806ae03bf2b0963"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980732ed9acfb8c431f3b41",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110005": [
+      {
+        "regNo": "61782323110005",
+        "name": "Deepak Priyan M",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110005",
+          "name": "Deepak Priyan M",
+          "department": "IT",
+          "personalEmail": "deepakpriyan.23it@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "6374761669",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a09a0806ae03bf28e80c"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072cfd9acfb8c431f2117",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110005",
+        "name": "ABISHEK S",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110005",
+          "name": "ABISHEK S",
+          "department": "AI&DS",
+          "personalEmail": "example@gmail.com",
+          "collegeEmail": "",
+          "mobile": "1234567890",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Absent",
+              "_id": "6980a3690806ae03bf2b0b46"
+            }
+          ],
+          "attendancePercent": 0,
+          "_id": "6980827ed9acfb8c43214645",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110006": [
+      {
+        "regNo": "61782323110006",
+        "name": "Kavi Priya J",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110006",
+          "name": "Kavi Priya J",
+          "department": "IT",
+          "personalEmail": "kavipriya.23it@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "6369187570",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a09a0806ae03bf28e80d"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072cfd9acfb8c431f2118",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110006",
+        "name": "Ajaysivam T",
+        "batchName": "BATCH -  [2]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110006",
+          "name": "Ajaysivam T",
+          "department": "AI&DS",
+          "personalEmail": "ajaysivam.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "814629433",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3670806ae03bf2b0964"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980732ed9acfb8c431f3b42",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110009": [
+      {
+        "regNo": "61782323110009",
+        "name": "Reyaash U",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110009",
+          "name": "Reyaash U",
+          "department": "IT",
+          "personalEmail": "reyaash.23it@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "8667718867",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a09a0806ae03bf28e810"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072cfd9acfb8c431f211b",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110009",
+        "name": "Akshya Harini N",
+        "batchName": "NOT-WILLING",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110009",
+          "name": "Akshya Harini N",
+          "department": "NONE",
+          "personalEmail": "example@gmail.com",
+          "collegeEmail": "",
+          "mobile": "0",
+          "marksLastUpdated": null,
+          "attendance": [],
+          "attendancePercent": 0,
+          "_id": "6980732ed9acfb8c431f3b43",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110010": [
+      {
+        "regNo": "61782323110010",
+        "name": "Sabeshhan R",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110010",
+          "name": "Sabeshhan R",
+          "department": "IT",
+          "personalEmail": "sabeshhan.23it@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "6369576509",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a09a0806ae03bf28e811"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072cfd9acfb8c431f211c",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110010",
+        "name": "Angelin Sumithra S",
+        "batchName": "BATCH -  [2]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110010",
+          "name": "Angelin Sumithra S",
+          "department": "AI&DS",
+          "personalEmail": "angelinsumithra.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "6381911953",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3670806ae03bf2b0965"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980732ed9acfb8c431f3b44",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110014": [
+      {
+        "regNo": "61782323110014",
+        "name": "Saravanan M",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110014",
+          "name": "Saravanan M",
+          "department": "IT",
+          "personalEmail": "saravanan.23it@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "8122821057",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a09a0806ae03bf28e815"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f2120",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110014",
+        "name": "ARUN M",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110014",
+          "name": "ARUN M",
+          "department": "AI&DS",
+          "personalEmail": "arun.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9363354667",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3690806ae03bf2b0b47"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980827ed9acfb8c43214646",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110017": [
+      {
+        "regNo": "61782323110017",
+        "name": "Akshaya P",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110017",
+          "name": "Akshaya P",
+          "department": "AI&DS",
+          "personalEmail": "akshaya.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9952631496",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc1f"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f2123",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110017",
+        "name": "ASHWATH S N",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110017",
+          "name": "ASHWATH S N",
+          "department": "AI&DS",
+          "personalEmail": "ashwath.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "6379669951",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3690806ae03bf2b0b48"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980827ed9acfb8c43214647",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110018": [
+      {
+        "regNo": "61782323110018",
+        "name": "Anitha M",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110018",
+          "name": "Anitha M",
+          "department": "AI&DS",
+          "personalEmail": "anitha.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9025485772",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc20"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f2124",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110018",
+        "name": "ATHIF S",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110018",
+          "name": "ATHIF S",
+          "department": "AI&DS",
+          "personalEmail": "example@gmail.com",
+          "collegeEmail": "",
+          "mobile": "1234567890",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3690806ae03bf2b0b49"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980827ed9acfb8c43214648",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110020": [
+      {
+        "regNo": "61782323110020",
+        "name": "Archana Devi E",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110020",
+          "name": "Archana Devi E",
+          "department": "AI&DS",
+          "personalEmail": "archanadevi.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9363133960",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Absent",
+              "_id": "698180dab5828c7547e5cc22"
+            }
+          ],
+          "attendancePercent": 0,
+          "_id": "698072d0d9acfb8c431f2126",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110020",
+        "name": "BARANI SRI P J",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110020",
+          "name": "BARANI SRI P J",
+          "department": "AI&DS",
+          "personalEmail": "baranisri.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "8122012005",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Absent",
+              "_id": "6980a3690806ae03bf2b0b4a"
+            }
+          ],
+          "attendancePercent": 0,
+          "_id": "6980827ed9acfb8c43214649",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110021": [
+      {
+        "regNo": "61782323110021",
+        "name": "Arunachalam L",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110021",
+          "name": "Arunachalam L",
+          "department": "AI&DS",
+          "personalEmail": "arunachalam.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "7695850015",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc23"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f2127",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110021",
+        "name": "BARATH J",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110021",
+          "name": "BARATH J",
+          "department": "AI&DS",
+          "personalEmail": "barath.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "6374030168",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3690806ae03bf2b0b4b"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980827ed9acfb8c4321464a",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110023": [
+      {
+        "regNo": "61782323110023",
+        "name": "Balashanmugam A",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110023",
+          "name": "Balashanmugam A",
+          "department": "AI&DS",
+          "personalEmail": "balashanmugam.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9361509198",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Absent",
+              "_id": "698180dab5828c7547e5cc25"
+            }
+          ],
+          "attendancePercent": 0,
+          "_id": "698072d0d9acfb8c431f2129",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110023",
+        "name": "BHAVANA L",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110023",
+          "name": "BHAVANA L",
+          "department": "AI&DS",
+          "personalEmail": "bhavana.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9345507870",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Absent",
+              "_id": "6980a3690806ae03bf2b0b4c"
+            }
+          ],
+          "attendancePercent": 0,
+          "_id": "6980827ed9acfb8c4321464b",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110024": [
+      {
+        "regNo": "61782323110024",
+        "name": "Benadict Infant A",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110024",
+          "name": "Benadict Infant A",
+          "department": "AI&DS",
+          "personalEmail": "benadiciinfant.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9360343032",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc26"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f212a",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110024",
+        "name": "Bilal Ahamed A",
+        "batchName": "BATCH -  [2]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110024",
+          "name": "Bilal Ahamed A",
+          "department": "AI&DS",
+          "personalEmail": "bilalahamed.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "8148609764",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3670806ae03bf2b0966"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980732ed9acfb8c431f3b45",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110025": [
+      {
+        "regNo": "61782323110025",
+        "name": "Elangovan S",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110025",
+          "name": "Elangovan S",
+          "department": "AI&DS",
+          "personalEmail": "elangovan.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "7010588856",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc27"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f212b",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110025",
+        "name": "DAWOOD KHAN A",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110025",
+          "name": "DAWOOD KHAN A",
+          "department": "AI&DS",
+          "personalEmail": "Dawoodkhan.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9842888013",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3690806ae03bf2b0b4d"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980827ed9acfb8c4321464c",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110026": [
+      {
+        "regNo": "61782323110026",
+        "name": "Giridharan K",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110026",
+          "name": "Giridharan K",
+          "department": "AI&DS",
+          "personalEmail": "giridharan.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9360602260",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Absent",
+              "_id": "698180dab5828c7547e5cc28"
+            }
+          ],
+          "attendancePercent": 0,
+          "_id": "698072d0d9acfb8c431f212c",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110026",
+        "name": "Deepika R",
+        "batchName": "BATCH -  [2]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110026",
+          "name": "Deepika R",
+          "department": "AI&DS",
+          "personalEmail": "deepika.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "8072228462",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Absent",
+              "_id": "6980a3670806ae03bf2b0967"
+            }
+          ],
+          "attendancePercent": 0,
+          "_id": "6980732ed9acfb8c431f3b46",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110027": [
+      {
+        "regNo": "61782323110027",
+        "name": "Kavinya K K",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110027",
+          "name": "Kavinya K K",
+          "department": "AI&DS",
+          "personalEmail": "kavinya.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9629286819",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc29"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f212d",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110027",
+        "name": "DHANUSRI S",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110027",
+          "name": "DHANUSRI S",
+          "department": "AI&DS",
+          "personalEmail": "example@gmail.com",
+          "collegeEmail": "",
+          "mobile": "1234567890",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3690806ae03bf2b0b4e"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980827ed9acfb8c4321464d",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110028": [
+      {
+        "regNo": "61782323110028",
+        "name": "Kovendan P S",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110028",
+          "name": "Kovendan P S",
+          "department": "AI&DS",
+          "personalEmail": "kovendan.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9042374603",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc2a"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f212e",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110028",
+        "name": "Dharanesh S",
+        "batchName": "BATCH -  [2]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110028",
+          "name": "Dharanesh S",
+          "department": "AI&DS",
+          "personalEmail": "dharanesh.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "8610086004",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3670806ae03bf2b0968"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980732ed9acfb8c431f3b47",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110030": [
+      {
+        "regNo": "61782323110030",
+        "name": "Muhilan R",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110030",
+          "name": "Muhilan R",
+          "department": "AI&DS",
+          "personalEmail": "muhilan.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "8270437123",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc2c"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f2130",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110030",
+        "name": "DHARSHANA R",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110030",
+          "name": "DHARSHANA R",
+          "department": "AI&DS",
+          "personalEmail": "dharshana.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "8300315433",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3690806ae03bf2b0b4f"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980827ed9acfb8c4321464e",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110031": [
+      {
+        "regNo": "61782323110031",
+        "name": "Naveena S",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110031",
+          "name": "Naveena S",
+          "department": "AI&DS",
+          "personalEmail": "naveena.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9894470747",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc2d"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f2131",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110031",
+        "name": "DHARSHINI M",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110031",
+          "name": "DHARSHINI M",
+          "department": "AI&DS",
+          "personalEmail": "example@gmail.com",
+          "collegeEmail": "",
+          "mobile": "1234567890",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3690806ae03bf2b0b50"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980827ed9acfb8c4321464f",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110032": [
+      {
+        "regNo": "61782323110032",
+        "name": "Pranita A",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110032",
+          "name": "Pranita A",
+          "department": "AI&DS",
+          "personalEmail": "pranita.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "8682829869",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc2e"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f2132",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110032",
+        "name": "DHARSHINI S",
+        "batchName": "BATCH-  [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110032",
+          "name": "DHARSHINI S",
+          "department": "AI&DS",
+          "personalEmail": "dharshinis.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "6382630679",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3690806ae03bf2b0b51"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980827ed9acfb8c43214650",
+          "marksHistory": []
+        }
+      }
+    ],
+    "61782323110033": [
+      {
+        "regNo": "61782323110033",
+        "name": "Rajakumaran P",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110033",
+          "name": "Rajakumaran P",
+          "department": "AI&DS",
+          "personalEmail": "rajakumaran.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9080065866",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc2f"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f2133",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110033",
+        "name": "Dharunprakash M",
+        "batchName": "BATCH -  [2]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110033",
+          "name": "Dharunprakash M",
+          "department": "AI&DS",
+          "personalEmail": "dharunprakash.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9363329889",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "6980a3670806ae03bf2b0969"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "6980732ed9acfb8c431f3b48",
+          "marksHistory": []
+        }
+      }
+    ]
+  }
+}

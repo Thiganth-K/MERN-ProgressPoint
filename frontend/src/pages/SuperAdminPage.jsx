@@ -6,6 +6,7 @@ import { Bar, Pie } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js';
 import AdminLogsModal from '../components/AdminLogsModal';
 import BackupManager from '../components/BackupManager';
+import StudentEditModal from '../components/StudentEditModal';
 Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 // Minimal SuperAdmin NavBar and Footer
@@ -146,6 +147,8 @@ const SuperAdminPage = () => {
   const [departmentStudents, setDepartmentStudents] = useState([]);
   const [showDepartmentStudentsModal, setShowDepartmentStudentsModal] = useState(false);
   const [departmentStats, setDepartmentStats] = useState([]);
+  const [studentToEdit, setStudentToEdit] = useState(null);
+  const [showEditStudentModal, setShowEditStudentModal] = useState(false);
   const [timeRestrictions, setTimeRestrictions] = useState({
     attendance: {
       isEnabled: false,
@@ -1506,6 +1509,7 @@ const SuperAdminPage = () => {
                       <th className="px-2 py-2 text-left font-bold whitespace-nowrap">Email</th>
                       <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Profile</th>
                       <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Attendance</th>
+                      <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Edit</th>
                       <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Move</th>
                       <th className="px-2 py-2 text-center font-bold whitespace-nowrap">Remove</th>
                     </tr>
@@ -1513,7 +1517,7 @@ const SuperAdminPage = () => {
                   <tbody>
                     {studentsInBatch.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="text-center py-6 text-gray-400 font-semibold">
+                        <td colSpan={10} className="text-center py-6 text-gray-400 font-semibold">
                           <span className="inline-flex items-center gap-2">
                             {icons.add}
                             No students in this batch.
@@ -1544,6 +1548,15 @@ const SuperAdminPage = () => {
                               </svg>
                               {student.attendancePercent ?? 0}%
                             </span>
+                          </td>
+                          <td className="px-2 py-2 text-center whitespace-nowrap">
+                            <button
+                              className="btn btn-primary btn-sm w-24 flex items-center gap-1 justify-center"
+                              onClick={() => { setStudentToEdit(student); setShowEditStudentModal(true); }}
+                              title="Edit Student"
+                            >
+                              {icons.edit} Edit
+                            </button>
                           </td>
                           <td className="px-2 py-2 text-center whitespace-nowrap">
                             <select
@@ -2082,6 +2095,31 @@ const SuperAdminPage = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Student Edit Modal */}
+        {showEditStudentModal && studentToEdit && (
+          <StudentEditModal
+            student={studentToEdit}
+            batchName={selectedBatch}
+            onClose={() => {
+              setShowEditStudentModal(false);
+              setStudentToEdit(null);
+            }}
+            onUpdate={(updatedStudent, isDeleted) => {
+              if (isDeleted) {
+                // Remove student from list
+                setStudentsInBatch(prev => prev.filter(s => s.regNo !== studentToEdit.regNo));
+              } else {
+                // Update student in list
+                setStudentsInBatch(prev => prev.map(s => 
+                  s.regNo === studentToEdit.regNo ? updatedStudent : s
+                ));
+              }
+              // Refresh batches to update counts
+              fetchBatches();
+            }}
+          />
         )}
       </main>
       <SuperAdminFooter />

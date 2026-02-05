@@ -9,6 +9,7 @@ import timeRestrictionRoutes from "./timeRestrictionRoutes.js";
 import backupRoutes from "./backupRoutes.js";
 import dataExportImportRoutes from "./dataExportImportRoutes.js";
 import departmentRoutes from "./departmentRoutes.js";
+import studentRoutes from "./studentRoutes.js";
 // Import batch controller for batch averages
 import { getBatchAverages } from "../controllers/batchController.js";
 
@@ -25,6 +26,7 @@ router.use("/time-restrictions", timeRestrictionRoutes);
 router.use("/backup", backupRoutes);
 router.use("/data", dataExportImportRoutes);
 router.use("/departments", departmentRoutes);
+router.use("/students", studentRoutes);
 
 // Keep the /admins endpoint for backward compatibility
 router.use("/admins", adminRoutes);

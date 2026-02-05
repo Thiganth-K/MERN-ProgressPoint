@@ -10,7 +10,10 @@
     "backup:list": "node src/backup.js list",
     "data:export": "node src/dataExportImport.js export",
     "data:import": "node src/dataExportImport.js import",
-    "data:list": "node src/dataExportImport.js list"
+    "data:list": "node src/dataExportImport.js list",
+    "delete-batch": "node src/delete-batch.js",
+    "find-duplicates": "node src/find-duplicate-regnos.js",
+    "duplicates-to-excel": "node src/export-duplicates-excel.js"
   },
   "type": "module",
   "keywords": [],

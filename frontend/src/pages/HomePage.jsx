@@ -121,7 +121,7 @@ const HomePage = () => {
                     <div className="divider text-xs text-gray-400">OR</div>
                     <button
                         onClick={() => navigate('/client-dashboard')}
-                        className="btn btn-outline btn-secondary w-full flex items-center justify-center gap-2 text-base font-semibold hover:scale-105 transition-transform"
+                        className="btn btn-outline btn-secondary w-full flex items-center justify-center gap-2 text-base font-semibold hover:scale-105 transition-transform mb-2"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -129,7 +129,19 @@ const HomePage = () => {
                         </svg>
                         Login without Account
                     </button>
-                    <p className="text-xs text-gray-500 mt-2">View placement statistics as a guest</p>
+                    <p className="text-xs text-gray-500 mb-3">View placement statistics as a guest</p>
+                    
+                    <button
+                        onClick={() => navigate('/student-login')}
+                        className="btn btn-outline btn-accent w-full flex items-center justify-center gap-2 text-base font-semibold hover:scale-105 transition-transform"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                        </svg>
+                        Student Login
+                    </button>
+                    <p className="text-xs text-gray-500 mt-2">Students: Login to view your progress</p>
                 </div>
                 {/* Failed login animation */}
                 {showFail && (

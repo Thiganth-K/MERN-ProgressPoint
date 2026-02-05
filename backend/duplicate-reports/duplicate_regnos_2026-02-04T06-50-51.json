@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "searchDate": "2026-02-04T06:50:51.471Z",
+    "totalDuplicateRegNos": 1,
+    "totalStudentsAffected": 2,
+    "description": "Students with duplicate registration numbers across all batches"
+  },
+  "duplicates": {
+    "61782323110004": [
+      {
+        "regNo": "61782323110004",
+        "name": "Abishek R",
+        "batchName": "BATCH - [1]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110004",
+          "name": "Abishek R",
+          "department": "AI&DS",
+          "personalEmail": "abishekr.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9042639962",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Present",
+              "_id": "698180dab5828c7547e5cc1e"
+            }
+          ],
+          "attendancePercent": 100,
+          "_id": "698072d0d9acfb8c431f2122",
+          "marksHistory": []
+        }
+      },
+      {
+        "regNo": "61782323110004",
+        "name": "ABISHEK S",
+        "batchName": "BATCH - [3]",
+        "studentData": {
+          "marks": {
+            "efforts": 0,
+            "presentation": 0,
+            "assessment": 0,
+            "assignment": 0
+          },
+          "regNo": "61782323110004",
+          "name": "ABISHEK S",
+          "department": "AI&DS",
+          "personalEmail": "abishek.23ads@sonatech.ac.in",
+          "collegeEmail": "",
+          "mobile": "9042639962",
+          "marksLastUpdated": null,
+          "attendance": [
+            {
+              "date": "2026-02-02",
+              "session": "AN",
+              "status": "Absent",
+              "_id": "6980a3690806ae03bf2b0b46"
+            }
+          ],
+          "attendancePercent": 0,
+          "_id": "6980827ed9acfb8c43214645",
+          "marksHistory": []
+        }
+      }
+    ]
+  }
+}

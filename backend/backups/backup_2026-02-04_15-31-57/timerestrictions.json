@@ -1,0 +1,44 @@
+[
+  {
+    "_id": "690ccb8e432474bf85ad431d",
+    "type": "attendance",
+    "__v": 0,
+    "allowWeekends": true,
+    "allowedDays": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "endTime": "19:00",
+    "isEnabled": false,
+    "lastUpdatedAt": "2026-02-03T04:59:06.591Z",
+    "lastUpdatedBy": "System",
+    "startTime": "17:00",
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "_id": "690ccb8e432474bf85ad431e",
+    "type": "marks",
+    "__v": 0,
+    "allowWeekends": true,
+    "allowedDays": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "endTime": "19:00",
+    "isEnabled": false,
+    "lastUpdatedAt": "2026-02-03T04:59:06.878Z",
+    "lastUpdatedBy": "System",
+    "startTime": "17:00",
+    "timezone": "Asia/Kolkata"
+  }
+]

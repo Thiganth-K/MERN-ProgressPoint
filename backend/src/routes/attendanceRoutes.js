@@ -2,12 +2,17 @@ import express from "express";
 import {
   getAttendance,
   markAttendance,
-  exportAttendance
+  exportAttendance,
+  exportAttendanceByDateSession
 } from "../controllers/attendanceController.js";
 import { logAdminAction } from "../middleware/logging.js";
 import { checkAttendanceTime } from "../middleware/timeRestriction.js";
 
 const router = express.Router();
+
+// IMPORTANT: More specific routes MUST come before generic routes
+// Export attendance by specific date and session (must be first!)
+router.get("/export-attendance/:date/:session", exportAttendanceByDateSession);
 
 // Attendance routes
 router.get("/:batchName/attendance/:date/:session", logAdminAction("view_attendance", (req) => ({

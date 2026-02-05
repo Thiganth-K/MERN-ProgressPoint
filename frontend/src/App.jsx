@@ -12,6 +12,8 @@ import SuperAdminPage from './pages/SuperAdminPage';
 import ManageAdminsPage from './pages/ManageAdminsPage';
 import PlacementDonePage from "./pages/PlacementDonePage.jsx";
 import ClientDashboardPage from "./pages/ClientDashboardPage.jsx";
+import StudentLoginPage from "./pages/StudentLoginPage.jsx";
+import StudentDashboardPage from "./pages/StudentDashboardPage.jsx";
 
 
 const App = () => {
@@ -30,6 +32,8 @@ const App = () => {
         <Route path="/manage-admins" element={<ManageAdminsPage />} />
         <Route path="/placement-done" element={<PlacementDonePage />} />
         <Route path="/client-dashboard" element={<ClientDashboardPage />} />
+        <Route path="/student-login" element={<StudentLoginPage />} />
+        <Route path="/student-dashboard" element={<StudentDashboardPage />} />
       </Routes>
     </div>
   );

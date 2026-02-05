@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import api from '../lib/axios';
+import { FiDownload } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -33,6 +35,8 @@ const ViewAttendancePage = () => {
   const [students, setStudents] = useState([]);
   const [attendanceByDate, setAttendanceByDate] = useState({});
   const [selectedDateSession, setSelectedDateSession] = useState(null);
+  const [batchFilter, setBatchFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const query = useQuery();
   const batch = query.get('batch');
   const department = query.get('department');
@@ -57,13 +61,47 @@ const ViewAttendancePage = () => {
     }
   }, [batch, department]);
 
+  // Get unique batches from students
+  const uniqueBatches = [...new Set(students.map(s => s.batchName))].filter(Boolean).sort();
+
   // Get sorted date-session keys (latest first, FN before AN)
   const dateSessionKeys = Object.keys(attendanceByDate).sort((a, b) => {
     const [dateA, sessionA] = a.split("__");
     const [dateB, sessionB] = b.split("__");
-    if (dateA !== dateB) return new Date(b) - new Date(a);
+    if (dateA !== dateB) return new Date(dateB) - new Date(dateA);
     return sessionA.localeCompare(sessionB);
   });
+
+  // Export attendance for specific date and session
+  const handleExportAttendance = async (date, session, e) => {
+    e.stopPropagation(); // Prevent card click event
+    try {
+      const params = new URLSearchParams();
+      if (department) {
+        params.append('department', department);
+      } else if (batch) {
+        params.append('batch', batch);
+      }
+      
+      const response = await api.get(`/batches/export-attendance/${date}/${session}?${params.toString()}`, {
+        responseType: 'blob'
+      });
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `attendance_${date}_${session}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Attendance exported successfully!');
+    } catch (error) {
+      console.error('Error exporting attendance:', error);
+      toast.error('Failed to export attendance');
+    }
+  };
 
   return (
     <div>
@@ -86,8 +124,7 @@ const ViewAttendancePage = () => {
               return (
                 <div
                   key={key}
-                  className="card w-80 bg-base-100 shadow-xl cursor-pointer hover:scale-[1.03] transition-transform duration-200"
-                  onClick={() => setSelectedDateSession(key)}
+                  className="card w-80 bg-base-100 shadow-xl hover:scale-[1.03] transition-transform duration-200"
                 >
                   <div className="card-body items-center text-center">
                     <h2 className="card-title mb-2 text-lg font-bold text-primary">
@@ -98,9 +135,21 @@ const ViewAttendancePage = () => {
                       <span className="font-semibold text-error">Absent: {absent}</span>
                       <span className="font-semibold text-yellow-500">On-Duty: {onDuty}</span>
                     </div>
-                    <button className="btn btn-primary btn-sm mt-4 w-full font-semibold tracking-wide">
-                      View Details
-                    </button>
+                    <div className="flex gap-2 mt-4 w-full">
+                      <button 
+                        className="btn btn-primary btn-sm flex-1 font-semibold tracking-wide"
+                        onClick={() => setSelectedDateSession(key)}
+                      >
+                        View Details
+                      </button>
+                      <button 
+                        className="btn btn-success btn-sm font-semibold tracking-wide"
+                        onClick={(e) => handleExportAttendance(date, session, e)}
+                        title="Export to Excel"
+                      >
+                        <FiDownload className="text-lg" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -116,6 +165,46 @@ const ViewAttendancePage = () => {
                 })()}
               </span>
             </h2>
+
+            {/* Filters */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              {/* Batch Filter - Only show if viewing department */}
+              {department && uniqueBatches.length > 0 && (
+                <div className="form-control flex-1">
+                  <label className="label">
+                    <span className="label-text font-semibold">Filter by Batch:</span>
+                  </label>
+                  <select
+                    value={batchFilter}
+                    onChange={(e) => setBatchFilter(e.target.value)}
+                    className="select select-bordered select-sm"
+                  >
+                    <option value="">All Batches</option>
+                    {uniqueBatches.map(batchName => (
+                      <option key={batchName} value={batchName}>{batchName}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Status Filter */}
+              <div className="form-control flex-1">
+                <label className="label">
+                  <span className="label-text font-semibold">Filter by Status:</span>
+                </label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="select select-bordered select-sm"
+                >
+                  <option value="">All Status</option>
+                  <option value="Present">Present</option>
+                  <option value="Absent">Absent</option>
+                  <option value="On-Duty">On-Duty</option>
+                </select>
+              </div>
+            </div>
+
             <div className="overflow-x-auto rounded-xl border border-base-200 mb-6">
               <table className="table w-full text-base">
                 <thead>
@@ -129,20 +218,28 @@ const ViewAttendancePage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {attendanceByDate[selectedDateSession].map((record, idx) => (
-                    <tr key={record.regNo + idx} className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200"}>
-                      <td className="px-4 py-2">{idx + 1}</td>
-                      <td className="px-4 py-2 font-mono">{record.regNo}</td>
-                      <td className="px-4 py-2">{record.name}</td>
-                      <td className="px-4 py-2 font-semibold text-primary">{record.batchName || '-'}</td>
-                      <td className="px-4 py-2 text-sm">{record.personalEmail || record.collegeEmail || '-'}</td>
-                      <td className="px-4 py-2">
-                        {record.status === 'Present' && <span className="text-success font-semibold">Present</span>}
-                        {record.status === 'Absent' && <span className="text-error font-semibold">Absent</span>}
-                        {record.status === 'On-Duty' && <span className="text-yellow-500 font-semibold">On-Duty</span>}
-                      </td>
-                    </tr>
-                  ))}
+                  {attendanceByDate[selectedDateSession]
+                    .filter(record => {
+                      // Apply batch filter
+                      if (batchFilter && record.batchName !== batchFilter) return false;
+                      // Apply status filter
+                      if (statusFilter && record.status !== statusFilter) return false;
+                      return true;
+                    })
+                    .map((record, idx) => (
+                      <tr key={record.regNo + idx} className={idx % 2 === 0 ? "bg-base-100" : "bg-base-200"}>
+                        <td className="px-4 py-2">{idx + 1}</td>
+                        <td className="px-4 py-2 font-mono">{record.regNo}</td>
+                        <td className="px-4 py-2">{record.name}</td>
+                        <td className="px-4 py-2 font-semibold text-primary">{record.batchName || '-'}</td>
+                        <td className="px-4 py-2 text-sm">{record.personalEmail || record.collegeEmail || '-'}</td>
+                        <td className="px-4 py-2">
+                          {record.status === 'Present' && <span className="text-success font-semibold">Present</span>}
+                          {record.status === 'Absent' && <span className="text-error font-semibold">Absent</span>}
+                          {record.status === 'On-Duty' && <span className="text-yellow-500 font-semibold">On-Duty</span>}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>

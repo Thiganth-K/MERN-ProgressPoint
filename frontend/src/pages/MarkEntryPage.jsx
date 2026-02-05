@@ -18,6 +18,7 @@ const columns = [
 
 const MarkEntryPage = () => {
   const [students, setStudents] = useState([]);
+  const [allStudents, setAllStudents] = useState([]);
   const [marks, setMarks] = useState({});
   const [date, setDate] = useState('');
   const [showMessage, setShowMessage] = useState(false);
@@ -27,8 +28,10 @@ const MarkEntryPage = () => {
   const [openMarkRegNo, setOpenMarkRegNo] = useState(null); // NEW
   const [prevMarks, setPrevMarks] = useState({}); // NEW
   const [timeRestrictionAlert, setTimeRestrictionAlert] = useState(null);
+  const [selectedBatchFilter, setSelectedBatchFilter] = useState('');
   const query = useQuery();
   const batch = query.get('batch');
+  const department = query.get('department');
 
   // Check time restrictions for marks entry
   const checkTimeRestrictions = async () => {
@@ -52,7 +55,29 @@ const MarkEntryPage = () => {
   };
 
   useEffect(() => {
-    if (batch) {
+    if (department) {
+      // Check time restrictions when component loads
+      checkTimeRestrictions();
+      
+      api.get(`/departments/${encodeURIComponent(department)}/students`).then(res => {
+        const fetchedStudents = res.data.students || [];
+        setAllStudents(fetchedStudents);
+        setStudents(fetchedStudents);
+        // Initialize marks with zeros
+        const initial = {};
+        const prev = {};
+        fetchedStudents.forEach(s => {
+          initial[s.regNo] = { efforts: 0, presentation: 0, assessment: 0, assignment: 0 };
+          // Get last marksHistory entry if exists
+          if (s.marksHistory && s.marksHistory.length > 0) {
+            const last = s.marksHistory[s.marksHistory.length - 1];
+            prev[s.regNo] = last.marks;
+          }
+        });
+        setMarks(initial);
+        setPrevMarks(prev);
+      });
+    } else if (batch) {
       // Check time restrictions when component loads
       checkTimeRestrictions();
       
@@ -70,15 +95,62 @@ const MarkEntryPage = () => {
           }
         });
         setMarks(initial);
-        setPrevMarks(prev); // NEW
+        setPrevMarks(prev);
       });
     }
-  }, [batch]);
+  }, [batch, department]);
+
+  // Filter students by batch when batch filter changes
+  useEffect(() => {
+    if (department) {
+      if (selectedBatchFilter) {
+        const filtered = allStudents.filter(s => s.batchName === selectedBatchFilter);
+        setStudents(filtered);
+        // Update marks state to only include filtered students
+        const initial = {};
+        const prev = {};
+        filtered.forEach(s => {
+          initial[s.regNo] = marks[s.regNo] || { efforts: 0, presentation: 0, assessment: 0, assignment: 0 };
+          if (s.marksHistory && s.marksHistory.length > 0) {
+            const last = s.marksHistory[s.marksHistory.length - 1];
+            prev[s.regNo] = last.marks;
+          }
+        });
+        setMarks(initial);
+        setPrevMarks(prev);
+      } else {
+        setStudents(allStudents);
+        // Reset marks for all students
+        const initial = {};
+        const prev = {};
+        allStudents.forEach(s => {
+          initial[s.regNo] = marks[s.regNo] || { efforts: 0, presentation: 0, assessment: 0, assignment: 0 };
+          if (s.marksHistory && s.marksHistory.length > 0) {
+            const last = s.marksHistory[s.marksHistory.length - 1];
+            prev[s.regNo] = last.marks;
+          }
+        });
+        setMarks(initial);
+        setPrevMarks(prev);
+      }
+    }
+  }, [selectedBatchFilter, allStudents, department]);
+
+  // Get unique batches for filter dropdown
+  const uniqueBatches = [...new Set(allStudents.map(s => s.batchName))].filter(Boolean).sort();
 
   // Fetch marks for the selected date
   useEffect(() => {
-    if (batch && date) {
+    if ((department || batch) && date) {
       setIsLoading(true);
+      // For department view, we can't fetch existing marks by date since marks are stored by batch
+      // So we'll skip this for department view
+      if (department) {
+        setExistingMarksFound(false);
+        setIsLoading(false);
+        return;
+      }
+      
       api.get(`/batches/${batch}/marks/${date}`)
         .then(res => {
           if (res.data.marks && Object.keys(res.data.marks).length > 0) {
@@ -102,7 +174,7 @@ const MarkEntryPage = () => {
         .catch(() => setExistingMarksFound(false))
         .finally(() => setIsLoading(false));
     }
-  }, [batch, date, students]);
+  }, [batch, department, date, students]);
 
   const handleMarkChange = (regNo, key, value) => {
     setMarks(prev => ({
@@ -124,12 +196,36 @@ const MarkEntryPage = () => {
       return;
     }
     
+    // For department view, we need to save marks for each student's batch
     try {
-      await api.post(`/batches/${batch}/marks`, {
-        date,
-        marks
-      });
-      toast.success(existingMarksFound ? 'Marks updated successfully!' : 'Marks saved successfully!');
+      if (department) {
+        // Group students by batch and save marks for each batch
+        // Only save marks for currently visible/filtered students
+        const batchGroups = {};
+        students.forEach(student => {
+          if (!batchGroups[student.batchName]) {
+            batchGroups[student.batchName] = {};
+          }
+          batchGroups[student.batchName][student.regNo] = marks[student.regNo];
+        });
+        
+        // Save marks for each batch
+        const promises = Object.entries(batchGroups).map(([batchName, batchMarks]) => {
+          return api.post(`/batches/${batchName}/marks`, {
+            date,
+            marks: batchMarks
+          });
+        });
+        
+        await Promise.all(promises);
+        toast.success(`Marks saved successfully for ${students.length} student(s)!`);
+      } else {
+        await api.post(`/batches/${batch}/marks`, {
+          date,
+          marks
+        });
+        toast.success(existingMarksFound ? 'Marks updated successfully!' : 'Marks saved successfully!');
+      }
       setShowMessage(true);
       setTimeout(() => setShowMessage(false), 2200);
       setExistingMarksFound(true);
@@ -147,7 +243,7 @@ const MarkEntryPage = () => {
       <NavBar />
       <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-base-200 px-2 py-8">
         <h1 className="mb-8 text-3xl sm:text-4xl font-extrabold text-primary text-center tracking-tight">
-          Mark Entry <span className="text-accent">{batch ? `- ${batch}` : ''}</span>
+          Mark Entry <span className="text-accent">{department ? `- ${department}` : batch ? `- ${batch}` : ''}</span>
         </h1>
         
         {/* Time Restriction Alert */}
@@ -180,6 +276,26 @@ const MarkEntryPage = () => {
             />
             {isLoading && <div className="loading loading-spinner loading-md"></div>}
           </div>
+
+          {/* Batch Filter (only for department view) */}
+          {department && uniqueBatches.length > 0 && (
+            <div className="mb-6 flex flex-col sm:flex-row items-center gap-4">
+              <label className="font-semibold text-lg text-secondary">Filter by Batch:</label>
+              <select
+                value={selectedBatchFilter}
+                onChange={e => setSelectedBatchFilter(e.target.value)}
+                className="select select-bordered select-md max-w-xs"
+              >
+                <option value="">All Batches ({allStudents.length} students)</option>
+                {uniqueBatches.map(batchName => (
+                  <option key={batchName} value={batchName}>
+                    {batchName} ({allStudents.filter(s => s.batchName === batchName).length} students)
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Student List with Mark Entry Button */}
           <div className="mb-6">
             {students.map((student, idx) => (

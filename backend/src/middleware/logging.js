@@ -18,7 +18,15 @@ export const logAdminAction = (actionType, getDetails = null) => {
 
     // Override res.end for non-JSON responses
     res.end = function(chunk, encoding) {
-      if (res.statusCode >= 200 && res.statusCode < 300) {
+      // Skip logging for file downloads (when Content-Type is for Excel/files)
+      const contentType = res.getHeader('Content-Type');
+      const isFileDownload = contentType && (
+        contentType.includes('application/vnd.openxmlformats') ||
+        contentType.includes('application/octet-stream') ||
+        contentType.includes('application/excel')
+      );
+
+      if (!isFileDownload && res.statusCode >= 200 && res.statusCode < 300) {
         logAction(req, actionType, getDetails);
       }
       return originalEnd.call(this, chunk, encoding);

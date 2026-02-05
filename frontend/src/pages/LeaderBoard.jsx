@@ -24,14 +24,22 @@ const trophyIcons = [
 const LeaderBoard = () => {
   const [students, setStudents] = useState([]);
   const query = useQuery();
-  const batch = query.get('batch');
+  const department = query.get('department');
+  const batch = query.get('batch'); // Keep for backward compatibility
 
   useEffect(() => {
-    if (batch) {
+    if (department) {
+      // Use department endpoint for admin
+      api.get(`/departments/${encodeURIComponent(department)}/students`)
+        .then(res => setStudents(res.data.students || []))
+        .catch(err => console.error('Error fetching department students:', err));
+    } else if (batch) {
+      // Use batch endpoint for superadmin
       api.get(`/batches/${batch}/students`)
-        .then(res => setStudents(res.data.students || []));
+        .then(res => setStudents(res.data.students || []))
+        .catch(err => console.error('Error fetching batch students:', err));
     }
-  }, [batch]);
+  }, [department, batch]);
 
   // Calculate total marks and attendance percentage for each student
   const leaderboard = students.map(student => {
@@ -64,12 +72,17 @@ const LeaderBoard = () => {
     <div className="bg-base-200 min-h-[calc(100vh-64px)] flex flex-col">
       <NavBar />
       <div className="flex flex-col items-center flex-1 py-8 px-2">
-        <h1 className="text-3xl sm:text-4xl font-extrabold mb-6 text-primary tracking-tight flex items-center gap-2">
+        <h1 className="text-3xl sm:text-4xl font-extrabold mb-2 text-primary tracking-tight flex items-center gap-2">
           <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M8 17v-7a4 4 0 118 0v7M12 21v-4" />
           </svg>
           Leaderboard
         </h1>
+        {(department || batch) && (
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-secondary">
+            {department ? `Department: ${department}` : `Batch: ${batch}`}
+          </h2>
+        )}
         <div className="overflow-x-auto w-full max-w-4xl bg-base-100 rounded-2xl shadow-xl p-4">
           <table className="table w-full text-base">
             <thead>

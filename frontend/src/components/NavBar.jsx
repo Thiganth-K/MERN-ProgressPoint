@@ -14,14 +14,15 @@ const navItems = [
     btnClass: "btn-outline"
   },
   {
-    label: 'Leaderboard',
-    path: '/leaderboard',
+    label: 'View Attendance',
+    path: '/viewattendance',
     icon: (
       <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8 17v-7a4 4 0 118 0v7M12 21v-4" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
       </svg>
     ),
-    btnClass: "btn-info"
+    btnClass: "btn-warning"
   },
   {
     label: 'Mark Attendance',
@@ -32,17 +33,6 @@ const navItems = [
       </svg>
     ),
     btnClass: "btn-success"
-  },
-  {
-    label: 'View Attendance',
-    path: '/viewattendance',
-    icon: (
-      <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-      </svg>
-    ),
-    btnClass: "btn-warning"
   },
   {
     label: 'Mark Entry',
@@ -60,23 +50,21 @@ const navItems = [
 const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [batches, setBatches] = useState([]);
-  const [selectedBatch, setSelectedBatch] = useState(localStorage.getItem('selectedBatch') || '');
+  const [departments, setDepartments] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState(localStorage.getItem('selectedDepartment') || '');
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
-    api.get('/batches').then(res => {
-      const sorted = (res.data.batches || []).sort((a, b) =>
-        a.batchName.localeCompare(b.batchName)
-      );
-      setBatches(sorted);
+    api.get('/departments').then(res => {
+      const sorted = (res.data.departments || []).sort();
+      setDepartments(sorted);
     });
     const params = new URLSearchParams(location.search);
-    const batchFromUrl = params.get('batch');
-    if (batchFromUrl && batchFromUrl !== selectedBatch) {
-      setSelectedBatch(batchFromUrl);
-      localStorage.setItem('selectedBatch', batchFromUrl);
+    const departmentFromUrl = params.get('department');
+    if (departmentFromUrl && departmentFromUrl !== selectedDepartment) {
+      setSelectedDepartment(departmentFromUrl);
+      localStorage.setItem('selectedDepartment', departmentFromUrl);
     }
   }, [location]);
 
@@ -93,19 +81,19 @@ const NavBar = () => {
 
   const goTo = (path) => {
     setMenuOpen(false);
-    if (selectedBatch && path !== '/admin') {
-      navigate(`${path}?batch=${selectedBatch}`);
+    if (selectedDepartment && path !== '/admin') {
+      navigate(`${path}?department=${encodeURIComponent(selectedDepartment)}`);
     } else {
       navigate(path);
     }
   };
 
-  const handleBatchChange = (e) => {
-    const batch = e.target.value;
-    setSelectedBatch(batch);
-    localStorage.setItem('selectedBatch', batch);
+  const handleDepartmentChange = (e) => {
+    const department = e.target.value;
+    setSelectedDepartment(department);
+    localStorage.setItem('selectedDepartment', department);
     const params = new URLSearchParams(location.search);
-    params.set('batch', batch);
+    params.set('department', department);
     navigate(`${location.pathname}?${params.toString()}`);
     setMenuOpen(false);
   };
@@ -118,7 +106,7 @@ const NavBar = () => {
       } catch (err) {}
     }
     localStorage.removeItem('adminName');
-    localStorage.removeItem('selectedBatch');
+    localStorage.removeItem('selectedDepartment');
     navigate('/');
     setMenuOpen(false);
   };
@@ -150,12 +138,12 @@ const NavBar = () => {
           ))}
           <select
             className="select select-sm ml-2"
-            value={selectedBatch}
-            onChange={handleBatchChange}
+            value={selectedDepartment}
+            onChange={handleDepartmentChange}
           >
-            <option value="">Select Batch</option>
-            {batches.map(batch => (
-              <option key={batch.batchName} value={batch.batchName}>{batch.batchName}</option>
+            <option value="">Select Department</option>
+            {departments.map(dept => (
+              <option key={dept} value={dept}>{dept}</option>
             ))}
           </select>
           <button className="btn btn-sm btn-ghost font-semibold ml-2" onClick={handleLogout}>
@@ -203,12 +191,12 @@ const NavBar = () => {
           ))}
           <select
             className="select select-sm mb-2 w-full"
-            value={selectedBatch}
-            onChange={handleBatchChange}
+            value={selectedDepartment}
+            onChange={handleDepartmentChange}
           >
-            <option value="">Select Batch</option>
-            {batches.map(batch => (
-              <option key={batch.batchName} value={batch.batchName}>{batch.batchName}</option>
+            <option value="">Select Department</option>
+            {departments.map(dept => (
+              <option key={dept} value={dept}>{dept}</option>
             ))}
           </select>
           <button className="btn btn-sm btn-ghost font-semibold w-full" onClick={handleLogout}>

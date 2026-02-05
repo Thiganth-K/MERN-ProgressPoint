@@ -13,13 +13,14 @@ const navItems = [
     path: '/admin'
   },
   {
-    label: 'Leaderboard',
+    label: 'View',
     icon: (
       <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8 17v-7a4 4 0 118 0v7M12 21v-4" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
       </svg>
     ),
-    path: '/leaderboard'
+    path: '/viewattendance'
   },
   {
     label: 'Attendance',
@@ -29,16 +30,6 @@ const navItems = [
       </svg>
     ),
     path: '/markattendance'
-  },
-  {
-    label: 'View',
-    icon: (
-      <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-      </svg>
-    ),
-    path: '/viewattendance'
   },
   {
     label: 'Mark Entry',
@@ -64,16 +55,14 @@ const navItems = [
 const Footer = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [batches, setBatches] = useState([]);
-  const [selectedBatch, setSelectedBatch] = useState(localStorage.getItem('selectedBatch') || '');
+  const [selectedDepartment, setSelectedDepartment] = useState(localStorage.getItem('selectedDepartment') || '');
 
   useEffect(() => {
-    api.get('/batches').then(res => setBatches(res.data.batches || []));
     const params = new URLSearchParams(location.search);
-    const batchFromUrl = params.get('batch');
-    if (batchFromUrl && batchFromUrl !== selectedBatch) {
-      setSelectedBatch(batchFromUrl);
-      localStorage.setItem('selectedBatch', batchFromUrl);
+    const departmentFromUrl = params.get('department');
+    if (departmentFromUrl && departmentFromUrl !== selectedDepartment) {
+      setSelectedDepartment(departmentFromUrl);
+      localStorage.setItem('selectedDepartment', departmentFromUrl);
     }
   }, [location]);
 
@@ -89,15 +78,15 @@ const Footer = () => {
         }
       }
       localStorage.removeItem('adminName');
-      localStorage.removeItem('selectedBatch');
+      localStorage.removeItem('selectedDepartment');
       navigate('/');
     } else {
-      const selectedBatch = localStorage.getItem('selectedBatch');
+      const selectedDepartment = localStorage.getItem('selectedDepartment');
       if (
-        ['/leaderboard', '/markattendance', '/viewattendance', '/markentry'].includes(item.path) &&
-        selectedBatch
+        ['/markattendance', '/viewattendance', '/markentry'].includes(item.path) &&
+        selectedDepartment
       ) {
-        navigate(`${item.path}?batch=${selectedBatch}`);
+        navigate(`${item.path}?department=${encodeURIComponent(selectedDepartment)}`);
       } else {
         navigate(item.path);
       }

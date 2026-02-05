@@ -1,0 +1,59 @@
+{
+	"folders": [
+		{
+			"path": "backend"
+		},
+		{
+			"path": ".github"
+		},
+		{
+			"path": "backend/data-exports"
+		},
+		{
+			"path": "backend/duplicate-reports"
+		},
+		{
+			"path": "backend/backups"
+		},
+		{
+			"path": "backend/node_modules"
+		},
+		{
+			"path": "backend/src"
+		},
+		{
+			"path": "frontend"
+		},
+		{
+			"path": "frontend/.vite"
+		},
+		{
+			"path": "frontend/dist"
+		},
+		{
+			"path": "frontend/node_modules"
+		},
+		{
+			"path": "frontend/public"
+		},
+		{
+			"path": "frontend/src"
+		},
+		{
+			"path": "frontend/src/assets"
+		},
+		{
+			"path": "frontend/src/components"
+		},
+		{
+			"path": "frontend/src/lib"
+		},
+		{
+			"path": "frontend/src/pages"
+		},
+		{
+			"path": "node_modules"
+		}
+	],
+	"settings": {}
+}

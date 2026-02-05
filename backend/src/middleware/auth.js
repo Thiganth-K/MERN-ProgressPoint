@@ -13,3 +13,29 @@ export const SUPER_ADMIN = {
   username: process.env.SUPER_ADMIN_USERNAME,
   password: process.env.SUPER_ADMIN_PASSWORD
 };
+
+// Middleware to authenticate super admin
+export const authenticateSuperAdmin = (req, res, next) => {
+  const { username, password } = req.body;
+  
+  // Check if credentials are provided in body (for POST requests)
+  if (username && password) {
+    if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
+      return next();
+    }
+  }
+  
+  // Check for authorization header
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const [username, password] = Buffer.from(authHeader.split(' ')[1] || '', 'base64')
+      .toString()
+      .split(':');
+    
+    if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
+      return next();
+    }
+  }
+  
+  return res.status(401).json({ message: "Unauthorized. Super admin access required." });
+};
