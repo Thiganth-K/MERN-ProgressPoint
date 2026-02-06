@@ -14,6 +14,7 @@ import PlacementDonePage from "./pages/PlacementDonePage.jsx";
 import ClientDashboardPage from "./pages/ClientDashboardPage.jsx";
 import StudentLoginPage from "./pages/StudentLoginPage.jsx";
 import StudentDashboardPage from "./pages/StudentDashboardPage.jsx";
+import StudentManagementPage from "./pages/StudentManagementPage.jsx";
 
 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
         <Route path="/client-dashboard" element={<ClientDashboardPage />} />
         <Route path="/student-login" element={<StudentLoginPage />} />
         <Route path="/student-dashboard" element={<StudentDashboardPage />} />
+        <Route path="/student-management" element={<StudentManagementPage />} />
       </Routes>
     </div>
   );

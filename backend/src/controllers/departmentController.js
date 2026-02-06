@@ -10,6 +10,11 @@ export const getAllDepartments = async (req, res) => {
     const departmentSet = new Set();
     
     batches.forEach(batch => {
+      // Skip NOT-WILLING batch students
+      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+        return;
+      }
+      
       batch.students.forEach(student => {
         if (student.department && student.department.trim()) {
           const dept = student.department.trim();
@@ -39,6 +44,11 @@ export const getDepartmentStudents = async (req, res) => {
     
     const students = [];
     batches.forEach(batch => {
+      // Skip NOT-WILLING batch students
+      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+        return;
+      }
+      
       batch.students.forEach(student => {
         const studentDept = student.department ? student.department.trim() : '';
         const requestedDept = department.trim();
@@ -72,6 +82,11 @@ export const getDepartmentStats = async (req, res) => {
     const departmentStats = {};
     
     batches.forEach(batch => {
+      // Skip NOT-WILLING batch students
+      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+        return;
+      }
+      
       batch.students.forEach(student => {
         const dept = student.department?.trim() || "Unassigned";
         
@@ -121,6 +136,11 @@ export const exportDepartmentStudents = async (req, res) => {
     
     const students = [];
     batches.forEach(batch => {
+      // Skip NOT-WILLING batch students
+      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+        return;
+      }
+      
       batch.students.forEach(student => {
         if (student.department && student.department.trim() === department) {
           students.push({
@@ -199,6 +219,11 @@ export const searchStudentByRegNo = async (req, res) => {
     let foundBatch = null;
     
     for (const batch of batches) {
+      // Skip NOT-WILLING batch students
+      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+        continue;
+      }
+      
       const student = batch.students.find(s => s.regNo === regNo);
       if (student) {
         foundStudent = student;
@@ -231,6 +256,11 @@ export const getDepartmentAverages = async (req, res) => {
     const departmentData = {};
     
     batches.forEach(batch => {
+      // Skip NOT-WILLING batch students
+      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+        return;
+      }
+      
       batch.students.forEach(student => {
         const dept = student.department?.trim() || "Unassigned";
         

@@ -52,10 +52,12 @@ const MarkAttendancePage = () => {
       api.get(`/departments/${encodeURIComponent(department)}/students`)
         .then(res => {
           const fetchedStudents = res.data.students || [];
-          setAllStudents(fetchedStudents);
-          setStudents(fetchedStudents);
+          // Sort students by registration number in ascending order
+          const sortedStudents = fetchedStudents.sort((a, b) => a.regNo.localeCompare(b.regNo));
+          setAllStudents(sortedStudents);
+          setStudents(sortedStudents);
           const initial = {};
-          fetchedStudents.forEach(s => {
+          sortedStudents.forEach(s => {
             initial[s.regNo] = 'Present'; // Default to Present
           });
           setAttendance(initial);
@@ -67,18 +69,22 @@ const MarkAttendancePage = () => {
   useEffect(() => {
     if (selectedBatchFilter) {
       const filtered = allStudents.filter(s => s.batchName === selectedBatchFilter);
-      setStudents(filtered);
+      // Sort filtered students by registration number
+      const sortedFiltered = filtered.sort((a, b) => a.regNo.localeCompare(b.regNo));
+      setStudents(sortedFiltered);
       // Update attendance state to only include filtered students
       const initial = {};
-      filtered.forEach(s => {
+      sortedFiltered.forEach(s => {
         initial[s.regNo] = attendance[s.regNo] || 'Present';
       });
       setAttendance(initial);
     } else {
-      setStudents(allStudents);
+      // Sort all students by registration number
+      const sortedAll = [...allStudents].sort((a, b) => a.regNo.localeCompare(b.regNo));
+      setStudents(sortedAll);
       // Reset attendance for all students
       const initial = {};
-      allStudents.forEach(s => {
+      sortedAll.forEach(s => {
         initial[s.regNo] = attendance[s.regNo] || 'Present';
       });
       setAttendance(initial);

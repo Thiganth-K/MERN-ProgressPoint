@@ -486,3 +486,279 @@ export const updateStudentEmails = async (req, res) => {
     res.status(500).json({ message: "Server error while updating email addresses" });
   }
 };
+
+// ============================================
+// STUDENT MANAGEMENT CRUD OPERATIONS
+// ============================================
+
+// Get all students across all batches
+export const getAllStudentsFromBatches = async (req, res) => {
+  try {
+    const batches = await Batch.find({}).sort({ year: -1, batchName: 1 });
+    
+    const allStudents = [];
+    
+    batches.forEach(batch => {
+      batch.students.forEach(student => {
+        allStudents.push({
+          _id: student._id,
+          regNo: student.regNo,
+          name: student.name,
+          department: student.department,
+          personalEmail: student.personalEmail,
+          collegeEmail: student.collegeEmail,
+          mobile: student.mobile,
+          batchName: batch.batchName,
+          batchId: batch._id,
+          year: batch.year,
+          marks: student.marks,
+          attendancePercent: student.attendancePercent
+        });
+      });
+    });
+
+    res.json({
+      success: true,
+      count: allStudents.length,
+      students: allStudents
+    });
+  } catch (error) {
+    console.error("Get all students error:", error);
+    res.status(500).json({ success: false, message: "Server error while fetching students" });
+  }
+};
+
+// Create a new student in a batch
+export const createStudentInBatch = async (req, res) => {
+  try {
+    const { 
+      regNo, 
+      name, 
+      department, 
+      personalEmail, 
+      collegeEmail, 
+      mobile,
+      batchId 
+    } = req.body;
+
+    // Validation
+    if (!regNo || !name || !batchId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Registration number, name, and batch ID are required" 
+      });
+    }
+
+    const upperRegNo = regNo.toUpperCase().trim();
+
+    // Check if student already exists in any batch
+    const existingBatch = await Batch.findOne({ "students.regNo": upperRegNo });
+    if (existingBatch) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `Student with registration number ${upperRegNo} already exists in batch ${existingBatch.batchName}` 
+      });
+    }
+
+    // Find the target batch
+    const batch = await Batch.findById(batchId);
+    if (!batch) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Batch not found" 
+      });
+    }
+
+    // Create new student object
+    const newStudent = {
+      regNo: upperRegNo,
+      name: name.trim(),
+      department: department?.trim() || "",
+      personalEmail: personalEmail?.trim() || "",
+      collegeEmail: collegeEmail?.trim() || "",
+      mobile: mobile?.trim() || "",
+      marks: {
+        efforts: 0,
+        presentation: 0,
+        assessment: 0,
+        assignment: 0
+      },
+      marksLastUpdated: null,
+      marksHistory: [],
+      attendance: [],
+      attendancePercent: 0
+    };
+
+    // Add student to batch
+    batch.students.push(newStudent);
+    await batch.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Student created successfully",
+      student: {
+        ...newStudent,
+        _id: batch.students[batch.students.length - 1]._id,
+        batchName: batch.batchName,
+        batchId: batch._id,
+        year: batch.year
+      }
+    });
+  } catch (error) {
+    console.error("Create student error:", error);
+    res.status(500).json({ success: false, message: "Server error while creating student" });
+  }
+};
+
+// Update student information
+export const updateStudentInBatch = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const { 
+      name, 
+      regNo,
+      department, 
+      personalEmail, 
+      collegeEmail, 
+      mobile,
+      batchId 
+    } = req.body;
+
+    // Find current batch containing the student
+    const currentBatch = await Batch.findOne({ "students._id": studentId });
+    
+    if (!currentBatch) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Student not found" 
+      });
+    }
+
+    const studentIndex = currentBatch.students.findIndex(
+      s => s._id.toString() === studentId
+    );
+
+    if (studentIndex === -1) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Student not found in batch" 
+      });
+    }
+
+    const student = currentBatch.students[studentIndex];
+
+    // If regNo is being changed, check for duplicates
+    if (regNo && regNo.toUpperCase() !== student.regNo) {
+      const upperRegNo = regNo.toUpperCase().trim();
+      const duplicate = await Batch.findOne({ "students.regNo": upperRegNo });
+      if (duplicate) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Registration number ${upperRegNo} already exists in batch ${duplicate.batchName}` 
+        });
+      }
+      student.regNo = upperRegNo;
+    }
+
+    // Update basic information
+    if (name) student.name = name.trim();
+    if (department !== undefined) student.department = department.trim();
+    if (personalEmail !== undefined) student.personalEmail = personalEmail.trim();
+    if (collegeEmail !== undefined) student.collegeEmail = collegeEmail.trim();
+    if (mobile !== undefined) student.mobile = mobile.trim();
+
+    // If batch is being changed, move student to new batch
+    if (batchId && batchId !== currentBatch._id.toString()) {
+      const newBatch = await Batch.findById(batchId);
+      
+      if (!newBatch) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Target batch not found" 
+        });
+      }
+
+      // Remove from current batch
+      currentBatch.students.splice(studentIndex, 1);
+      await currentBatch.save();
+
+      // Add to new batch
+      newBatch.students.push(student);
+      await newBatch.save();
+
+      return res.json({
+        success: true,
+        message: "Student updated and moved to new batch successfully",
+        student: {
+          ...student.toObject(),
+          batchName: newBatch.batchName,
+          batchId: newBatch._id,
+          year: newBatch.year
+        }
+      });
+    }
+
+    // Save changes in current batch
+    await currentBatch.save();
+
+    res.json({
+      success: true,
+      message: "Student updated successfully",
+      student: {
+        ...student.toObject(),
+        batchName: currentBatch.batchName,
+        batchId: currentBatch._id,
+        year: currentBatch.year
+      }
+    });
+  } catch (error) {
+    console.error("Update student error:", error);
+    res.status(500).json({ success: false, message: "Server error while updating student" });
+  }
+};
+
+// Delete student from batch
+export const deleteStudentFromBatch = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    // Find batch containing the student
+    const batch = await Batch.findOne({ "students._id": studentId });
+    
+    if (!batch) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Student not found" 
+      });
+    }
+
+    const studentIndex = batch.students.findIndex(
+      s => s._id.toString() === studentId
+    );
+
+    if (studentIndex === -1) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Student not found in batch" 
+      });
+    }
+
+    const student = batch.students[studentIndex];
+    const studentRegNo = student.regNo;
+
+    // Remove student from batch
+    batch.students.splice(studentIndex, 1);
+    await batch.save();
+
+    // Also delete student auth if exists
+    await StudentAuth.findOneAndDelete({ regNo: studentRegNo });
+
+    res.json({
+      success: true,
+      message: "Student deleted successfully"
+    });
+  } catch (error) {
+    console.error("Delete student error:", error);
+    res.status(500).json({ success: false, message: "Server error while deleting student" });
+  }
+};
