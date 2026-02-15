@@ -113,42 +113,103 @@ export const exportAttendanceByDateSession = async (req, res) => {
     const { date, session } = req.params;
     const { department, batch } = req.query;
 
+    // DEBUG: Log incoming request parameters
+    console.log('\n========== ATTENDANCE EXPORT DEBUG ==========');
+    console.log('Request Parameters:');
+    console.log('  - Date:', date);
+    console.log('  - Session:', session);
+    console.log('  - Department:', department || 'Not specified');
+    console.log('  - Batch:', batch || 'Not specified');
+
     let students = [];
 
     if (department) {
-      // Fetch students by department
-      const batches = await Batch.find({ department });
+      // Fetch students by department (department is stored at student level, not batch level)
+      const batches = await Batch.find();
+      console.log(`Checking all batches for students in department: ${department}`);
+      
+      const requestedDept = department.trim();
+      let totalBatchesChecked = 0;
+      let batchesWithMatchingStudents = 0;
+      
       batches.forEach(b => {
+        // Skip NOT-WILLING batch
+        if (b.batchName && b.batchName.toUpperCase() === 'NOT-WILLING') {
+          return;
+        }
+        
+        totalBatchesChecked++;
+        let studentsInThisBatch = 0;
+        
         b.students.forEach(student => {
-          students.push({
-            ...student.toObject(),
-            batchName: b.batchName,
-            department: b.department
-          });
+          const studentDept = student.department ? student.department.trim() : '';
+          
+          // Case-insensitive comparison
+          if (studentDept.toLowerCase() === requestedDept.toLowerCase()) {
+            studentsInThisBatch++;
+            students.push({
+              ...student.toObject(),
+              batchName: b.batchName,
+              department: student.department
+            });
+          }
         });
+        
+        if (studentsInThisBatch > 0) {
+          batchesWithMatchingStudents++;
+          console.log(`  - Batch: ${b.batchName}, Students in ${department}: ${studentsInThisBatch}`);
+        }
       });
+      
+      console.log(`Total batches checked: ${totalBatchesChecked}`);
+      console.log(`Batches with ${department} students: ${batchesWithMatchingStudents}`);
     } else if (batch) {
       // Fetch students by batch
       const foundBatch = await Batch.findOne({ batchName: batch });
       if (!foundBatch) {
+        console.log(`ERROR: Batch "${batch}" not found in database`);
         return res.status(404).json({ error: "Batch not found" });
       }
+      console.log(`Found batch: ${batch}, Students: ${foundBatch.students.length}`);
       students = foundBatch.students.map(student => ({
         ...student.toObject(),
         batchName: foundBatch.batchName,
         department: foundBatch.department
       }));
     } else {
+      console.log('ERROR: Neither department nor batch parameter provided');
       return res.status(400).json({ error: "Department or batch parameter required" });
+    }
+
+    console.log(`Total students to check: ${students.length}`);
+
+    // DEBUG: Sample first student's attendance records
+    if (students.length > 0 && students[0].attendance) {
+      console.log('\nSample attendance records (first student):');
+      console.log('  Student:', students[0].name, '(' + students[0].regNo + ')');
+      console.log('  Total attendance records:', students[0].attendance.length);
+      if (students[0].attendance.length > 0) {
+        console.log('  First 3 attendance records:');
+        students[0].attendance.slice(0, 3).forEach(rec => {
+          console.log(`    - Date: "${rec.date}", Session: "${rec.session}", Status: "${rec.status}"`);
+        });
+      }
     }
 
     // Filter students who have attendance for this date and session
     const attendanceRecords = [];
+    let matchedCount = 0;
+    let totalAttendanceRecordsChecked = 0;
+
     students.forEach(student => {
-      const record = (student.attendance || []).find(
+      const attendanceArray = student.attendance || [];
+      totalAttendanceRecordsChecked += attendanceArray.length;
+
+      const record = attendanceArray.find(
         a => a.date === date && a.session === session
       );
       if (record) {
+        matchedCount++;
         attendanceRecords.push({
           regNo: student.regNo,
           name: student.name,
@@ -161,6 +222,43 @@ export const exportAttendanceByDateSession = async (req, res) => {
         });
       }
     });
+
+    // DEBUG: Log filtering results
+    console.log('\nFiltering Results:');
+    console.log(`  - Students checked: ${students.length}`);
+    console.log(`  - Total attendance records checked: ${totalAttendanceRecordsChecked}`);
+    console.log(`  - Matched records for date "${date}" and session "${session}": ${matchedCount}`);
+    console.log(`  - Final attendance records to export: ${attendanceRecords.length}`);
+
+    // DEBUG: Show all unique date-session combinations available
+    const uniqueDateSessions = new Set();
+    students.forEach(student => {
+      (student.attendance || []).forEach(rec => {
+        uniqueDateSessions.add(`${rec.date}__${rec.session}`);
+      });
+    });
+    console.log('\nAll available date-session combinations in database:');
+    Array.from(uniqueDateSessions).sort().forEach(ds => {
+      console.log(`  - ${ds.replace('__', ' / ')}`);
+    });
+
+    // DEBUG: Show sample of what we're trying to match
+    console.log('\nLooking for exact match:');
+    console.log(`  - Date: "${date}" (type: ${typeof date}, length: ${date.length})`);
+    console.log(`  - Session: "${session}" (type: ${typeof session}, length: ${session.length})`);
+
+    if (attendanceRecords.length === 0) {
+      console.log('\n⚠️  WARNING: No attendance records found for this date and session!');
+      console.log('   This will result in an empty Excel file.');
+      console.log('   Possible reasons:');
+      console.log('   1. Date format mismatch (check date string format in database)');
+      console.log('   2. Session name mismatch (check exact spelling and case)');
+      console.log('   3. No attendance was marked for this date/session');
+      console.log('   4. Attendance exists but for different students');
+    } else {
+      console.log(`\n✓ Found ${attendanceRecords.length} records. Generating Excel file...`);
+    }
+    console.log('============================================\n');
 
     // Create Excel workbook
     const workbook = new ExcelJS.Workbook();
@@ -251,8 +349,13 @@ export const exportAttendanceByDateSession = async (req, res) => {
     // Write directly to response stream
     await workbook.xlsx.write(res);
     res.end();
+    
+    console.log('Excel file successfully generated and sent to client\n');
   } catch (error) {
+    console.error('\n========== ATTENDANCE EXPORT ERROR ==========');
     console.error('Error exporting attendance:', error);
+    console.error('Error stack:', error.stack);
+    console.error('============================================\n');
     if (!res.headersSent) {
       res.status(500).json({ error: 'Failed to export attendance' });
     }
