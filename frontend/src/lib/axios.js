@@ -28,16 +28,20 @@ api.interceptors.response.use(
   response => response,
   error => {
     if (error.response && error.response.status === 429) {
+      // Dispatch custom event to show rate limit modal
+      window.dispatchEvent(new Event('rateLimitExceeded'));
+      
+      // Also show toast as backup
       toast.error(
-        "You are sending requests too quickly. Please wait a moment and try again.",
+        "Too many requests! Please wait a moment.",
         {
           style: {
-            background: "#fff", // base-100
-            color: "#1d4ed8", // primary
-            border: "1px solid #06b6d4" // accent
+            background: "#fff",
+            color: "#1d4ed8",
+            border: "1px solid #f59e42"
           },
           iconTheme: {
-            primary: "#f59e42", // accent
+            primary: "#f59e42",
             secondary: "#fff",
           },
         }

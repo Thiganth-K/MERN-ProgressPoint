@@ -15,11 +15,13 @@ import ClientDashboardPage from "./pages/ClientDashboardPage.jsx";
 import StudentLoginPage from "./pages/StudentLoginPage.jsx";
 import StudentDashboardPage from "./pages/StudentDashboardPage.jsx";
 import StudentManagementPage from "./pages/StudentManagementPage.jsx";
+import RateLimitModal from "./components/RateLimitModal.jsx";
 
 
 const App = () => {
   return (
     <div>
+      <RateLimitModal />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/admin" element={<AdminPage />} />

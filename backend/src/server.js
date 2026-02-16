@@ -20,7 +20,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Rate limiter middleware (100 requests per 15 minutes per IP)
+// Rate limiter middleware (200 requests per 15 minutes per IP)
 app.use("/api/", apiLimiter);
 
 // Connect to database
