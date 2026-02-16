@@ -12,6 +12,10 @@ import PlacementDoneStudent from "./placementDone.model.js";
 dotenv.config();
 
 const app = express();
+
+// Trust proxy - Required for rate limiting behind proxies (Render, Heroku, etc.)
+app.set('trust proxy', 1);
+
 app.use(cors());
 app.use(express.json());
 
