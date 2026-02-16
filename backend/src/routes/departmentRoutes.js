@@ -5,7 +5,8 @@ import {
   getDepartmentStats,
   exportDepartmentStudents,
   searchStudentByRegNo,
-  getDepartmentAverages
+  getDepartmentAverages,
+  getDepartmentAttendance
 } from "../controllers/departmentController.js";
 
 const router = express.Router();
@@ -21,6 +22,9 @@ router.get("/averages", getDepartmentAverages);
 
 // Get students from a specific department
 router.get("/:department/students", getDepartmentStudents);
+
+// Get attendance for a department by date and session
+router.get("/:department/attendance", getDepartmentAttendance);
 
 // Export department students as Excel
 router.get("/:department/export", exportDepartmentStudents);

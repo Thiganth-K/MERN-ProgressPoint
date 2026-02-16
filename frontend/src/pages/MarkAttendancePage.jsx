@@ -94,15 +94,33 @@ const MarkAttendancePage = () => {
   // Get unique batches for filter
   const uniqueBatches = [...new Set(allStudents.map(s => s.batchName))].filter(Boolean).sort();
 
-  // Note: Fetching existing attendance by department would require a new backend endpoint
-  // For now, we'll skip existing attendance fetch for department view
+  // Fetch existing attendance by department when date and session are selected
   useEffect(() => {
     if (department && date && session) {
       setIsLoading(true);
-      // This would need a new backend endpoint to fetch attendance by department
-      // For now, skipping existing attendance fetch for department view
-      setExistingAttendanceFound(false);
-      setIsLoading(false);
+      api.get(`/departments/${encodeURIComponent(department)}/attendance`, {
+        params: { date, session }
+      })
+        .then(res => {
+          if (res.data.found && Object.keys(res.data.attendance).length > 0) {
+            // Update attendance state with existing data
+            setAttendance(prev => ({
+              ...prev,
+              ...res.data.attendance
+            }));
+            setExistingAttendanceFound(true);
+            toast.info(`Loaded existing attendance for ${date} (${session})`);
+          } else {
+            setExistingAttendanceFound(false);
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching existing attendance:', err);
+          setExistingAttendanceFound(false);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }, [department, date, session]);
 

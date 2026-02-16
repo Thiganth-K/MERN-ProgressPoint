@@ -300,3 +300,57 @@ export const getDepartmentAverages = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch department averages" });
   }
 };
+
+/**
+ * Get attendance for a specific department by date and session
+ */
+export const getDepartmentAttendance = async (req, res) => {
+  try {
+    const { department } = req.params;
+    const { date, session } = req.query;
+
+    if (!date || !session) {
+      return res.status(400).json({ error: "Date and session are required" });
+    }
+
+    const batches = await Batch.find();
+    const attendanceData = {};
+    let found = false;
+
+    batches.forEach(batch => {
+      // Skip NOT-WILLING batch students
+      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+        return;
+      }
+
+      batch.students.forEach(student => {
+        const studentDept = student.department ? student.department.trim() : '';
+        const requestedDept = department.trim();
+
+        // Case-insensitive comparison
+        if (studentDept.toLowerCase() === requestedDept.toLowerCase()) {
+          // Find attendance record for the specific date and session
+          const attendanceRecord = student.attendance.find(
+            a => a.date === date && a.session === session
+          );
+
+          if (attendanceRecord) {
+            attendanceData[student.regNo] = attendanceRecord.status;
+            found = true;
+          }
+        }
+      });
+    });
+
+    res.json({ 
+      attendance: attendanceData, 
+      found,
+      date,
+      session,
+      department
+    });
+  } catch (err) {
+    console.error('Error fetching department attendance:', err);
+    res.status(500).json({ error: "Failed to fetch department attendance" });
+  }
+};
