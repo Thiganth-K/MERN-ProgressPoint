@@ -13,8 +13,10 @@ import ManageAdminsPage from './pages/ManageAdminsPage';
 import PlacementDonePage from "./pages/PlacementDonePage.jsx";
 import ClientDashboardPage from "./pages/ClientDashboardPage.jsx";
 import StudentLoginPage from "./pages/StudentLoginPage.jsx";
+import AdminLoginPage from "./pages/AdminLoginPage.jsx";
 import StudentDashboardPage from "./pages/StudentDashboardPage.jsx";
 import StudentManagementPage from "./pages/StudentManagementPage.jsx";
+import LeadManagementPage from "./pages/LeadManagementPage.jsx";
 import RateLimitModal from "./components/RateLimitModal.jsx";
 
 
@@ -36,8 +38,10 @@ const App = () => {
         <Route path="/placement-done" element={<PlacementDonePage />} />
         <Route path="/client-dashboard" element={<ClientDashboardPage />} />
         <Route path="/student-login" element={<StudentLoginPage />} />
+        <Route path="/admin-login" element={<AdminLoginPage />} />
         <Route path="/student-dashboard" element={<StudentDashboardPage />} />
         <Route path="/student-management" element={<StudentManagementPage />} />
+        <Route path="/lead-management" element={<LeadManagementPage />} />
       </Routes>
     </div>
   );

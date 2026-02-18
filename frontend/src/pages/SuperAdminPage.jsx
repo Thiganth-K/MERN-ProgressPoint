@@ -7,6 +7,24 @@ import { Chart, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Leg
 import AdminLogsModal from '../components/AdminLogsModal';
 import BackupManager from '../components/BackupManager';
 import StudentEditModal from '../components/StudentEditModal';
+import { 
+  HiChartBar, 
+  HiPlus, 
+  HiSquares2X2, 
+  HiUserPlus, 
+  HiUserGroup, 
+  HiBuildingOffice2, 
+  HiUsers, 
+  HiDocumentText, 
+  HiClipboardDocumentList, 
+  HiClock, 
+  HiCheckCircle, 
+  HiCircleStack,
+  HiPencilSquare,
+  HiTrash,
+  HiEye,
+  HiArrowRightOnRectangle
+} from 'react-icons/hi2';
 Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 // Minimal SuperAdmin NavBar and Footer
@@ -50,55 +68,6 @@ const SuperAdminFooter = () => (
     <span className="text-xs sm:text-sm text-gray-500 font-semibold">ProgressPoint &copy; {new Date().getFullYear()}</span>
   </footer>
 );
-
-const icons = {
-  batch: (
-    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 12h18M3 17h18" />
-    </svg>
-  ),
-  admin: (
-    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-  ),
-  logs: (
-    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M7 17v-2a4 4 0 014-4h2a4 4 0 014 4v2" />
-    </svg>
-  ),
-  logout: (
-    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
-    </svg>
-  ),
-  add: (
-    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-    </svg>
-  ),
-  edit: (
-    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6-6m2 2l-6 6m-2 2h6" />
-    </svg>
-  ),
-  remove: (
-    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-  ),
-  view: (
-    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-    </svg>
-  ),
-  time: (
-    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  ),
-};
 
 const SuperAdminPage = () => {
   const navigate = useNavigate();
@@ -304,6 +273,7 @@ const SuperAdminPage = () => {
     localStorage.removeItem('adminName');
     localStorage.removeItem('role');
     localStorage.removeItem('selectedBatch');
+    sessionStorage.clear(); // Clear super admin authentication
     navigate('/');
   };
 
@@ -818,9 +788,7 @@ const SuperAdminPage = () => {
             >
               <div className="flex items-start gap-3">
                 <div className="text-primary"> 
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+                  <HiChartBar className="w-8 h-8" />
                 </div>
                 <div>
                   <div className="font-semibold text-lg">{showAnalysis ? 'Hide Analysis' : 'View Analysis'}</div>
@@ -835,7 +803,9 @@ const SuperAdminPage = () => {
               className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
             >
               <div className="flex items-start gap-3">
-                <div className="text-success">{icons.add}</div>
+                <div className="text-success">
+                  <HiPlus className="w-8 h-8" />
+                </div>
                 <div>
                   <div className="font-semibold text-lg">{showAddBatch ? 'Hide Add Batch' : 'Add Batch'}</div>
                   <p className="text-sm sm:text-base text-gray-500">Create a new batch with students and assign a year.</p>
@@ -849,7 +819,9 @@ const SuperAdminPage = () => {
               className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
             >
               <div className="flex items-start gap-3">
-                <div className="text-primary">{icons.batch}</div>
+                <div className="text-primary">
+                  <HiSquares2X2 className="w-8 h-8" />
+                </div>
                 <div>
                   <div className="font-semibold text-lg">{showBatches ? 'Hide Batches' : 'View Batches'}</div>
                   <p className="text-sm sm:text-base text-gray-500">Browse and manage existing batches (edit/remove students).</p>
@@ -863,7 +835,9 @@ const SuperAdminPage = () => {
               className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
             >
               <div className="flex items-start gap-3">
-                <div className="text-success">{icons.add}</div>
+                <div className="text-success">
+                  <HiUserPlus className="w-8 h-8" />
+                </div>
                 <div>
                   <div className="font-semibold text-lg">{showAddAdmin ? 'Hide Add Admin' : 'Add Admin'}</div>
                   <p className="text-sm sm:text-base text-gray-500">Create admin accounts for marking attendance and entering marks.</p>
@@ -877,7 +851,9 @@ const SuperAdminPage = () => {
               className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
             >
               <div className="flex items-start gap-3">
-                <div className="text-primary">{icons.admin}</div>
+                <div className="text-primary">
+                  <HiUserGroup className="w-8 h-8" />
+                </div>
                 <div>
                   <div className="font-semibold text-lg">{showViewAdmin ? 'Hide Admins' : 'View Admins'}</div>
                   <p className="text-sm sm:text-base text-gray-500">Manage admin users and edit their credentials.</p>
@@ -892,9 +868,7 @@ const SuperAdminPage = () => {
             >
               <div className="flex items-start gap-3">
                 <div className="text-secondary">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
+                  <HiBuildingOffice2 className="w-8 h-8" />
                 </div>
                 <div>
                   <div className="font-semibold text-lg">{showDepartments ? 'Hide Departments' : 'View Departments'}</div>
@@ -910,13 +884,27 @@ const SuperAdminPage = () => {
             >
               <div className="flex items-start gap-3">
                 <div className="text-info">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
+                  <HiUsers className="w-8 h-8" />
                 </div>
                 <div>
                   <div className="font-semibold text-lg">Student Management</div>
                   <p className="text-sm sm:text-base text-gray-500">Add, edit, delete students and manage their information across batches.</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Card: Lead Management System */}
+            <button
+              onClick={() => navigate('/lead-management')}
+              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-success">
+                  <HiDocumentText className="w-8 h-8" />
+                </div>
+                <div>
+                  <div className="font-semibold text-lg">Lead Management</div>
+                  <p className="text-sm sm:text-base text-gray-500">Request and collect documents from students (marksheets, certificates, etc.).</p>
                 </div>
               </div>
             </button>
@@ -927,7 +915,9 @@ const SuperAdminPage = () => {
               className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
             >
               <div className="flex items-start gap-3">
-                <div className="text-warning">{icons.logs}</div>
+                <div className="text-warning">
+                  <HiClipboardDocumentList className="w-8 h-8" />
+                </div>
                 <div>
                   <div className="font-semibold text-lg">View Admin Logs</div>
                   <p className="text-sm sm:text-base text-gray-500">See activity logs for admins and clear them if needed.</p>
@@ -941,7 +931,9 @@ const SuperAdminPage = () => {
               className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
             >
               <div className="flex items-start gap-3">
-                <div className="text-secondary">{icons.time}</div>
+                <div className="text-secondary">
+                  <HiClock className="w-8 h-8" />
+                </div>
                 <div>
                   <div className="font-semibold text-lg">{showTimeRestrictions ? 'Hide Time Settings' : 'Time Restrictions'}</div>
                   <p className="text-sm sm:text-base text-gray-500">Configure when admins can mark attendance and enter marks.</p>
@@ -955,7 +947,9 @@ const SuperAdminPage = () => {
               className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
             >
               <div className="flex items-start gap-3">
-                <div className="text-accent">{icons.view}</div>
+                <div className="text-accent">
+                  <HiCheckCircle className="w-8 h-8" />
+                </div>
                 <div>
                   <div className="font-semibold text-lg">Placement Done</div>
                   <p className="text-sm sm:text-base text-gray-500">Open placement dashboard showing placed students.</p>
@@ -970,9 +964,7 @@ const SuperAdminPage = () => {
             >
               <div className="flex items-start gap-3">
                 <div className="text-info">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                  </svg>
+                  <HiCircleStack className="w-8 h-8" />
                 </div>
                 <div>
                   <div className="font-semibold text-lg">{showBackupManager ? 'Hide Backup Manager' : 'Database Backup'}</div>
@@ -980,6 +972,8 @@ const SuperAdminPage = () => {
                 </div>
               </div>
             </button>
+
+            
           </div>
         </section>
 
@@ -1207,8 +1201,8 @@ const SuperAdminPage = () => {
         {/* Add Batch Form - Only show when showAddBatch is true */}
         {showAddBatch && (
           <section className="w-full max-w-4xl mb-4 sm:mb-6">
-            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center mb-3 sm:mb-4">
-              {icons.batch} Add New Batch
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center gap-2 mb-3 sm:mb-4">
+              <HiSquares2X2 className="w-5 h-5" /> Add New Batch
             </h2>
             <form onSubmit={handleAddBatch} className="flex flex-col gap-3 sm:gap-4 bg-base-200 rounded-xl p-3 sm:p-4 lg:p-6 shadow">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -1237,8 +1231,8 @@ const SuperAdminPage = () => {
                 className="textarea textarea-bordered text-xs sm:text-sm"
                 rows={window.innerWidth < 640 ? 4 : 6}
               />
-              <button type="submit" className="btn btn-primary btn-sm sm:btn-md font-semibold flex items-center w-full sm:w-fit self-end">
-                {icons.add} Add Batch
+              <button type="submit" className="btn btn-primary btn-sm sm:btn-md font-semibold flex items-center gap-2 w-full sm:w-fit self-end">
+                <HiPlus className="w-5 h-5" /> Add Batch
               </button>
             </form>
           </section>
@@ -1247,8 +1241,8 @@ const SuperAdminPage = () => {
         {/* Batches Table - Only show when showBatches is true */}
         {showBatches && (
           <section className="w-full max-w-6xl mb-4 sm:mb-6">
-            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center mb-3 sm:mb-4">
-              {icons.batch} Batches
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center gap-2 mb-3 sm:mb-4">
+              <HiSquares2X2 className="w-5 h-5" /> Batches
             </h2>
             {Object.keys(batchesByYear).sort().map(year => (
               <div key={year} className="mb-4 sm:mb-6">
@@ -1277,28 +1271,28 @@ const SuperAdminPage = () => {
                             <td className="px-2 sm:px-4 py-2 sm:py-3">
                               <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 justify-center">
                                 <button
-                                  className="btn btn-info btn-xs text-xs"
+                                  className="btn btn-info btn-xs text-xs flex items-center gap-1"
                                   onClick={() => handleViewStudents(batch.batchName)}
                                   title="View Students"
                                 >
-                                  {icons.view} <span className="hidden sm:inline">View</span>
+                                  <HiEye className="w-4 h-4" /> <span className="hidden sm:inline">View</span>
                                 </button>
                                 <button
-                                  className="btn btn-warning btn-xs text-xs"
+                                  className="btn btn-warning btn-xs text-xs flex items-center gap-1"
                                   onClick={() => handleEditBatch(batch)}
                                   title="Edit Batch"
                                 >
-                                  {icons.edit} <span className="hidden sm:inline">Edit</span>
+                                  <HiPencilSquare className="w-4 h-4" /> <span className="hidden sm:inline">Edit</span>
                                 </button>
                                 <button
-                                  className="btn btn-error btn-xs text-xs"
+                                  className="btn btn-error btn-xs text-xs flex items-center gap-1"
                                   onClick={() => {
                                     setBatchToRemove(batch.batchName);
                                     setShowRemoveBatchModal(true);
                                   }}
                                   title="Remove Batch"
                                 >
-                                  {icons.remove} <span className="hidden sm:inline">Remove</span>
+                                  <HiTrash className="w-4 h-4" /> <span className="hidden sm:inline">Remove</span>
                                 </button>
                               </div>
                             </td>
@@ -1316,8 +1310,8 @@ const SuperAdminPage = () => {
         {/* Add Admin Form - Only show when showAddAdmin is true */}
         {showAddAdmin && (
           <section className="w-full max-w-4xl mb-4 sm:mb-6">
-            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center mb-3 sm:mb-4">
-              {icons.admin} Add New Admin
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center gap-2 mb-3 sm:mb-4">
+              <HiUserGroup className="w-5 h-5" /> Add New Admin
             </h2>
             <form onSubmit={handleAddAdmin} className="flex flex-col sm:flex-row gap-3 sm:gap-4 bg-base-200 rounded-xl p-3 sm:p-4 lg:p-6 shadow">
               <input
@@ -1335,8 +1329,8 @@ const SuperAdminPage = () => {
                 className="input input-bordered input-sm sm:input-md flex-1"
                 autoComplete="new-password"
               />
-              <button type="submit" className="btn btn-success btn-sm sm:btn-md font-semibold flex items-center w-full sm:w-fit">
-                {icons.add} Add Admin
+              <button type="submit" className="btn btn-success btn-sm sm:btn-md font-semibold flex items-center gap-2 w-full sm:w-fit">
+                <HiUserPlus className="w-5 h-5" /> Add Admin
               </button>
             </form>
           </section>
@@ -1345,8 +1339,8 @@ const SuperAdminPage = () => {
         {/* Admins List - Only show when showViewAdmin is true */}
         {showViewAdmin && (
           <section className="w-full max-w-4xl mb-4 sm:mb-6">
-            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center mb-3 sm:mb-4">
-              {icons.admin} Admins
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center gap-2 mb-3 sm:mb-4">
+              <HiUserGroup className="w-5 h-5" /> Admins
             </h2>
             <div className="bg-base-200 rounded-xl shadow p-3 sm:p-4 lg:p-6">
               {admins.length === 0 ? (
@@ -1360,7 +1354,7 @@ const SuperAdminPage = () => {
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <span className="text-primary shrink-0">{icons.admin}</span>
+                          <span className="text-primary shrink-0"><HiUserGroup className="w-5 h-5" /></span>
                           <div className="min-w-0">
                             <span className="font-semibold text-sm sm:text-base block truncate">{a.adminName}</span>
                             <span className="text-xs text-gray-500 font-mono block">
@@ -1370,18 +1364,18 @@ const SuperAdminPage = () => {
                         </div>
                         <div className="flex gap-2 sm:gap-3">
                           <button
-                            className="btn btn-xs sm:btn-sm btn-info flex-1 sm:flex-none"
+                            className="btn btn-xs sm:btn-sm btn-info flex-1 sm:flex-none flex items-center gap-1"
                             onClick={() => handleShowAdmin(a)}
                             title="Edit Admin"
                           >
-                            {icons.edit} <span className="hidden sm:inline">Edit</span>
+                            <HiPencilSquare className="w-4 h-4" /> <span className="hidden sm:inline">Edit</span>
                           </button>
                           <button
-                            className="btn btn-xs sm:btn-sm btn-error flex-1 sm:flex-none"
+                            className="btn btn-xs sm:btn-sm btn-error flex-1 sm:flex-none flex items-center gap-1"
                             onClick={() => handleRemoveAdmin(a._id)}
                             title="Remove Admin"
                           >
-                            {icons.remove} <span className="hidden sm:inline">Remove</span>
+                            <HiTrash className="w-4 h-4" /> <span className="hidden sm:inline">Remove</span>
                           </button>
                         </div>
                       </div>
@@ -1398,10 +1392,8 @@ const SuperAdminPage = () => {
         {/* Departments List - Only show when showDepartments is true */}
         {showDepartments && (
           <section className="w-full max-w-6xl mb-4 sm:mb-6">
-            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center mb-3 sm:mb-4">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary flex items-center gap-2 mb-3 sm:mb-4">
+              <HiBuildingOffice2 className="w-5 h-5" />
               Departments
             </h2>
             <div className="bg-base-200 rounded-xl shadow p-3 sm:p-4 lg:p-6">
@@ -1431,11 +1423,11 @@ const SuperAdminPage = () => {
                             <td className="text-center">
                               <div className="flex gap-2 justify-center">
                                 <button
-                                  className="btn btn-info btn-xs"
+                                  className="btn btn-info btn-xs flex items-center gap-1"
                                   onClick={() => handleViewDepartmentStudents(dept)}
                                   title="View Students"
                                 >
-                                  {icons.view} <span className="hidden sm:inline">View</span>
+                                  <HiEye className="w-4 h-4" /> <span className="hidden sm:inline">View</span>
                                 </button>
                                 <button
                                   className="btn btn-success btn-xs"
@@ -1537,7 +1529,7 @@ const SuperAdminPage = () => {
                       <tr>
                         <td colSpan={10} className="text-center py-6 text-gray-400 font-semibold">
                           <span className="inline-flex items-center gap-2">
-                            {icons.add}
+                            <HiPlus className="w-5 h-5" />
                             No students in this batch.
                           </span>
                         </td>
@@ -1556,7 +1548,7 @@ const SuperAdminPage = () => {
                               onClick={() => { setProfileStudent(student); setShowProfileModal(true); }}
                               title="View Profile"
                             >
-                              {icons.view} Profile
+                              <HiEye className="w-4 h-4" /> Profile
                             </button>
                           </td>
                           <td className="px-2 py-2 text-center whitespace-nowrap">
@@ -1573,7 +1565,7 @@ const SuperAdminPage = () => {
                               onClick={() => { setStudentToEdit(student); setShowEditStudentModal(true); }}
                               title="Edit Student"
                             >
-                              {icons.edit} Edit
+                              <HiPencilSquare className="w-4 h-4" /> Edit
                             </button>
                           </td>
                           <td className="px-2 py-2 text-center whitespace-nowrap">
@@ -1633,7 +1625,7 @@ const SuperAdminPage = () => {
                 ✕
               </button>
               <h3 className="text-base sm:text-lg font-bold mb-4 text-primary flex items-center gap-2">
-                {icons.admin} Edit Admin
+                <HiUserGroup className="w-5 h-5" /> Edit Admin
               </h3>
               <form onSubmit={handleUpdateAdmin} className="flex flex-col gap-4">
                 <div>
@@ -1657,15 +1649,15 @@ const SuperAdminPage = () => {
                   />
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2">
-                  <button type="submit" className="btn btn-primary font-semibold flex items-center gap-1 flex-1">
-                    {icons.edit} Save Changes
+                  <button type="submit" className="btn btn-primary font-semibold flex items-center gap-2 flex-1">
+                    <HiPencilSquare className="w-5 h-5" /> Save Changes
                   </button>
                   <button
                     type="button"
-                    className="btn btn-error font-semibold flex items-center gap-1 flex-1"
+                    className="btn btn-error font-semibold flex items-center gap-2 flex-1"
                     onClick={() => handleRemoveAdmin(selectedAdmin._id)}
                   >
-                    {icons.remove} Remove Admin
+                    <HiTrash className="w-5 h-5" /> Remove Admin
                   </button>
                 </div>
               </form>
@@ -1691,8 +1683,8 @@ const SuperAdminPage = () => {
         {showEditBatchModal && batchToEdit && (
           <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
             <div className="bg-base-100 rounded-2xl shadow-2xl w-[90vw] max-w-md p-6">
-              <h3 className="text-xl font-bold text-warning mb-4 flex items-center">
-                {icons.edit} Edit Batch
+              <h3 className="text-xl font-bold text-warning mb-4 flex items-center gap-2">
+                <HiPencilSquare className="w-5 h-5" /> Edit Batch
               </h3>
               <div className="flex flex-col gap-4 mb-6">
                 <div>
@@ -1930,8 +1922,8 @@ const SuperAdminPage = () => {
                 </svg>
               </button>
               
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-primary mb-6 text-center tracking-tight">
-                {icons.time} Time Restrictions Management
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-primary mb-6 text-center tracking-tight flex items-center justify-center gap-2">
+                <HiClock className="w-7 h-7" /> Time Restrictions Management
               </h2>
               
               <div className="overflow-y-auto flex-1 space-y-6">

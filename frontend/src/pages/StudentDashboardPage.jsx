@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../lib/axios";
+import StudentNotifications from "../components/StudentNotifications";
 
 export default function StudentDashboardPage() {
   const [studentData, setStudentData] = useState(null);
@@ -501,6 +502,14 @@ export default function StudentDashboardPage() {
                 Last updated: {new Date(data.marksLastUpdated).toLocaleString()}
               </p>
             )}
+          </div>
+        </div>
+
+        {/* Document Requests & Notifications */}
+        <div className="card bg-base-100 shadow-xl mb-6">
+          <div className="card-body">
+            <h2 className="card-title mb-4">📢 Document Requests & Submissions</h2>
+            <StudentNotifications regNo={regNo} />
           </div>
         </div>
 

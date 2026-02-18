@@ -18,6 +18,15 @@ api.interceptors.request.use(
     if (adminName) {
       config.headers['x-admin-name'] = adminName;
     }
+    
+    // Add super admin authentication for protected routes
+    const role = localStorage.getItem('role');
+    const superAdminAuth = sessionStorage.getItem('superAdminAuth');
+    
+    if (role === 'superadmin' && superAdminAuth) {
+      config.headers['Authorization'] = `Basic ${superAdminAuth}`;
+    }
+    
     return config;
   },
   error => Promise.reject(error)

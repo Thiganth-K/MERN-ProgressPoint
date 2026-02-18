@@ -10,6 +10,7 @@ import backupRoutes from "./backupRoutes.js";
 import dataExportImportRoutes from "./dataExportImportRoutes.js";
 import departmentRoutes from "./departmentRoutes.js";
 import studentRoutes from "./studentRoutes.js";
+import leadManagementRoutes from "./leadManagementRoutes.js";
 // Import batch controller for batch averages
 import { getBatchAverages } from "../controllers/batchController.js";
 
@@ -27,6 +28,7 @@ router.use("/backup", backupRoutes);
 router.use("/data", dataExportImportRoutes);
 router.use("/departments", departmentRoutes);
 router.use("/students", studentRoutes);
+router.use("/lead-management", leadManagementRoutes);
 
 // Keep the /admins endpoint for backward compatibility
 router.use("/admins", adminRoutes);
