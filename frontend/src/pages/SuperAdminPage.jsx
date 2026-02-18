@@ -23,41 +23,30 @@ import {
   HiPencilSquare,
   HiTrash,
   HiEye,
-  HiArrowRightOnRectangle
+  HiArrowRightOnRectangle,
+  HiBars3,
+  HiXMark,
+  HiChevronLeft,
+  HiChevronRight
 } from 'react-icons/hi2';
 Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 // Minimal SuperAdmin NavBar and Footer
 const SuperAdminNavBar = ({ onLogout, onViewPlacementDone }) => (
   <nav className="w-full bg-base-100 shadow z-50">
-    {/* Title Bar */}
-    <div className="flex items-center justify-center px-4 sm:px-6 py-3">
+    <div className="flex items-center justify-between px-4 sm:px-6 py-3">
+      {/* Title */}
       <span className="text-lg sm:text-xl font-extrabold text-primary tracking-tight">ProgressPoint</span>
-    </div>
-    
-    {/* Mobile Action Buttons */}
-    <div className="flex items-center justify-center gap-2 px-4 pb-3 sm:hidden">
+      
+      {/* Logout Button */}
       <button
-        className="btn btn-error btn-xs font-semibold flex items-center gap-1 flex-1"
+        className="btn btn-error btn-xs sm:btn-sm font-semibold flex items-center gap-1 sm:gap-2"
         onClick={onLogout}
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
         </svg>
-        <span className="text-xs">Logout</span>
-      </button>
-    </div>
-
-    {/* Desktop Action Buttons */}
-    <div className="hidden sm:flex items-center justify-end gap-2 px-4 sm:px-6 pb-3">
-      <button
-        className="btn btn-error btn-sm font-semibold flex items-center"
-        onClick={onLogout}
-      >
-        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
-        </svg>
-        Logout
+        <span className="text-xs sm:text-sm">Logout</span>
       </button>
     </div>
   </nav>
@@ -104,6 +93,7 @@ const SuperAdminPage = () => {
   const [attendanceBarData, setAttendanceBarData] = useState(null);
   const [attendancePieData, setAttendancePieData] = useState(null);
   const [placementDoneBatchStats, setPlacementDoneBatchStats] = useState({});
+  const [showWelcome, setShowWelcome] = useState(true);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showAddBatch, setShowAddBatch] = useState(false);
   const [showBatches, setShowBatches] = useState(false);
@@ -118,6 +108,7 @@ const SuperAdminPage = () => {
   const [departmentStats, setDepartmentStats] = useState([]);
   const [studentToEdit, setStudentToEdit] = useState(null);
   const [showEditStudentModal, setShowEditStudentModal] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [timeRestrictions, setTimeRestrictions] = useState({
     attendance: {
       isEnabled: false,
@@ -267,6 +258,60 @@ const SuperAdminPage = () => {
     } catch {
       toast.error('Failed to fetch placement done batch stats');
     }
+  };
+
+  // Helper function to hide all sections
+  const hideAllSections = () => {
+    setShowWelcome(false);
+    setShowAnalysis(false);
+    setShowAddBatch(false);
+    setShowBatches(false);
+    setShowAddAdmin(false);
+    setShowViewAdmin(false);
+    setShowDepartments(false);
+    setShowTimeRestrictions(false);
+    setShowBackupManager(false);
+  };
+
+  // Navigation handlers for sidebar items
+  const handleViewAnalysis = () => {
+    hideAllSections();
+    setShowAnalysis(true);
+  };
+
+  const handleAddBatchNavigation = () => {
+    hideAllSections();
+    setShowAddBatch(true);
+  };
+
+  const handleViewBatchesNavigation = () => {
+    hideAllSections();
+    setShowBatches(true);
+  };
+
+  const handleAddAdminNavigation = () => {
+    hideAllSections();
+    setShowAddAdmin(true);
+  };
+
+  const handleViewAdminsNavigation = () => {
+    hideAllSections();
+    setShowViewAdmin(true);
+  };
+
+  const handleDepartmentsNavigation = () => {
+    hideAllSections();
+    setShowDepartments(true);
+  };
+
+  const handleTimeRestrictionsNavigation = () => {
+    hideAllSections();
+    setShowTimeRestrictions(true);
+  };
+
+  const handleBackupManagerNavigation = () => {
+    hideAllSections();
+    setShowBackupManager(true);
   };
 
   const handleSuperAdminLogout = () => {
@@ -777,223 +822,215 @@ const SuperAdminPage = () => {
         onLogout={handleSuperAdminLogout}
         onViewPlacementDone={handleShowPlacementDone}
       />
-      <main className="flex-1 flex flex-col items-center px-2 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
-        {/* Control Buttons as Cards */}
-        <section className="w-full max-w-4xl mb-4 sm:mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Card: View Analysis */}
+      
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <aside 
+          className={`bg-base-100 shadow-lg transition-all duration-300 flex flex-col overflow-hidden ${
+            sidebarCollapsed ? 'w-16' : 'w-64'
+          }`}
+        >
+          {/* Sidebar Header with Toggle */}
+          <div className="flex items-center justify-between p-4 border-b border-base-300">
+            {!sidebarCollapsed && (
+              <span className="font-bold text-primary">Menu</span>
+            )}
             <button
-              onClick={() => setShowAnalysis(!showAnalysis)}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="btn btn-ghost btn-sm btn-square"
+              title={sidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
             >
-              <div className="flex items-start gap-3">
-                <div className="text-primary"> 
-                  <HiChartBar className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">{showAnalysis ? 'Hide Analysis' : 'View Analysis'}</div>
-                  <p className="text-sm sm:text-base text-gray-500">Visualize batch metrics, attendance and placement charts.</p>
-                </div>
-              </div>
+              {sidebarCollapsed ? <HiChevronRight className="w-5 h-5" /> : <HiChevronLeft className="w-5 h-5" />}
             </button>
-
-            {/* Card: Add Batch */}
-            <button
-              onClick={() => setShowAddBatch(!showAddBatch)}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="text-success">
-                  <HiPlus className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">{showAddBatch ? 'Hide Add Batch' : 'Add Batch'}</div>
-                  <p className="text-sm sm:text-base text-gray-500">Create a new batch with students and assign a year.</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Card: View Batches */}
-            <button
-              onClick={() => setShowBatches(!showBatches)}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="text-primary">
-                  <HiSquares2X2 className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">{showBatches ? 'Hide Batches' : 'View Batches'}</div>
-                  <p className="text-sm sm:text-base text-gray-500">Browse and manage existing batches (edit/remove students).</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Card: Add Admin */}
-            <button
-              onClick={() => setShowAddAdmin(!showAddAdmin)}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="text-success">
-                  <HiUserPlus className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">{showAddAdmin ? 'Hide Add Admin' : 'Add Admin'}</div>
-                  <p className="text-sm sm:text-base text-gray-500">Create admin accounts for marking attendance and entering marks.</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Card: View Admins */}
-            <button
-              onClick={() => setShowViewAdmin(!showViewAdmin)}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="text-primary">
-                  <HiUserGroup className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">{showViewAdmin ? 'Hide Admins' : 'View Admins'}</div>
-                  <p className="text-sm sm:text-base text-gray-500">Manage admin users and edit their credentials.</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Card: View Departments */}
-            <button
-              onClick={() => setShowDepartments(!showDepartments)}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="text-secondary">
-                  <HiBuildingOffice2 className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">{showDepartments ? 'Hide Departments' : 'View Departments'}</div>
-                  <p className="text-sm sm:text-base text-gray-500">View students grouped by department across all batches.</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Card: Student Management */}
-            <button
-              onClick={() => navigate('/student-management')}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="text-info">
-                  <HiUsers className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">Student Management</div>
-                  <p className="text-sm sm:text-base text-gray-500">Add, edit, delete students and manage their information across batches.</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Card: Lead Management System */}
-            <button
-              onClick={() => navigate('/lead-management')}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="text-success">
-                  <HiDocumentText className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">Lead Management</div>
-                  <p className="text-sm sm:text-base text-gray-500">Request and collect documents from students (marksheets, certificates, etc.).</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Card: View Admin Logs */}
-            <button
-              onClick={handleViewLogs}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="text-warning">
-                  <HiClipboardDocumentList className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">View Admin Logs</div>
-                  <p className="text-sm sm:text-base text-gray-500">See activity logs for admins and clear them if needed.</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Card: Time Restrictions */}
-            <button
-              onClick={() => setShowTimeRestrictions(!showTimeRestrictions)}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="text-secondary">
-                  <HiClock className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">{showTimeRestrictions ? 'Hide Time Settings' : 'Time Restrictions'}</div>
-                  <p className="text-sm sm:text-base text-gray-500">Configure when admins can mark attendance and enter marks.</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Card: Placement Done */}
-            <button
-              onClick={handleShowPlacementDone}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="text-accent">
-                  <HiCheckCircle className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">Placement Done</div>
-                  <p className="text-sm sm:text-base text-gray-500">Open placement dashboard showing placed students.</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Card: Database Backup */}
-            <button
-              onClick={() => setShowBackupManager(!showBackupManager)}
-              className="card card-bordered bg-base-100 p-6 sm:p-6 lg:p-8 text-left hover:shadow-lg transition-shadow min-h-[96px]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="text-info">
-                  <HiCircleStack className="w-8 h-8" />
-                </div>
-                <div>
-                  <div className="font-semibold text-lg">{showBackupManager ? 'Hide Backup Manager' : 'Database Backup'}</div>
-                  <p className="text-sm sm:text-base text-gray-500">Create, restore, and manage database backups for data protection.</p>
-                </div>
-              </div>
-            </button>
-
-            
           </div>
-        </section>
 
-        {/* Year Tabs for Chart Filtering (DaisyUI) - Only show when analysis is visible */}
-        {showAnalysis && (
-          <div className="w-full flex justify-center mb-4 sm:mb-6">
-            <div role="tablist" className="tabs tabs-boxed tabs-sm sm:tabs-md">
-              {years.map(year => (
+          {/* Sidebar Navigation Items */}
+          <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4">
+            <ul className="menu p-2 space-y-1">
+              {/* View Analysis */}
+              <li>
                 <button
-                  key={year}
-                  role="tab"
-                  className={`tab text-xs sm:text-sm ${year === selectedYear ? "tab-active" : ""}`}
-                  onClick={() => setSelectedYear(year)}
+                  onClick={handleViewAnalysis}
+                  className={`flex items-center gap-3 ${showAnalysis ? 'active' : ''} ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'View Analysis' : ''}
                 >
-                  {year}
+                  <HiChartBar className="w-5 h-5 text-primary flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">View Analysis</span>}
                 </button>
-              ))}
+              </li>
+
+              {/* Add Batch */}
+              <li>
+                <button
+                  onClick={handleAddBatchNavigation}
+                  className={`flex items-center gap-3 ${showAddBatch ? 'active' : ''} ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'Add Batch' : ''}
+                >
+                  <HiPlus className="w-5 h-5 text-success flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">Add Batch</span>}
+                </button>
+              </li>
+
+              {/* View Batches */}
+              <li>
+                <button
+                  onClick={handleViewBatchesNavigation}
+                  className={`flex items-center gap-3 ${showBatches ? 'active' : ''} ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'View Batches' : ''}
+                >
+                  <HiSquares2X2 className="w-5 h-5 text-primary flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">View Batches</span>}
+                </button>
+              </li>
+
+              {/* Add Admin */}
+              <li>
+                <button
+                  onClick={handleAddAdminNavigation}
+                  className={`flex items-center gap-3 ${showAddAdmin ? 'active' : ''} ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'Add Admin' : ''}
+                >
+                  <HiUserPlus className="w-5 h-5 text-success flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">Add Admin</span>}
+                </button>
+              </li>
+
+              {/* View Admins */}
+              <li>
+                <button
+                  onClick={handleViewAdminsNavigation}
+                  className={`flex items-center gap-3 ${showViewAdmin ? 'active' : ''} ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'View Admins' : ''}
+                >
+                  <HiUserGroup className="w-5 h-5 text-primary flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">View Admins</span>}
+                </button>
+              </li>
+
+              {/* View Departments */}
+              <li>
+                <button
+                  onClick={handleDepartmentsNavigation}
+                  className={`flex items-center gap-3 ${showDepartments ? 'active' : ''} ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'Departments' : ''}
+                >
+                  <HiBuildingOffice2 className="w-5 h-5 text-secondary flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">Departments</span>}
+                </button>
+              </li>
+
+              <div className="divider my-2"></div>
+
+              {/* Student Management */}
+              <li>
+                <button
+                  onClick={() => navigate('/student-management')}
+                  className={`flex items-center gap-3 ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'Student Management' : ''}
+                >
+                  <HiUsers className="w-5 h-5 text-info flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">Student Management</span>}
+                </button>
+              </li>
+
+              {/* Lead Management */}
+              <li>
+                <button
+                  onClick={() => navigate('/lead-management')}
+                  className={`flex items-center gap-3 ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'Lead Management' : ''}
+                >
+                  <HiDocumentText className="w-5 h-5 text-success flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">Lead Management</span>}
+                </button>
+              </li>
+
+              <div className="divider my-2"></div>
+
+              {/* Admin Logs */}
+              <li>
+                <button
+                  onClick={handleViewLogs}
+                  className={`flex items-center gap-3 ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'Admin Logs' : ''}
+                >
+                  <HiClipboardDocumentList className="w-5 h-5 text-warning flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">Admin Logs</span>}
+                </button>
+              </li>
+
+              {/* Time Restrictions */}
+              <li>
+                <button
+                  onClick={handleTimeRestrictionsNavigation}
+                  className={`flex items-center gap-3 ${showTimeRestrictions ? 'active' : ''} ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'Time Restrictions' : ''}
+                >
+                  <HiClock className="w-5 h-5 text-secondary flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">Time Restrictions</span>}
+                </button>
+              </li>
+
+              {/* Placement Done */}
+              <li>
+                <button
+                  onClick={handleShowPlacementDone}
+                  className={`flex items-center gap-3 ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'Placement Done' : ''}
+                >
+                  <HiCheckCircle className="w-5 h-5 text-accent flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">Placement Done</span>}
+                </button>
+              </li>
+
+              {/* Database Backup */}
+              <li>
+                <button
+                  onClick={handleBackupManagerNavigation}
+                  className={`flex items-center gap-3 ${showBackupManager ? 'active' : ''} ${sidebarCollapsed ? 'tooltip tooltip-right justify-center' : ''}`}
+                  data-tip={sidebarCollapsed ? 'Database Backup' : ''}
+                >
+                  <HiCircleStack className="w-5 h-5 text-info flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="flex-1 text-left">Database Backup</span>}
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </aside>
+
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+          {/* Welcome Page - Default Landing */}
+          {showWelcome && (
+            <section className="w-full h-full flex items-center justify-center">
+              <div className="text-center">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-primary mb-4">
+                  Hi superadmin!!
+                </h1>
+                <p className="text-base sm:text-lg text-base-content/70">
+                  Welcome to ProgressPoint. Select an option from the menu to get started.
+                </p>
+              </div>
+            </section>
+          )}
+
+          {/* Year Tabs for Chart Filtering (DaisyUI) - Only show when analysis is visible */}
+          {showAnalysis && (
+            <div className="w-full flex justify-center mb-4 sm:mb-6">
+              <div role="tablist" className="tabs tabs-boxed tabs-sm sm:tabs-md">
+                {years.map(year => (
+                  <button
+                    key={year}
+                    role="tab"
+                    className={`tab text-xs sm:text-sm ${year === selectedYear ? "tab-active" : ""}`}
+                    onClick={() => setSelectedYear(year)}
+                  >
+                    {year}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Show charts only if analysis is visible and a year is selected */}
         {showAnalysis && selectedYear && (
@@ -2131,7 +2168,8 @@ const SuperAdminPage = () => {
             }}
           />
         )}
-      </main>
+        </main>
+      </div>
       <SuperAdminFooter />
     </div>
   );
