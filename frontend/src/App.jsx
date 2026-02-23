@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import api from './lib/axios';
 import HomePage from "./pages/HomePage";
 import AdminPage from "./pages/AdminPage";
 import AboutPage from "./pages/AboutPage";
@@ -21,6 +22,25 @@ import RateLimitModal from "./components/RateLimitModal.jsx";
 
 
 const App = () => {
+  // Fetch a guest token for visitors who are not logged in as any role
+  useEffect(() => {
+    const hasToken =
+      localStorage.getItem("token") ||
+      localStorage.getItem("studentToken");
+
+    if (!hasToken) {
+      api.post("/admin/guest-token")
+        .then(res => {
+          if (res.data?.token) {
+            localStorage.setItem("guestToken", res.data.token);
+          }
+        })
+        .catch(() => {
+          // Silently ignore — guest token is optional
+        });
+    }
+  }, []);
+
   return (
     <div>
       <RateLimitModal />

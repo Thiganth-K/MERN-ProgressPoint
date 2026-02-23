@@ -57,13 +57,22 @@ const storage = new CloudinaryStorage({
     } else if (file.mimetype.startsWith('image/')) {
       resourceType = 'image';
     }
+
+    const ext = file.mimetype === 'application/pdf' ? '.pdf'
+      : file.mimetype.includes('msword') || file.mimetype.includes('docx') ? '.docx'
+      : file.mimetype.startsWith('image/jpeg') || file.mimetype === 'image/jpg' ? '.jpg'
+      : file.mimetype === 'image/png' ? '.png'
+      : '';
+    const publicId = `student_${Date.now()}_${Math.random().toString(36).substring(7)}${ext}`;
+    console.log(`[Cloudinary Upload] Preparing upload: type=${resourceType} publicId=${publicId} mimetype=${file.mimetype}`);
     
     return {
       folder: 'progresspoint/student-submissions',
       allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
       resource_type: resourceType,
-      access_mode: 'public', // Ensure files are publicly accessible
-      public_id: `student_${Date.now()}_${Math.random().toString(36).substring(7)}`
+      type: 'upload',          // 'upload' = publicly accessible (no auth required)
+      access_mode: 'public',   // Explicitly set public access
+      public_id: publicId
     };
   }
 });

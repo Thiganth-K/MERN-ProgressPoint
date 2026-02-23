@@ -1,6 +1,7 @@
 import Batch from "../batch.model.js";
 import PlacementDoneStudent from "../placementDone.model.js";
 import StudentAuth from "../studentAuth.model.js";
+import { generateStudentToken } from "../middleware/jwtAuth.js";
 
 // Student login
 export const studentLogin = async (req, res) => {
@@ -42,8 +43,11 @@ export const studentLogin = async (req, res) => {
 
     await studentAuth.save();
 
+    const token = generateStudentToken(studentAuth.regNo);
+
     res.json({
       message: "Login successful",
+      token,
       student: {
         regNo: studentAuth.regNo,
         lastLogin: studentAuth.lastLogin

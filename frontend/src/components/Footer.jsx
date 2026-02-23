@@ -78,6 +78,9 @@ const Footer = () => {
         }
       }
       localStorage.removeItem('adminName');
+      localStorage.removeItem('role');
+      localStorage.removeItem('token');       // clear JWT
+      localStorage.removeItem('guestToken');
       localStorage.removeItem('selectedDepartment');
       navigate('/');
     } else {

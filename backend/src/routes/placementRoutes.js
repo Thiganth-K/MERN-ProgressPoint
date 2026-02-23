@@ -5,13 +5,16 @@ import {
   exportPlacementDone
 } from "../controllers/placementController.js";
 import { updatePlacementDone } from "../controllers/placementController.js";
+import { requireAdminOrSuperAdmin } from "../middleware/jwtAuth.js";
 
 const router = express.Router();
 
-// Placement routes
+// Public: view placement records (used in guest / client dashboard)
 router.get("/", getAllPlacementDone);
-router.post("/", moveToPlacementDone);
-router.get("/export", exportPlacementDone);
-router.put("/:id", updatePlacementDone);
+
+// Admin/Superadmin: modify placement records
+router.post("/", requireAdminOrSuperAdmin, moveToPlacementDone);
+router.get("/export", requireAdminOrSuperAdmin, exportPlacementDone);
+router.put("/:id", requireAdminOrSuperAdmin, updatePlacementDone);
 
 export default router;

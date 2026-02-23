@@ -8,28 +8,17 @@ import {
   getDepartmentAverages,
   getDepartmentAttendance
 } from "../controllers/departmentController.js";
+import { requireAdminOrSuperAdmin } from "../middleware/jwtAuth.js";
 
 const router = express.Router();
 
-// Get all departments
-router.get("/", getAllDepartments);
-
-// Get department statistics
-router.get("/stats", getDepartmentStats);
-
-// Get department averages for charts
-router.get("/averages", getDepartmentAverages);
-
-// Get students from a specific department
-router.get("/:department/students", getDepartmentStudents);
-
-// Get attendance for a department by date and session
-router.get("/:department/attendance", getDepartmentAttendance);
-
-// Export department students as Excel
-router.get("/:department/export", exportDepartmentStudents);
-
-// Search student by registration number
-router.get("/search/:regNo", searchStudentByRegNo);
+// All department routes require admin or superadmin JWT
+router.get("/", requireAdminOrSuperAdmin, getAllDepartments);
+router.get("/stats", requireAdminOrSuperAdmin, getDepartmentStats);
+router.get("/averages", requireAdminOrSuperAdmin, getDepartmentAverages);
+router.get("/:department/students", requireAdminOrSuperAdmin, getDepartmentStudents);
+router.get("/:department/attendance", requireAdminOrSuperAdmin, getDepartmentAttendance);
+router.get("/:department/export", requireAdminOrSuperAdmin, exportDepartmentStudents);
+router.get("/search/:regNo", requireAdminOrSuperAdmin, searchStudentByRegNo);
 
 export default router;

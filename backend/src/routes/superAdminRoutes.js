@@ -12,22 +12,23 @@ import {
   deleteStudent,
   addStudent
 } from "../controllers/superAdminController.js";
+import { requireSuperAdmin } from "../middleware/jwtAuth.js";
 
 const router = express.Router();
 
-// Super admin routes
-router.get("/logs", getAllLogs);
-router.delete("/logs", clearLogs);
-router.get("/admins", getAdmins);
-router.post("/admins", createAdmin);
-router.put("/admins/:id", updateAdmin);
-router.delete("/admins/:id", deleteAdmin);
-router.post("/move-student", moveStudent);
+// All super admin routes require superadmin JWT
+router.get("/logs", requireSuperAdmin, getAllLogs);
+router.delete("/logs", requireSuperAdmin, clearLogs);
+router.get("/admins", requireSuperAdmin, getAdmins);
+router.post("/admins", requireSuperAdmin, createAdmin);
+router.put("/admins/:id", requireSuperAdmin, updateAdmin);
+router.delete("/admins/:id", requireSuperAdmin, deleteAdmin);
+router.post("/move-student", requireSuperAdmin, moveStudent);
 
-// Student management routes
-router.get("/student/:regNo", getStudentByRegNo);
-router.put("/student/:batchName/:regNo", updateStudent);
-router.delete("/student/:batchName/:regNo", deleteStudent);
-router.post("/student/:batchName", addStudent);
+// Student management routes (superadmin only)
+router.get("/student/:regNo", requireSuperAdmin, getStudentByRegNo);
+router.put("/student/:batchName/:regNo", requireSuperAdmin, updateStudent);
+router.delete("/student/:batchName/:regNo", requireSuperAdmin, deleteStudent);
+router.post("/student/:batchName", requireSuperAdmin, addStudent);
 
 export default router;

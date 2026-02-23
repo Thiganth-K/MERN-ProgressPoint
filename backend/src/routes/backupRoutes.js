@@ -6,22 +6,15 @@ import {
   deleteDatabaseBackup,
   downloadBackup
 } from "../controllers/backupController.js";
+import { requireSuperAdmin } from "../middleware/jwtAuth.js";
 
 const router = express.Router();
 
-// Create backup
-router.post("/create", createDatabaseBackup);
-
-// Restore backup
-router.post("/restore/:timestamp", restoreDatabaseBackup);
-
-// Delete backup
-router.delete("/delete/:timestamp", deleteDatabaseBackup);
-
-// List all backups
-router.get("/list", listDatabaseBackups);
-
-// Download backup (future enhancement)
-router.get("/download/:timestamp", downloadBackup);
+// All backup routes require superadmin JWT
+router.post("/create", requireSuperAdmin, createDatabaseBackup);
+router.post("/restore/:timestamp", requireSuperAdmin, restoreDatabaseBackup);
+router.delete("/delete/:timestamp", requireSuperAdmin, deleteDatabaseBackup);
+router.get("/list", requireSuperAdmin, listDatabaseBackups);
+router.get("/download/:timestamp", requireSuperAdmin, downloadBackup);
 
 export default router;

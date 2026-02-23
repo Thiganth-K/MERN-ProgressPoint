@@ -13,20 +13,27 @@ const LeadManagementPage = () => {
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [filePreviewModal, setFilePreviewModal] = useState(null); // { url, name, type }
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [statistics, setStatistics] = useState(null);
 
-  // Helper function to fix Cloudinary URLs for PDFs and documents
+  // Helper function to fix Cloudinary URLs for PDFs stored under /image/upload/ (old records)
   const getCloudinaryFileUrl = (fileUrl, fileType) => {
     if (!fileUrl) return '';
-    
-    // If it's a PDF or document, ensure it uses /raw/ resource type
+    let url = fileUrl;
     if (fileType && (fileType.includes('pdf') || fileType.includes('document'))) {
-      // Replace /image/upload/ with /raw/upload/ for PDFs
-      return fileUrl.replace('/image/upload/', '/raw/upload/');
+      url = url.replace('/image/upload/', '/raw/upload/');
     }
-    
-    return fileUrl;
+    return url;
+  };
+
+  // Open file in an inline preview modal (no new tab, no download)
+  const handleViewFile = (fileUrl, fileType, fileName) => {
+    console.log('[SuperAdmin View File]', { fileUrl, fileType, fileName });
+    if (!fileUrl) { toast.error('File URL not available'); return; }
+    const fixedUrl = getCloudinaryFileUrl(fileUrl, fileType);
+    console.log('[SuperAdmin View File] Final URL:', fixedUrl);
+    setFilePreviewModal({ url: fixedUrl, name: fileName || 'File', type: fileType || '' });
   };
 
   // Form state for creating new request
@@ -865,20 +872,14 @@ const LeadManagementPage = () => {
                               </div>
                             )}
                           </div>
-                          <div className="flex flex-row lg:flex-col gap-2 justify-center">
-                            <a
-                              href={getCloudinaryFileUrl(submission.fileUrl, submission.fileType)}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <div className="flex flex-row lg:flex-col gap-2 justify-center">
+                            <button
+                              onClick={() => handleViewFile(submission.fileUrl, submission.fileType, submission.fileName)}
                               className="btn btn-primary btn-sm gap-2 shadow-lg"
-                              onClick={(e) => {
-                                const url = getCloudinaryFileUrl(submission.fileUrl, submission.fileType);
-                                console.log('Opening file:', url);
-                              }}
                             >
                               <FiEye />
                               View File
-                            </a>
+                            </button>
                             {submission.reviewStatus === 'pending' && (
                               <>
                                 <button
@@ -921,6 +922,57 @@ const LeadManagementPage = () => {
               </button>
             </div>
           </div>
+        </dialog>
+      )}
+
+      {/* File Preview Modal */}
+      {filePreviewModal && (
+        <dialog open className="modal">
+          <div className="modal-box w-11/12 max-w-5xl h-[90vh] flex flex-col p-0 overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-base-300 bg-base-100 flex-shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <FiFileText className="text-primary flex-shrink-0" />
+                <span className="font-semibold truncate text-sm">{filePreviewModal.name}</span>
+              </div>
+              <div className="flex gap-2 flex-shrink-0">
+                <a
+                  href={filePreviewModal.url}
+                  download
+                  className="btn btn-sm btn-outline gap-1"
+                  title="Download file"
+                >
+                  ⬇ Download
+                </a>
+                <button
+                  onClick={() => setFilePreviewModal(null)}
+                  className="btn btn-sm btn-circle btn-ghost"
+                >✕</button>
+              </div>
+            </div>
+            {/* Preview */}
+            <div className="flex-1 overflow-hidden bg-base-200">
+              {filePreviewModal.type.startsWith('image/') ? (
+                <div className="w-full h-full flex items-center justify-center p-4">
+                  <img
+                    src={filePreviewModal.url}
+                    alt={filePreviewModal.name}
+                    className="max-w-full max-h-full object-contain rounded shadow-lg"
+                  />
+                </div>
+              ) : (
+                <iframe
+                  src={filePreviewModal.url}
+                  title={filePreviewModal.name}
+                  className="w-full h-full border-0"
+                  allow="fullscreen"
+                />
+              )}
+            </div>
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button onClick={() => setFilePreviewModal(null)}>close</button>
+          </form>
         </dialog>
       )}
     </div>

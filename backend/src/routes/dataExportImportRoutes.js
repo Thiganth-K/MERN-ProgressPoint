@@ -7,25 +7,16 @@ import {
   deleteExport,
   uploadAndImport
 } from "../controllers/dataExportImportController.js";
+import { requireSuperAdmin } from "../middleware/jwtAuth.js";
 
 const router = express.Router();
 
-// Export all data to JSON
-router.post("/export", exportData);
-
-// Import data from JSON
-router.post("/import", importData);
-
-// List all exported files
-router.get("/list", listExports);
-
-// Download a specific export file
-router.get("/download/:fileName", downloadExport);
-
-// Delete a specific export file
-router.delete("/delete/:fileName", deleteExport);
-
-// Upload and import a JSON file
-router.post("/upload-import", uploadAndImport);
+// All data export/import routes are superadmin only
+router.post("/export", requireSuperAdmin, exportData);
+router.post("/import", requireSuperAdmin, importData);
+router.get("/list", requireSuperAdmin, listExports);
+router.get("/download/:fileName", requireSuperAdmin, downloadExport);
+router.delete("/delete/:fileName", requireSuperAdmin, deleteExport);
+router.post("/upload-import", requireSuperAdmin, uploadAndImport);
 
 export default router;

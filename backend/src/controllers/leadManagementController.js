@@ -320,7 +320,9 @@ export const getStudentInfoRequests = async (req, res) => {
           submittedAt: submission.submittedAt,
           reviewStatus: submission.reviewStatus,
           reviewComments: submission.reviewComments,
-          fileUrl: submission.fileUrl
+          fileUrl: submission.fileUrl,
+          fileType: submission.fileType,
+          fileName: submission.fileName
         } : {
           submitted: false
         }
@@ -358,11 +360,13 @@ export const submitInfoRequest = async (req, res) => {
       });
     }
 
-    console.log('File details:', {
+    console.log('[Upload] File details from Cloudinary:', {
       filename: req.file.filename,
       originalname: req.file.originalname,
       mimetype: req.file.mimetype,
-      size: req.file.size
+      size: req.file.size,
+      path: req.file.path,
+      secure_url: req.file.secure_url || req.file.path
     });
 
     // Find the info request
@@ -416,14 +420,14 @@ export const submitInfoRequest = async (req, res) => {
       });
     }
 
-    // Fix URL for PDFs and documents (ensure /raw/ resource type)
+    // For PDFs/documents uploaded as raw type, ensure /raw/ path is used
     let fileUrl = req.file.path;
-    if (req.file.mimetype === 'application/pdf' || 
-        req.file.mimetype.includes('document') || 
+    if (req.file.mimetype === 'application/pdf' ||
+        req.file.mimetype.includes('document') ||
         req.file.mimetype.includes('msword')) {
-      // Replace /image/upload/ with /raw/upload/ for proper PDF delivery
       fileUrl = fileUrl.replace('/image/upload/', '/raw/upload/');
     }
+    console.log(`[Upload] Stored URL: ${fileUrl}`);
 
     // Create submission
     const submission = new StudentSubmission({
@@ -442,12 +446,14 @@ export const submitInfoRequest = async (req, res) => {
 
     await submission.save();
     
-    console.log('File uploaded successfully:', {
+    console.log('[Upload] ✅ File saved successfully:', {
       originalUrl: req.file.path,
       fixedUrl: fileUrl,
       publicId: req.file.filename,
-      mimetype: req.file.mimetype
+      mimetype: req.file.mimetype,
+      publicAccessibleLink: fileUrl
     });
+    console.log(`[Upload] 🔗 Public accessible link: ${fileUrl}`);
 
     // Update info request statistics
     infoRequest.totalSubmissions += 1;

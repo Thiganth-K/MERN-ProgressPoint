@@ -7,25 +7,26 @@ import {
 } from "../controllers/attendanceController.js";
 import { logAdminAction } from "../middleware/logging.js";
 import { checkAttendanceTime } from "../middleware/timeRestriction.js";
+import { requireAdminOrSuperAdmin } from "../middleware/jwtAuth.js";
 
 const router = express.Router();
 
 // IMPORTANT: More specific routes MUST come before generic routes
 // Export attendance by specific date and session (must be first!)
-router.get("/export-attendance/:date/:session", exportAttendanceByDateSession);
+router.get("/export-attendance/:date/:session", requireAdminOrSuperAdmin, exportAttendanceByDateSession);
 
 // Attendance routes
-router.get("/:batchName/attendance/:date/:session", logAdminAction("view_attendance", (req) => ({
+router.get("/:batchName/attendance/:date/:session", requireAdminOrSuperAdmin, logAdminAction("view_attendance", (req) => ({
   batchName: req.params.batchName,
   action: `View attendance for ${req.params.date} ${req.params.session}`,
   metadata: { date: req.params.date, session: req.params.session }
 })), getAttendance);
-router.post("/:batchName/attendance", checkAttendanceTime, logAdminAction("mark_attendance", (req) => ({
+router.post("/:batchName/attendance", requireAdminOrSuperAdmin, checkAttendanceTime, logAdminAction("mark_attendance", (req) => ({
   batchName: req.params.batchName,
   action: `Mark attendance for ${req.body.date} ${req.body.session}`,
   metadata: { date: req.body.date, session: req.body.session, studentsCount: Object.keys(req.body.attendance || {}).length }
 })), markAttendance);
-router.get("/:batchName/export-attendance", logAdminAction("export_data", (req) => ({
+router.get("/:batchName/export-attendance", requireAdminOrSuperAdmin, logAdminAction("export_data", (req) => ({
   batchName: req.params.batchName,
   action: "Export attendance data"
 })), exportAttendance);

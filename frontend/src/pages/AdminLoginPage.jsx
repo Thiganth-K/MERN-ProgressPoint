@@ -28,6 +28,10 @@ export default function AdminLoginPage() {
       if (data.success) {
         localStorage.setItem("adminName", adminName);
         localStorage.setItem("role", data.role);
+        // Store the JWT token
+        localStorage.setItem("token", data.token);
+        // Clear any leftover old-style auth
+        sessionStorage.removeItem("superAdminAuth");
         toast.success("Login successfully!");
         
         if (data.role === "superadmin") {

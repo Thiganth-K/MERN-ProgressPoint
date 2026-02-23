@@ -23,6 +23,8 @@ export default function StudentLoginPage() {
       // Store student info in localStorage
       localStorage.setItem("studentRegNo", response.data.student.regNo);
       localStorage.setItem("studentLastLogin", response.data.student.lastLogin);
+      // Store the JWT token
+      localStorage.setItem("studentToken", response.data.token);
 
       // Navigate to student dashboard
       navigate("/student-dashboard");

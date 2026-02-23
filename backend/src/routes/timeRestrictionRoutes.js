@@ -7,20 +7,17 @@ import {
   checkTimeAccess
 } from "../controllers/timeRestrictionController.js";
 import { logAdminAction } from "../middleware/logging.js";
+import { requireAdminOrSuperAdmin, requireSuperAdmin } from "../middleware/jwtAuth.js";
 
 const router = express.Router();
 
-// Get all time restrictions
-router.get("/", getTimeRestrictions);
+// Read (admin or superadmin)
+router.get("/", requireAdminOrSuperAdmin, getTimeRestrictions);
+router.get("/:type", requireAdminOrSuperAdmin, getTimeRestrictionByType);
+router.get("/:type/check", requireAdminOrSuperAdmin, checkTimeAccess);
 
-// Get specific time restriction by type
-router.get("/:type", getTimeRestrictionByType);
-
-// Check if current time allows access for specific type
-router.get("/:type/check", checkTimeAccess);
-
-// Create or update time restriction
-router.post("/", logAdminAction("set_time_restriction", (req) => ({
+// Write (superadmin only)
+router.post("/", requireSuperAdmin, logAdminAction("set_time_restriction", (req) => ({
   type: req.body.type,
   isEnabled: req.body.isEnabled,
   startTime: req.body.startTime,
@@ -28,8 +25,7 @@ router.post("/", logAdminAction("set_time_restriction", (req) => ({
   action: "Set time restriction"
 })), setTimeRestriction);
 
-// Update specific time restriction
-router.put("/:type", logAdminAction("update_time_restriction", (req) => ({
+router.put("/:type", requireSuperAdmin, logAdminAction("update_time_restriction", (req) => ({
   type: req.params.type,
   isEnabled: req.body.isEnabled,
   startTime: req.body.startTime,
@@ -37,8 +33,7 @@ router.put("/:type", logAdminAction("update_time_restriction", (req) => ({
   action: "Update time restriction"
 })), setTimeRestriction);
 
-// Delete time restriction
-router.delete("/:type", logAdminAction("delete_time_restriction", (req) => ({
+router.delete("/:type", requireSuperAdmin, logAdminAction("delete_time_restriction", (req) => ({
   type: req.params.type,
   action: "Delete time restriction"
 })), deleteTimeRestriction);

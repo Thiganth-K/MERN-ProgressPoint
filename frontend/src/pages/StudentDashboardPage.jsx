@@ -49,6 +49,7 @@ export default function StudentDashboardPage() {
   const handleLogout = () => {
     localStorage.removeItem("studentRegNo");
     localStorage.removeItem("studentLastLogin");
+    localStorage.removeItem("studentToken");  // clear JWT
     navigate("/student-login");
   };
 

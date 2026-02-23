@@ -11,39 +11,45 @@ const api = axios.create({
   baseURL: BASE_URL,
 });
 
-// Add a request interceptor to include admin name in headers
+// ─────────────────────────────────────────────
+// Request interceptor — attach JWT Bearer token
+// ─────────────────────────────────────────────
 api.interceptors.request.use(
   config => {
-    const adminName = localStorage.getItem('adminName');
+    // Pick the active token for the current role
+    const token =
+      localStorage.getItem("token") ||      // admin / superadmin
+      localStorage.getItem("studentToken") || // student
+      localStorage.getItem("guestToken");     // guest
+
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    // Keep x-admin-name for logging middleware compatibility
+    const adminName = localStorage.getItem("adminName");
     if (adminName) {
-      config.headers['x-admin-name'] = adminName;
+      config.headers["x-admin-name"] = adminName;
     }
-    
-    // Add super admin authentication for protected routes
-    const role = localStorage.getItem('role');
-    const superAdminAuth = sessionStorage.getItem('superAdminAuth');
-    
-    if (role === 'superadmin' && superAdminAuth) {
-      config.headers['Authorization'] = `Basic ${superAdminAuth}`;
-    }
-    
+
     return config;
   },
   error => Promise.reject(error)
 );
 
-// Add a response interceptor for rate limiting
+// ─────────────────────────────────────────────
+// Response interceptor — handle errors
+// ─────────────────────────────────────────────
 api.interceptors.response.use(
   response => response,
   error => {
-    if (error.response && error.response.status === 429) {
-      // Dispatch custom event to show rate limit modal
-      window.dispatchEvent(new Event('rateLimitExceeded'));
-      
-      // Also show toast as backup
-      toast.error(
-        "Too many requests! Please wait a moment.",
-        {
+    if (error.response) {
+      const status = error.response.status;
+
+      // Rate limit
+      if (status === 429) {
+        window.dispatchEvent(new Event("rateLimitExceeded"));
+        toast.error("Too many requests! Please wait a moment.", {
           style: {
             background: "#fff",
             color: "#1d4ed8",
@@ -53,8 +59,40 @@ api.interceptors.response.use(
             primary: "#f59e42",
             secondary: "#fff",
           },
+        });
+      }
+
+      // Token expired or invalid → clear storage and redirect to login
+      if (status === 401) {
+        const isExpired = error.response.data?.expired;
+        const currentPath = window.location.pathname;
+
+        // Avoid redirect loops on login pages
+        if (
+          !currentPath.includes("login") &&
+          !currentPath.includes("home") &&
+          currentPath !== "/"
+        ) {
+          // Clear all auth tokens
+          localStorage.removeItem("token");
+          localStorage.removeItem("studentToken");
+          localStorage.removeItem("guestToken");
+          localStorage.removeItem("adminName");
+          localStorage.removeItem("role");
+          localStorage.removeItem("studentRegNo");
+
+          if (isExpired) {
+            toast.error("Your session has expired. Please log in again.");
+          }
+
+          // Redirect based on which portal was in use
+          if (currentPath.includes("student")) {
+            window.location.href = "/student-login";
+          } else {
+            window.location.href = "/admin-login";
+          }
         }
-      );
+      }
     }
     return Promise.reject(error);
   }

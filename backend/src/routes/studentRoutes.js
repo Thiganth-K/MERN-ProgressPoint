@@ -16,30 +16,31 @@ import {
   updateStudentInBatch,
   deleteStudentFromBatch
 } from "../controllers/studentController.js";
+import { requireStudent, requireSuperAdmin } from "../middleware/jwtAuth.js";
 
 const router = express.Router();
 
-// Public routes (no authentication required)
+// ── Public (no auth required) ────────────────────
 router.post("/login", studentLogin);
 
-// Student routes (require student to be logged in - you can add student auth middleware later)
-router.get("/:regNo/data", getStudentData);
-router.post("/:regNo/change-password", changeStudentPassword);
-router.put("/:regNo/update-emails", updateStudentEmails);
-router.get("/:regNo/login-history", getLoginHistory);
+// ── Student routes (require student JWT) ────────
+router.get("/:regNo/data", requireStudent, getStudentData);
+router.post("/:regNo/change-password", requireStudent, changeStudentPassword);
+router.put("/:regNo/update-emails", requireStudent, updateStudentEmails);
+router.get("/:regNo/login-history", requireStudent, getLoginHistory);
 
-// Superadmin routes - Student Auth Management
-router.post("/create", createStudentAuth);
-router.post("/bulk-create", bulkCreateStudentAuth);
-router.get("/all", getAllStudentAuth);
-router.put("/:regNo/status", updateStudentStatus);
-router.put("/:regNo/reset-password", resetStudentPassword);
-router.delete("/:regNo", deleteStudentAuth);
+// ── Super admin routes (student auth management) ────────
+router.post("/create", requireSuperAdmin, createStudentAuth);
+router.post("/bulk-create", requireSuperAdmin, bulkCreateStudentAuth);
+router.get("/all", requireSuperAdmin, getAllStudentAuth);
+router.put("/:regNo/status", requireSuperAdmin, updateStudentStatus);
+router.put("/:regNo/reset-password", requireSuperAdmin, resetStudentPassword);
+router.delete("/:regNo", requireSuperAdmin, deleteStudentAuth);
 
-// Superadmin routes - Student CRUD in Batches
-router.get("/batch/all-students", getAllStudentsFromBatches);
-router.post("/batch/create-student", createStudentInBatch);
-router.put("/batch/:studentId", updateStudentInBatch);
-router.delete("/batch/:studentId", deleteStudentFromBatch);
+// ── Super admin routes (student CRUD in batches) ────────
+router.get("/batch/all-students", requireSuperAdmin, getAllStudentsFromBatches);
+router.post("/batch/create-student", requireSuperAdmin, createStudentInBatch);
+router.put("/batch/:studentId", requireSuperAdmin, updateStudentInBatch);
+router.delete("/batch/:studentId", requireSuperAdmin, deleteStudentFromBatch);
 
 export default router;

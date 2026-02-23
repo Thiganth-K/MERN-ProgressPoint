@@ -1,13 +1,15 @@
 import Admin from "../admin.model.js";
 import { SUPER_ADMIN } from "../middleware/auth.js";
 import { manualLogAction } from "../middleware/logging.js";
+import { generateAdminToken, generateSuperAdminToken } from "../middleware/jwtAuth.js";
 
 // Admin login
 export const login = async (req, res) => {
   const { adminName, adminPassword } = req.body;
   
   if (adminName === SUPER_ADMIN.username && adminPassword === SUPER_ADMIN.password) {
-    return res.json({ success: true, role: "superadmin" });
+    const token = generateSuperAdminToken();
+    return res.json({ success: true, role: "superadmin", token });
   }
   
   try {
@@ -16,7 +18,9 @@ export const login = async (req, res) => {
     
     admin.logs.push({ type: "login", timestamp: new Date() });
     await admin.save();
-    res.json({ success: true, role: "admin" });
+
+    const token = generateAdminToken(admin.adminName, admin._id.toString());
+    res.json({ success: true, role: "admin", token });
   } catch {
     res.status(500).json({ success: false, error: "Server error" });
   }

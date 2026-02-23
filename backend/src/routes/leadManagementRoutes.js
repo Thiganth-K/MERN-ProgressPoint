@@ -14,7 +14,7 @@ import {
   getSubmissionStatistics,
   fixFileUrls
 } from '../controllers/leadManagementController.js';
-import { superAdminAuth, adminOrSuperAdminAuth, studentAuth } from '../middleware/auth.js';
+import { requireSuperAdmin, requireAdminOrSuperAdmin, requireStudent } from '../middleware/jwtAuth.js';
 import { upload } from '../config/cloudinary.js';
 
 const router = express.Router();
@@ -24,47 +24,47 @@ const router = express.Router();
 // ============================================================================
 
 // Create new info request
-router.post('/requests', adminOrSuperAdminAuth, createInfoRequest);
+router.post('/requests', requireAdminOrSuperAdmin, createInfoRequest);
 
 // Get all info requests
-router.get('/requests', adminOrSuperAdminAuth, getAllInfoRequests);
+router.get('/requests', requireAdminOrSuperAdmin, getAllInfoRequests);
 
 // Get single info request with submissions
-router.get('/requests/:id', adminOrSuperAdminAuth, getInfoRequestById);
+router.get('/requests/:id', requireAdminOrSuperAdmin, getInfoRequestById);
 
 // Update info request
-router.put('/requests/:id', adminOrSuperAdminAuth, updateInfoRequest);
+router.put('/requests/:id', requireAdminOrSuperAdmin, updateInfoRequest);
 
 // Delete info request
-router.delete('/requests/:id', adminOrSuperAdminAuth, deleteInfoRequest);
+router.delete('/requests/:id', requireAdminOrSuperAdmin, deleteInfoRequest);
 
 // Toggle info request active status
-router.patch('/requests/:id/toggle', adminOrSuperAdminAuth, toggleInfoRequestStatus);
+router.patch('/requests/:id/toggle', requireAdminOrSuperAdmin, toggleInfoRequestStatus);
 
 // Get submissions for a request
-router.get('/requests/:requestId/submissions', adminOrSuperAdminAuth, getSubmissionsByRequest);
+router.get('/requests/:requestId/submissions', requireAdminOrSuperAdmin, getSubmissionsByRequest);
 
 // Get submission statistics
-router.get('/statistics', adminOrSuperAdminAuth, getSubmissionStatistics);
+router.get('/statistics', requireAdminOrSuperAdmin, getSubmissionStatistics);
 
 // Fix existing file URLs (utility endpoint)
-router.post('/fix-file-urls', superAdminAuth, fixFileUrls);
+router.post('/fix-file-urls', requireSuperAdmin, fixFileUrls);
 
 // Review a submission
-router.patch('/submissions/:submissionId/review', adminOrSuperAdminAuth, reviewSubmission);
+router.patch('/submissions/:submissionId/review', requireAdminOrSuperAdmin, reviewSubmission);
 
 // Delete a submission
-router.delete('/submissions/:submissionId', adminOrSuperAdminAuth, deleteSubmission);
+router.delete('/submissions/:submissionId', requireAdminOrSuperAdmin, deleteSubmission);
 
 // ============================================================================
 // STUDENT ROUTES - View and Submit
 // ============================================================================
 
 // Get info requests for a student
-router.get('/student/:regNo/requests', studentAuth, getStudentInfoRequests);
+router.get('/student/:regNo/requests', requireStudent, getStudentInfoRequests);
 
 // Submit file for an info request
-router.post('/student/submit/:requestId', studentAuth, (req, res, next) => {
+router.post('/student/submit/:requestId', requireStudent, (req, res, next) => {
   upload.single('file')(req, res, (err) => {
     if (err) {
       console.error('Multer upload error:', err);

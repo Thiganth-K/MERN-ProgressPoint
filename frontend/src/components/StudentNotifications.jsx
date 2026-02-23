@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import axios from '../lib/axios';
 import toast from 'react-hot-toast';
-import { FiUpload, FiFile, FiCheckCircle, FiAlertCircle, FiClock, FiX } from 'react-icons/fi';
+import { FiUpload, FiFile, FiCheckCircle, FiAlertCircle, FiClock, FiX, FiEye } from 'react-icons/fi';
 
 const StudentNotifications = ({ regNo }) => {
   const [infoRequests, setInfoRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploadModal, setUploadModal] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [isImageFile, setIsImageFile] = useState(false);
   const [comments, setComments] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [filePreviewModal, setFilePreviewModal] = useState(null); // { url, name, type }
 
   useEffect(() => {
     fetchInfoRequests();
@@ -40,6 +43,34 @@ const StudentNotifications = ({ regNo }) => {
         return;
       }
       setSelectedFile(file);
+
+      // Revoke previous preview URL to avoid memory leaks
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(null);
+      }
+
+      const isImage = file.type.startsWith('image/');
+      setIsImageFile(isImage);
+
+      if (isImage) {
+        const url = URL.createObjectURL(file);
+        setPreviewUrl(url);
+        console.log('[File Preview] Image selected:', file.name, '| Type:', file.type, '| Size:', (file.size / 1024 / 1024).toFixed(2) + 'MB');
+      } else {
+        console.log('[File Preview] Non-image file selected:', file.name, '| Type:', file.type, '| Size:', (file.size / 1024 / 1024).toFixed(2) + 'MB');
+      }
+    }
+  };
+
+  const resetUploadState = () => {
+    setUploadModal(null);
+    setSelectedFile(null);
+    setComments('');
+    setIsImageFile(false);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
     }
   };
 
@@ -58,24 +89,41 @@ const StudentNotifications = ({ regNo }) => {
 
     try {
       setUploading(true);
-      await axios.post(`/lead-management/student/submit/${uploadModal._id}`, formData, {
+      console.log('[Upload] Starting upload for:', selectedFile.name, '| Request ID:', uploadModal._id, '| Student:', regNo);
+      const response = await axios.post(`/lead-management/student/submit/${uploadModal._id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'x-student-regno': regNo
         }
       });
-      
+      console.log('[Upload] ✅ Upload successful! File URL:', response.data?.data?.fileUrl);
       toast.success('File uploaded successfully!');
-      setUploadModal(null);
-      setSelectedFile(null);
-      setComments('');
+      resetUploadState();
       fetchInfoRequests(); // Refresh data
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error('[Upload] ❌ Upload failed:', error.response?.data || error.message);
       toast.error(error.response?.data?.message || 'Failed to upload file');
     } finally {
       setUploading(false);
     }
+  };
+
+  // Helper to fix Cloudinary URL: ensure raw path for PDFs (handle old records with /image/upload/)
+  const fixFileUrl = (fileUrl, fileType) => {
+    if (!fileUrl || !fileType) return fileUrl || '';
+    let url = fileUrl;
+    if (fileType.includes('pdf') || fileType.includes('document')) {
+      url = url.replace('/image/upload/', '/raw/upload/');
+    }
+    return url;
+  };
+
+  // Open submitted file in an inline preview modal
+  const handleViewSubmittedFile = (fileUrl, fileType, fileName) => {
+    const fixedUrl = fixFileUrl(fileUrl, fileType || '');
+    console.log('[View File] Opening inline preview:', fixedUrl, '| Type:', fileType);
+    if (!fixedUrl) { toast.error('File URL not available'); return; }
+    setFilePreviewModal({ url: fixedUrl, name: fileName || 'Submitted File', type: fileType || '' });
   };
 
   const getPriorityColor = (priority) => {
@@ -237,14 +285,12 @@ const StudentNotifications = ({ regNo }) => {
                       </div>
                       
                       <div className="flex flex-col gap-2">
-                        <a
-                          href={submission.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn btn-sm btn-outline"
+                        <button
+                          onClick={() => handleViewSubmittedFile(submission.fileUrl, submission.fileType, submission.fileName)}
+                          className="btn btn-sm btn-outline gap-1"
                         >
-                          <FiFile /> View File
-                        </a>
+                          <FiEye /> View File
+                        </button>
                         {submission.reviewStatus === 'rejected' && (
                           <button
                             onClick={() => setUploadModal(request)}
@@ -308,6 +354,34 @@ const StudentNotifications = ({ regNo }) => {
                     </span>
                   </label>
                 )}
+                {/* Image Preview */}
+                {selectedFile && isImageFile && previewUrl && (
+                  <div className="mt-3">
+                    <p className="text-sm font-semibold mb-2 flex items-center gap-1">
+                      <FiEye className="text-primary" /> Preview (review before submitting):
+                    </p>
+                    <div className="relative border-2 border-dashed border-primary rounded-lg overflow-hidden bg-base-200">
+                      <img
+                        src={previewUrl}
+                        alt="File preview"
+                        className="max-h-64 w-full object-contain"
+                      />
+                      <span className="absolute top-2 right-2 badge badge-success text-xs">Ready to upload</span>
+                    </div>
+                    <p className="text-xs text-success mt-1">✅ Confirm the image looks correct before submitting.</p>
+                  </div>
+                )}
+                {/* Non-image file info */}
+                {selectedFile && !isImageFile && (
+                  <div className="mt-3 p-3 bg-base-200 rounded-lg flex items-center gap-3">
+                    <FiFile className="text-2xl text-primary flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm truncate">{selectedFile.name}</p>
+                      <p className="text-xs text-gray-500">{selectedFile.type} &bull; {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                    </div>
+                    <span className="badge badge-success text-xs flex-shrink-0">Ready to upload</span>
+                  </div>
+                )}
               </div>
 
               <div className="form-control mb-4">
@@ -325,11 +399,7 @@ const StudentNotifications = ({ regNo }) => {
               <div className="modal-action">
                 <button
                   type="button"
-                  onClick={() => {
-                    setUploadModal(null);
-                    setSelectedFile(null);
-                    setComments('');
-                  }}
+                  onClick={resetUploadState}
                   className="btn"
                   disabled={uploading}
                 >
@@ -355,11 +425,58 @@ const StudentNotifications = ({ regNo }) => {
             </form>
           </div>
           <form method="dialog" className="modal-backdrop">
-            <button onClick={() => {
-              setUploadModal(null);
-              setSelectedFile(null);
-              setComments('');
-            }}>close</button>
+            <button onClick={resetUploadState}>close</button>
+          </form>
+        </dialog>
+      )}
+
+      {/* Inline File Preview Modal */}
+      {filePreviewModal && (
+        <dialog open className="modal">
+          <div className="modal-box w-11/12 max-w-5xl h-[90vh] flex flex-col p-0 overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-base-300 bg-base-100 flex-shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <FiFile className="text-primary flex-shrink-0" />
+                <span className="font-semibold truncate text-sm">{filePreviewModal.name}</span>
+              </div>
+              <div className="flex gap-2 flex-shrink-0">
+                <a
+                  href={filePreviewModal.url}
+                  download
+                  className="btn btn-sm btn-outline gap-1"
+                  title="Download file"
+                >
+                  ⬇ Download
+                </a>
+                <button
+                  onClick={() => setFilePreviewModal(null)}
+                  className="btn btn-sm btn-circle btn-ghost"
+                >✕</button>
+              </div>
+            </div>
+            {/* Preview */}
+            <div className="flex-1 overflow-hidden bg-base-200">
+              {filePreviewModal.type.startsWith('image/') ? (
+                <div className="w-full h-full flex items-center justify-center p-4">
+                  <img
+                    src={filePreviewModal.url}
+                    alt={filePreviewModal.name}
+                    className="max-w-full max-h-full object-contain rounded shadow-lg"
+                  />
+                </div>
+              ) : (
+                <iframe
+                  src={filePreviewModal.url}
+                  title={filePreviewModal.name}
+                  className="w-full h-full border-0"
+                  allow="fullscreen"
+                />
+              )}
+            </div>
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button onClick={() => setFilePreviewModal(null)}>close</button>
           </form>
         </dialog>
       )}
