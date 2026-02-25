@@ -139,29 +139,117 @@ export const exportStudents = async (req, res) => {
   if (!batch) return res.status(404).json({ error: "Batch not found" });
 
   const workbook = new ExcelJS.Workbook();
+  workbook.creator = 'ProgressPoint';
+  workbook.created = new Date();
   const worksheet = workbook.addWorksheet("Students");
+  const TOTAL_COLS = 10;
 
-  worksheet.addRow([
-    "Reg No",
-    "Name",
-    "Efforts",
-    "Presentation",
-    "Assessment",
-    "Assignment",
-    "Attendance (%)"
+  // Set column widths first so merging works correctly
+  worksheet.columns = [
+    { width: 6 },  // S.No
+    { width: 14 }, // Reg No
+    { width: 22 }, // Name
+    { width: 12 }, // Department
+    { width: 28 }, // Email
+    { width: 10 }, // Efforts
+    { width: 14 }, // Presentation
+    { width: 12 }, // Assessment
+    { width: 12 }, // Assignment
+    { width: 14 }  // Attendance
+  ];
+
+  // ── Row 1: ProgressPoint brand title ──────────────────────────────
+  worksheet.mergeCells(1, 1, 1, TOTAL_COLS);
+  const brandRow = worksheet.getRow(1);
+  brandRow.height = 36;
+  const brandCell = worksheet.getCell('A1');
+  brandCell.value = 'ProgressPoint';
+  brandCell.font = { name: 'Calibri', bold: true, size: 20, color: { argb: 'FFFFFFFF' } };
+  brandCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1D4ED8' } };
+  brandCell.alignment = { horizontal: 'center', vertical: 'middle' };
+
+  // ── Row 2: subtitle ───────────────────────────────────────────────
+  worksheet.mergeCells(2, 1, 2, TOTAL_COLS);
+  const subtitleCell = worksheet.getCell('A2');
+  subtitleCell.value = 'Student Batch Performance Report';
+  subtitleCell.font = { name: 'Calibri', italic: true, size: 12, color: { argb: 'FFFFFFFF' } };
+  subtitleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } };
+  subtitleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+  worksheet.getRow(2).height = 20;
+
+  // ── Row 3: batch info ─────────────────────────────────────────────
+  worksheet.mergeCells(3, 1, 3, 5);
+  const batchInfoCell = worksheet.getCell('A3');
+  batchInfoCell.value = `Batch: ${batchName}  |  Year: ${batch.year || '-'}`;
+  batchInfoCell.font = { bold: true, size: 11, color: { argb: 'FF1E3A5F' } };
+  batchInfoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDBEAFE' } };
+  batchInfoCell.alignment = { horizontal: 'left', vertical: 'middle', indent: 1 };
+
+  worksheet.mergeCells(3, 6, 3, TOTAL_COLS);
+  const dateCell = worksheet.getCell('F3');
+  dateCell.value = `Generated: ${new Date().toLocaleString('en-IN', { dateStyle: 'long', timeStyle: 'short' })}`;
+  dateCell.font = { size: 10, color: { argb: 'FF1E3A5F' } };
+  dateCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDBEAFE' } };
+  dateCell.alignment = { horizontal: 'right', vertical: 'middle', indent: 1 };
+  worksheet.getRow(3).height = 18;
+
+  // ── Row 4: total count ────────────────────────────────────────────
+  worksheet.mergeCells(4, 1, 4, TOTAL_COLS);
+  const countCell = worksheet.getCell('A4');
+  countCell.value = `Total Students: ${batch.students.length}`;
+  countCell.font = { size: 10, color: { argb: 'FF374151' } };
+  countCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0F2FE' } };
+  countCell.alignment = { horizontal: 'center', vertical: 'middle' };
+  worksheet.getRow(4).height = 16;
+
+  // ── Row 5: spacer ─────────────────────────────────────────────────
+  worksheet.addRow([]);
+  worksheet.getRow(5).height = 6;
+
+  // ── Row 6: data column headers ────────────────────────────────────
+  const headerRow = worksheet.addRow([
+    "S.No", "Reg No", "Name", "Department", "Email",
+    "Efforts", "Presentation", "Assessment", "Assignment", "Attendance (%)"
   ]);
+  headerRow.height = 20;
+  headerRow.eachCell(cell => {
+    cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10 };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF3B82F6' } };
+    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    cell.border = {
+      bottom: { style: 'medium', color: { argb: 'FF1D4ED8' } }
+    };
+  });
 
-  batch.students.forEach(s => {
-    worksheet.addRow([
+  // ── Data rows ─────────────────────────────────────────────────────
+  batch.students.forEach((s, idx) => {
+    const row = worksheet.addRow([
+      idx + 1,
       s.regNo,
       s.name,
+      s.department || '-',
+      s.personalEmail || s.collegeEmail || '-',
       s.marks?.efforts ?? 0,
       s.marks?.presentation ?? 0,
       s.marks?.assessment ?? 0,
       s.marks?.assignment ?? 0,
       s.attendancePercent ?? 0
     ]);
+    if (idx % 2 === 1) {
+      row.eachCell(cell => {
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F5FF' } };
+      });
+    }
   });
+
+  // ── Footer row ────────────────────────────────────────────────────
+  worksheet.addRow([]);
+  const lastRowNum = worksheet.rowCount + 1;
+  worksheet.mergeCells(lastRowNum, 1, lastRowNum, TOTAL_COLS);
+  const footerCell = worksheet.getCell(`A${lastRowNum}`);
+  footerCell.value = 'This report is generated by ProgressPoint — Confidential & for internal use only.';
+  footerCell.font = { italic: true, size: 9, color: { argb: 'FF6B7280' } };
+  footerCell.alignment = { horizontal: 'center' };
 
   res.setHeader(
     "Content-Type",
