@@ -11,7 +11,7 @@ export const getAllDepartments = async (req, res) => {
     
     batches.forEach(batch => {
       // Skip NOT-WILLING batch students
-      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+      if (batch.batchName && batch.batchName.toUpperCase().includes('NOT-WILLING')) {
         return;
       }
       
@@ -45,7 +45,7 @@ export const getDepartmentStudents = async (req, res) => {
     const students = [];
     batches.forEach(batch => {
       // Skip NOT-WILLING batch students
-      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+      if (batch.batchName && batch.batchName.toUpperCase().includes('NOT-WILLING')) {
         return;
       }
       
@@ -83,7 +83,7 @@ export const getDepartmentStats = async (req, res) => {
     
     batches.forEach(batch => {
       // Skip NOT-WILLING batch students
-      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+      if (batch.batchName && batch.batchName.toUpperCase().includes('NOT-WILLING')) {
         return;
       }
       
@@ -137,7 +137,7 @@ export const exportDepartmentStudents = async (req, res) => {
     const students = [];
     batches.forEach(batch => {
       // Skip NOT-WILLING batch students
-      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+      if (batch.batchName && batch.batchName.toUpperCase().includes('NOT-WILLING')) {
         return;
       }
       
@@ -220,7 +220,7 @@ export const searchStudentByRegNo = async (req, res) => {
     
     for (const batch of batches) {
       // Skip NOT-WILLING batch students
-      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+      if (batch.batchName && batch.batchName.toUpperCase().includes('NOT-WILLING')) {
         continue;
       }
       
@@ -257,7 +257,7 @@ export const getDepartmentAverages = async (req, res) => {
     
     batches.forEach(batch => {
       // Skip NOT-WILLING batch students
-      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+      if (batch.batchName && batch.batchName.toUpperCase().includes('NOT-WILLING')) {
         return;
       }
       
@@ -319,7 +319,7 @@ export const getDepartmentAttendance = async (req, res) => {
 
     batches.forEach(batch => {
       // Skip NOT-WILLING batch students
-      if (batch.batchName && batch.batchName.toUpperCase() === 'NOT-WILLING') {
+      if (batch.batchName && batch.batchName.toUpperCase().includes('NOT-WILLING')) {
         return;
       }
 
